@@ -445,6 +445,40 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                             }
                         });
                     });
+
+                    // ── Remove near-empty trailing pages ──
+                    if (sofficeDone && fs.existsSync(processedFilePath)) {
+                        try {
+                            const pdfBytes = fs.readFileSync(processedFilePath);
+                            const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+                            const pageCount = pdfDoc.getPageCount();
+                            if (pageCount > 1) {
+                                // Remove trailing pages whose raw content is very sparse
+                                let lastPageToKeep = pageCount - 1;
+                                for (let i = pageCount - 1; i >= 1; i--) {
+                                    const page = pdfDoc.getPage(i);
+                                    const { width, height } = page.getSize();
+                                    // Estimate content by checking operators in content streams
+                                    const contentStreamSize = JSON.stringify(page).length;
+                                    if (contentStreamSize < 2000) {
+                                        lastPageToKeep = i - 1;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                if (lastPageToKeep < pageCount - 1) {
+                                    for (let i = pageCount - 1; i > lastPageToKeep; i--) {
+                                        pdfDoc.removePage(i);
+                                    }
+                                    const cleaned = await pdfDoc.save();
+                                    fs.writeFileSync(processedFilePath, cleaned);
+                                    console.log(`Removed ${pageCount - lastPageToKeep - 1} near-empty trailing page(s)`);
+                                }
+                            }
+                        } catch (cleanErr) {
+                            console.log('Page cleanup skipped:', cleanErr.message);
+                        }
+                    }
                 } catch (_) { /* soffice not installed, use mammoth fallback */ }
 
                 // ── Fallback: mammoth + Puppeteer ──
