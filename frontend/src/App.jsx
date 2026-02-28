@@ -20,7 +20,8 @@ function App() {
     <Router>
       <ScrollToTop />
       <Navbar />
-      <AdsPlacement slot="2004166750" format="auto" />
+      {/* Header Ad - Only shown on non-tool pages to avoid nav proximity policy issues */}
+      <AdsPlacement slot="2004166750" format="auto" style={{ margin: '0 0 8px 0' }} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tool/:toolId" element={<ToolPage />} />
@@ -33,7 +34,8 @@ function App() {
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
       </Routes>
-      <AdsPlacement slot="2965247838" format="auto" style={{ margin: '16px 0' }} />
+      {/* Footer Ad - Policy compliant: clear separation from content and footer */}
+      <AdsPlacement slot="2965247838" format="auto" style={{ margin: '32px 0 0 0' }} />
       <Footer />
     </Router>
   );

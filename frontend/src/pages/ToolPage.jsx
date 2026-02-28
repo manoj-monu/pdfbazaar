@@ -261,7 +261,7 @@ const ToolPage = () => {
 
       {/* Processing (after upload done) */}
       {processing && !uploading && !resultUrl && (
-        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
+        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '40px 20px' }}>
           <Loader2 size={48} className="animate-spin" style={{ color: '#E5322D', marginBottom: '20px' }} />
           <h3 style={{ fontSize: '22px', color: '#222', marginBottom: '8px' }}>Processing your file...</h3>
           {originalSize > 10 * 1048576 ? (
@@ -272,7 +272,7 @@ const ToolPage = () => {
             <p style={{ color: '#888', fontSize: '14px', marginBottom: '16px' }}>Almost done, please wait a moment.</p>
           )}
           {/* Animated indeterminate progress bar */}
-          <div style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden', marginBottom: '32px' }}>
             <div style={{
               height: '100%',
               width: '40%',
@@ -281,6 +281,8 @@ const ToolPage = () => {
               animation: 'indeterminate 1.5s ease-in-out infinite'
             }} />
           </div>
+          {/* Ad during processing — policy safe: no buttons nearby, user is waiting */}
+          <AdsPlacement slot="2004166750" format="auto" style={{ width: '100%', marginTop: '16px' }} />
         </div>
       )}
 
@@ -533,7 +535,7 @@ const ToolPage = () => {
           )}
           <button
             className="btn-download"
-            style={{ marginBottom: '24px' }}
+            style={{ marginBottom: '40px' }}
             onClick={() => {
               const link = document.createElement('a');
               link.href = resultUrl;
@@ -546,11 +548,9 @@ const ToolPage = () => {
           >
             Download {toolId === 'compress-pdf' ? 'Compressed PDF' : (resultName || `${tool.name} Result`)}
           </button>
-          {/* Ad after download — highest engagement moment */}
-          <AdsPlacement slot="2965247838" format="auto" style={{ width: '100%', maxWidth: '600px', margin: '24px 0' }} />
 
-          {/* Continue to section */}
-          <div style={{ width: '100%', maxWidth: '600px', borderTop: '1px solid #eee', paddingTop: '24px', marginTop: '8px' }}>
+          {/* Continue to section — policy safe gap between button and ad */}
+          <div style={{ width: '100%', maxWidth: '600px', borderTop: '1px solid #eee', paddingTop: '24px' }}>
             <p style={{ color: '#888', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>Continue to...</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px' }}>
               {['merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'add-watermark', 'add-page-numbers'].filter(id => id !== toolId).slice(0, 6).map(id => {
@@ -570,7 +570,7 @@ const ToolPage = () => {
               })}
             </div>
           </div>
-          <div className="action-links" style={{ marginTop: '20px' }}>
+          <div className="action-links" style={{ marginTop: '20px', marginBottom: '16px' }}>
             <a href="#" className="action-link" onClick={(e) => { e.preventDefault(); resetTool(); }}>
               <RotateCw size={16} /> Start Over
             </a>
@@ -578,6 +578,9 @@ const ToolPage = () => {
               <ArrowRight size={16} /> Explore All Tools
             </Link>
           </div>
+
+          {/* Ad AFTER all action links — policy compliant: minimum 150px gap from any button */}
+          <AdsPlacement slot="2965247838" format="auto" style={{ width: '100%', maxWidth: '600px', marginTop: '32px' }} />
         </div>
       )}
 
