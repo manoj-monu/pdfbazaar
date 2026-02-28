@@ -35,6 +35,10 @@ const ToolPage = () => {
   const [htmlUrl, setHtmlUrl] = useState('');
   const [originalSize, setOriginalSize] = useState(0);
   const [resultSize, setResultSize] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadSpeed, setUploadSpeed] = useState(0);
+  const [uploadedBytes, setUploadedBytes] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -54,85 +58,101 @@ const ToolPage = () => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const handleProcess = async () => {
+  const handleProcess = () => {
     setProcessing(true);
     setErrorMsg(null);
+    setUploadProgress(0);
+    setUploadSpeed(0);
+    setUploadedBytes(0);
 
-    try {
-      // Opt 2: Backend Server Processing
-      const formData = new FormData();
+    const formData = new FormData();
 
-      if (toolId === 'html-to-pdf') {
-        if (!htmlUrl) {
-          setErrorMsg('Please enter a valid URL');
-          setProcessing(false);
-          return;
-        }
-        formData.append('url', htmlUrl);
-      } else {
-        if (files.length === 0) return;
-        // Calculate original size
-        const totalOriginalSize = files.reduce((sum, f) => sum + f.size, 0);
-        setOriginalSize(totalOriginalSize);
-        files.forEach((file) => {
-          formData.append('files', file);
-        });
+    if (toolId === 'html-to-pdf') {
+      if (!htmlUrl) {
+        setErrorMsg('Please enter a valid URL');
+        setProcessing(false);
+        return;
       }
-
-      // Pass configuration options if needed (e.g. compress level)
-      formData.append('toolId', toolId);
-      formData.append('compressLevel', compressLevel);
-      formData.append('pageRange', pageRange);
-      formData.append('rotateAngle', rotateAngle);
-      formData.append('watermarkText', watermarkText);
-      formData.append('password', password);
-
-      const response = await fetch(`${BACKEND_URL}/api/process/${toolId}`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        let errorMessage = `Server error ${response.status}: ${errorText}`;
-        try {
-          const errorJson = JSON.parse(errorText);
-          if (errorJson.error) {
-            errorMessage = errorJson.details ? `${errorJson.error} (Details: ${errorJson.details})` : errorJson.error;
-          }
-        } catch (e) { /* ignore parse error */ }
-        throw new Error(errorMessage);
-      }
-
-      let filename = `pdfbazaar-${toolId}-result.pdf`;
-      const contentDisp = response.headers.get('content-disposition');
-      if (contentDisp && contentDisp.includes('filename=')) {
-        const match = contentDisp.match(/filename="?([^"]+)"?/);
-        if (match && match[1]) filename = match[1];
-      } else if (response.headers.get('content-type') === 'application/zip') {
-        filename = `pdfbazaar-${toolId}-result.zip`;
-      }
-
-      const blob = await response.blob();
-      setResultSize(blob.size);
-      const url = URL.createObjectURL(blob);
-      setResultUrl(url);
-      setResultName(filename);
-
-      // Auto-trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-    } catch (err) {
-      console.error(err);
-      setErrorMsg(err.message);
-    } finally {
-      setProcessing(false);
+      formData.append('url', htmlUrl);
+    } else {
+      if (files.length === 0) { setProcessing(false); return; }
+      const totalOriginalSize = files.reduce((sum, f) => sum + f.size, 0);
+      setOriginalSize(totalOriginalSize);
+      files.forEach((file) => formData.append('files', file));
     }
+
+    formData.append('toolId', toolId);
+    formData.append('compressLevel', compressLevel);
+    formData.append('pageRange', pageRange);
+    formData.append('rotateAngle', rotateAngle);
+    formData.append('watermarkText', watermarkText);
+    formData.append('password', password);
+
+    const xhr = new XMLHttpRequest();
+    let startTime = Date.now();
+
+    xhr.upload.onloadstart = () => {
+      setUploading(true);
+      startTime = Date.now();
+    };
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        setUploadProgress(pct);
+        setUploadedBytes(e.loaded);
+        const elapsed = (Date.now() - startTime) / 1000;
+        const speed = elapsed > 0 ? e.loaded / elapsed : 0;
+        setUploadSpeed(speed);
+      }
+    };
+
+    xhr.upload.onload = () => {
+      setUploadProgress(100);
+      setUploading(false);
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const contentDisp = xhr.getResponseHeader('Content-Disposition');
+        let filename = `pdfbazaar-${toolId}-result.pdf`;
+        if (contentDisp && contentDisp.includes('filename=')) {
+          const match = contentDisp.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) filename = match[1];
+        }
+        const contentType = xhr.getResponseHeader('Content-Type') || '';
+        if (contentType.includes('zip')) filename = `pdfbazaar-${toolId}-result.zip`;
+
+        const blob = xhr.response;
+        setResultSize(blob.size);
+        const url = URL.createObjectURL(blob);
+        setResultUrl(url);
+        setResultName(filename);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        let msg = `Server error ${xhr.status}`;
+        try { const j = JSON.parse(xhr.responseText); msg = j.error || msg; } catch (e) { }
+        setErrorMsg(msg);
+      }
+      setProcessing(false);
+      setUploading(false);
+    };
+
+    xhr.onerror = () => {
+      setErrorMsg('Connection failed. Please check if the server is running.');
+      setProcessing(false);
+      setUploading(false);
+    };
+
+    xhr.open('POST', `${BACKEND_URL}/api/process/${toolId}`);
+    xhr.responseType = 'blob';
+    xhr.send(formData);
   };
 
   const resetTool = () => {
@@ -140,6 +160,7 @@ const ToolPage = () => {
     setResultUrl(null);
     setResultName(null);
     setErrorMsg(null);
+    setUploadProgress(0);
   };
 
   if (!tool) {
@@ -200,6 +221,40 @@ const ToolPage = () => {
             </div>
           ) : null}
         </>
+      )}
+
+      {/* Upload Progress Screen */}
+      {processing && uploading && (
+        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '8px' }}>
+            Uploading file {files.length > 0 ? `1 of ${files.length}` : ''}
+          </h3>
+          {files[0] && (
+            <p style={{ color: '#666', marginBottom: '24px' }}>
+              {files[0].name} ({(files[0].size / 1048576).toFixed(2)} MB)
+            </p>
+          )}
+          {uploadSpeed > 0 && (
+            <p style={{ color: '#888', marginBottom: '12px', fontSize: '14px' }}>
+              Upload speed {(uploadSpeed / 1024).toFixed(1)} KB/S
+            </p>
+          )}
+          {/* Progress Bar */}
+          <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden', marginBottom: '16px' }}>
+            <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#E5322D', borderRadius: '4px', transition: 'width 0.3s ease' }} />
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#222' }}>{uploadProgress}%</div>
+          <div style={{ color: '#888', fontSize: '16px', marginTop: '4px' }}>UPLOADED</div>
+        </div>
+      )}
+
+      {/* Processing (after upload done) */}
+      {processing && !uploading && !resultUrl && (
+        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
+          <Loader2 size={48} className="animate-spin" style={{ color: '#E5322D', marginBottom: '16px' }} />
+          <h3 style={{ fontSize: '20px', color: '#333' }}>Processing your file...</h3>
+          <p style={{ color: '#888', marginTop: '8px' }}>Please wait, this may take a few seconds.</p>
+        </div>
       )}
 
       {errorMsg && (
