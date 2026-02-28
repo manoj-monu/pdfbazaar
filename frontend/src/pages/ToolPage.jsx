@@ -39,6 +39,8 @@ const ToolPage = () => {
   const [uploadSpeed, setUploadSpeed] = useState(0);
   const [uploadedBytes, setUploadedBytes] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [customDpi, setCustomDpi] = useState('auto');
+  const [targetSizeMB, setTargetSizeMB] = useState('');
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -87,6 +89,8 @@ const ToolPage = () => {
     formData.append('rotateAngle', rotateAngle);
     formData.append('watermarkText', watermarkText);
     formData.append('password', password);
+    formData.append('customDpi', customDpi);
+    formData.append('targetSizeMB', targetSizeMB);
 
     const xhr = new XMLHttpRequest();
     let startTime = Date.now();
@@ -333,6 +337,40 @@ const ToolPage = () => {
                       <div style={{ fontSize: '12px' }}>High quality, less compressed.</div>
                     </div>
                   </label>
+
+                  {/* Custom DPI */}
+                  <h4 style={{ color: '#333', margin: '16px 0 8px' }}>Image DPI (Resolution)</h4>
+                  <select
+                    className="input-field"
+                    value={customDpi}
+                    onChange={e => setCustomDpi(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', fontSize: '14px', marginBottom: '12px' }}
+                  >
+                    <option value="auto">Auto (Recommended)</option>
+                    <option value="72">72 DPI - Smallest Size (Screen only)</option>
+                    <option value="96">96 DPI - Very Small</option>
+                    <option value="120">120 DPI - Small</option>
+                    <option value="150">150 DPI - Balanced</option>
+                    <option value="200">200 DPI - Good Quality</option>
+                    <option value="300">300 DPI - High Quality (Print)</option>
+                  </select>
+
+                  {/* Target Size */}
+                  <h4 style={{ color: '#333', marginBottom: '8px' }}>Target File Size</h4>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      className="input-field"
+                      placeholder="e.g. 2"
+                      min="0.1"
+                      step="0.1"
+                      value={targetSizeMB}
+                      onChange={e => setTargetSizeMB(e.target.value)}
+                      style={{ flex: 1, padding: '8px 12px', fontSize: '14px' }}
+                    />
+                    <span style={{ color: '#555', fontWeight: '500', whiteSpace: 'nowrap' }}>MB</span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>Leave blank to auto-compress. Set a target like "1" for ~1 MB.</p>
                 </div>
               )}
 

@@ -318,10 +318,24 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             fs.writeFileSync(processedFilePath, resultBytes);
 
         } else if (toolId === 'compress-pdf') {
-            const { compressLevel } = options || {};
+            const { compressLevel, customDpi, targetSizeMB } = options || {};
             const inputFile = files[0].path;
             const inputBuffer = fs.readFileSync(inputFile);
             const originalSize = inputBuffer.length;
+
+            // Determine DPI
+            const dpi = customDpi && customDpi !== 'auto' ? parseInt(customDpi) : 96;
+
+            // GS quality based on targetSizeMB or compressLevel
+            let gsQuality = '/screen';
+            if (targetSizeMB && parseFloat(targetSizeMB) > 0) {
+                const ratio = (parseFloat(targetSizeMB) * 1048576) / originalSize;
+                if (ratio > 0.7) gsQuality = '/printer';
+                else if (ratio > 0.4) gsQuality = '/ebook';
+                else gsQuality = '/screen';
+            } else {
+                if (compressLevel === 'less') gsQuality = '/ebook';
+            }
 
             // ── Layer 1: Fast pure-JS compression (pdf-lib) ──
             let fastResultBytes;
@@ -331,26 +345,22 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                 fastResultBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
             } catch (e) { fastResultBytes = null; }
 
+            const targetBytes = targetSizeMB ? parseFloat(targetSizeMB) * 1048576 : null;
             const fastReduced = fastResultBytes && fastResultBytes.length < originalSize * 0.92;
+            const fastHitsTarget = targetBytes && fastResultBytes && fastResultBytes.length <= targetBytes;
 
-            if (fastReduced && compressLevel !== 'extreme') {
-                // Layer 1 gave good result - use it instantly!
+            if ((fastReduced && compressLevel !== 'extreme' && !targetSizeMB) || fastHitsTarget) {
                 fs.writeFileSync(processedFilePath, fastResultBytes);
             } else {
-                // ── Layer 2: Ultra-fast Ghostscript ──
-                let gsQuality = '/screen'; // always use screen for speed
-                if (compressLevel === 'less') gsQuality = '/ebook';
-
+                // ── Layer 2: Ghostscript with custom DPI ──
                 const gsCmd = getGsCommand();
-                // Subsample is 3x faster than Bicubic (default)
-                const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Subsample -dGrayImageDownsampleType=/Subsample -dMonoImageDownsampleType=/Subsample -dColorImageResolution=96 -dGrayImageResolution=96 -sOutputFile="${processedFilePath}" "${inputFile}"`;
+                const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Subsample -dGrayImageDownsampleType=/Subsample -dMonoImageDownsampleType=/Subsample -dColorImageResolution=${dpi} -dGrayImageResolution=${dpi} -dMonoImageResolution=${Math.max(dpi, 150)} -sOutputFile="${processedFilePath}" "${inputFile}"`;
 
                 await new Promise((resolve, reject) => exec(command, { timeout: 120000 }, (err) => {
                     if (err && !fs.existsSync(processedFilePath)) reject(err);
                     else resolve();
                 }));
 
-                // If GS result is larger than pdf-lib result, use pdf-lib result
                 if (fastResultBytes && fs.existsSync(processedFilePath)) {
                     const gsSize = fs.statSync(processedFilePath).size;
                     if (fastResultBytes.length < gsSize) {
