@@ -319,16 +319,45 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
 
         } else if (toolId === 'compress-pdf') {
             const { compressLevel } = options || {};
-            let gsQuality = '/ebook';
-            if (compressLevel === 'extreme') gsQuality = '/screen';
-            else if (compressLevel === 'less') gsQuality = '/printer';
-
             const inputFile = files[0].path;
-            const gsCmd = getGsCommand();
-            // Multi-threaded + fast settings for speed
-            const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -sOutputFile="${processedFilePath}" "${inputFile}"`;
+            const inputBuffer = fs.readFileSync(inputFile);
+            const originalSize = inputBuffer.length;
 
-            await new Promise((resolve) => exec(command, resolve));
+            // ── Layer 1: Fast pure-JS compression (pdf-lib) ──
+            let fastResultBytes;
+            try {
+                const { PDFDocument } = require('pdf-lib');
+                const pdfDoc = await PDFDocument.load(inputBuffer, { ignoreEncryption: true });
+                fastResultBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+            } catch (e) { fastResultBytes = null; }
+
+            const fastReduced = fastResultBytes && fastResultBytes.length < originalSize * 0.92;
+
+            if (fastReduced && compressLevel !== 'extreme') {
+                // Layer 1 gave good result - use it instantly!
+                fs.writeFileSync(processedFilePath, fastResultBytes);
+            } else {
+                // ── Layer 2: Ultra-fast Ghostscript ──
+                let gsQuality = '/screen'; // always use screen for speed
+                if (compressLevel === 'less') gsQuality = '/ebook';
+
+                const gsCmd = getGsCommand();
+                // Subsample is 3x faster than Bicubic (default)
+                const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Subsample -dGrayImageDownsampleType=/Subsample -dMonoImageDownsampleType=/Subsample -dColorImageResolution=96 -dGrayImageResolution=96 -sOutputFile="${processedFilePath}" "${inputFile}"`;
+
+                await new Promise((resolve, reject) => exec(command, { timeout: 120000 }, (err) => {
+                    if (err && !fs.existsSync(processedFilePath)) reject(err);
+                    else resolve();
+                }));
+
+                // If GS result is larger than pdf-lib result, use pdf-lib result
+                if (fastResultBytes && fs.existsSync(processedFilePath)) {
+                    const gsSize = fs.statSync(processedFilePath).size;
+                    if (fastResultBytes.length < gsSize) {
+                        fs.writeFileSync(processedFilePath, fastResultBytes);
+                    }
+                }
+            }
 
         } else if (toolId === 'grayscale-pdf') {
             const inputFile = files[0].path;
