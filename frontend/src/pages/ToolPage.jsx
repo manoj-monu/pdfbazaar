@@ -61,29 +61,191 @@ const ToolPage = () => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
-  const handleProcess = () => {
+  // ── BROWSER-SIDE INSTANT PROCESSING (no server needed) ──
+  const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf'];
+
+  const processBrowserSide = async () => {
+    const { degrees, rgb, StandardFonts } = await import('pdf-lib');
+    const buffers = await Promise.all(files.map(f => f.arrayBuffer()));
+
+    if (toolId === 'merge-pdf') {
+      const merged = await PDFDocument.create();
+      for (const buf of buffers) {
+        const src = await PDFDocument.load(buf, { ignoreEncryption: true });
+        const pages = await merged.copyPages(src, src.getPageIndices());
+        pages.forEach(p => merged.addPage(p));
+      }
+      return { bytes: await merged.save(), ext: 'pdf', name: 'pdfbazaar-merge-result.pdf' };
+    }
+
+    if (toolId === 'split-pdf') {
+      const src = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      const total = src.getPageCount();
+      let indices = [];
+      if (pageRange && pageRange.trim()) {
+        pageRange.split(',').forEach(part => {
+          part = part.trim();
+          if (part.includes('-')) {
+            let [s, e] = part.split('-').map(n => parseInt(n));
+            s = Math.max(1, s); e = Math.min(total, e);
+            for (let i = s; i <= e; i++) indices.push(i - 1);
+          } else {
+            const n = parseInt(part);
+            if (n >= 1 && n <= total) indices.push(n - 1);
+          }
+        });
+      } else {
+        indices = Array.from({ length: total }, (_, i) => i);
+      }
+      indices = [...new Set(indices)].sort((a, b) => a - b);
+      if (indices.length === 1) {
+        const out = await PDFDocument.create();
+        const [p] = await out.copyPages(src, [indices[0]]);
+        out.addPage(p);
+        return { bytes: await out.save(), ext: 'pdf', name: 'pdfbazaar-split-result.pdf' };
+      }
+      // Multiple pages → ZIP
+      const { default: JSZip } = await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm');
+      const zip = new JSZip();
+      for (const idx of indices) {
+        const out = await PDFDocument.create();
+        const [p] = await out.copyPages(src, [idx]);
+        out.addPage(p);
+        zip.file(`page_${idx + 1}.pdf`, await out.save());
+      }
+      return { bytes: await zip.generateAsync({ type: 'uint8array' }), ext: 'zip', name: 'pdfbazaar-split-result.zip' };
+    }
+
+    if (toolId === 'rotate-pdf') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      const angle = parseInt(rotateAngle) || 90;
+      doc.getPages().forEach(p => p.setRotation(degrees(angle)));
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-rotate-result.pdf' };
+    }
+
+    if (toolId === 'add-watermark') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      const font = await doc.embedFont(StandardFonts.HelveticaBold);
+      const text = watermarkText || 'Confidential';
+      doc.getPages().forEach(page => {
+        const { width, height } = page.getSize();
+        const fontSize = Math.min(width, height) * 0.08;
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        page.drawText(text, {
+          x: width / 2 - textWidth / 2,
+          y: height / 2,
+          size: fontSize,
+          font,
+          color: rgb(0.8, 0.1, 0.1),
+          opacity: 0.45,
+          rotate: degrees(45),
+        });
+      });
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-watermark-result.pdf' };
+    }
+
+    if (toolId === 'delete-pdf-pages') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      const total = doc.getPageCount();
+      const toDelete = new Set();
+      (pageRange || '').split(',').forEach(part => {
+        part = part.trim();
+        if (part.includes('-')) {
+          let [s, e] = part.split('-').map(n => parseInt(n));
+          for (let i = Math.max(1, s); i <= Math.min(total, e); i++) toDelete.add(i - 1);
+        } else {
+          const n = parseInt(part);
+          if (n >= 1 && n <= total) toDelete.add(n - 1);
+        }
+      });
+      [...toDelete].sort((a, b) => b - a).forEach(i => { if (doc.getPageCount() > 1) doc.removePage(i); });
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-delete-pages-result.pdf' };
+    }
+
+    if (toolId === 'add-page-numbers') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+      const pages = doc.getPages();
+      pages.forEach((page, i) => {
+        const { width } = page.getSize();
+        const text = `${i + 1} / ${pages.length}`;
+        const textWidth = font.widthOfTextAtSize(text, 11);
+        page.drawText(text, { x: width / 2 - textWidth / 2, y: 18, size: 11, font, color: rgb(0.3, 0.3, 0.3) });
+      });
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-page-numbers-result.pdf' };
+    }
+
+    if (toolId === 'jpg-to-pdf') {
+      const doc = await PDFDocument.create();
+      for (const buf of buffers) {
+        let img;
+        try { img = await doc.embedJpg(buf); } catch { img = await doc.embedPng(buf); }
+        const page = doc.addPage([img.width, img.height]);
+        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+      }
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-jpg-to-pdf-result.pdf' };
+    }
+
+    if (toolId === 'crop-pdf') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      doc.getPages().forEach(page => {
+        const { width, height } = page.getSize();
+        page.setCropBox(width * 0.05, height * 0.05, width * 0.9, height * 0.9);
+      });
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-crop-result.pdf' };
+    }
+
+    if (toolId === 'resize-pdf') {
+      const doc = await PDFDocument.load(buffers[0], { ignoreEncryption: true });
+      doc.getPages().forEach(page => page.setSize(595.28, 841.89)); // A4
+      return { bytes: await doc.save(), ext: 'pdf', name: 'pdfbazaar-resize-result.pdf' };
+    }
+
+    return null;
+  };
+
+  const handleProcess = async () => {
     setProcessing(true);
     setErrorMsg(null);
     setUploadProgress(0);
     setUploadSpeed(0);
     setUploadedBytes(0);
 
-    const formData = new FormData();
+    if (files.length === 0 && toolId !== 'html-to-pdf') { setProcessing(false); return; }
+    const totalOriginalSize = files.reduce((sum, f) => sum + f.size, 0);
+    setOriginalSize(totalOriginalSize);
 
-    if (toolId === 'html-to-pdf') {
-      if (!htmlUrl) {
-        setErrorMsg('Please enter a valid URL');
-        setProcessing(false);
-        return;
+    // ── Try browser-side instant processing first ──
+    if (BROWSER_TOOLS.includes(toolId)) {
+      try {
+        const result = await processBrowserSide();
+        if (result) {
+          const blob = new Blob([result.bytes], { type: result.ext === 'zip' ? 'application/zip' : 'application/pdf' });
+          setResultSize(blob.size);
+          const url = URL.createObjectURL(blob);
+          setResultUrl(url);
+          setResultName(result.name);
+          const link = document.createElement('a');
+          link.href = url; link.download = result.name;
+          document.body.appendChild(link); link.click();
+          document.body.removeChild(link);
+          setProcessing(false);
+          return; // Done! No server needed.
+        }
+      } catch (err) {
+        console.warn('Browser processing failed, falling back to server:', err.message);
+        // Fall through to server
       }
-      formData.append('url', htmlUrl);
-    } else {
-      if (files.length === 0) { setProcessing(false); return; }
-      const totalOriginalSize = files.reduce((sum, f) => sum + f.size, 0);
-      setOriginalSize(totalOriginalSize);
-      files.forEach((file) => formData.append('files', file));
     }
 
+    // ── Fallback: server-side processing ──
+    const formData = new FormData();
+    if (toolId === 'html-to-pdf') {
+      if (!htmlUrl) { setErrorMsg('Please enter a valid URL'); setProcessing(false); return; }
+      formData.append('url', htmlUrl);
+    } else {
+      files.forEach(f => formData.append('files', f));
+    }
     formData.append('toolId', toolId);
     formData.append('compressLevel', compressLevel);
     formData.append('pageRange', pageRange);
@@ -91,80 +253,52 @@ const ToolPage = () => {
     formData.append('watermarkText', watermarkText);
     formData.append('password', password);
     formData.append('customDpi', customDpi);
-    // Convert KB to MB before sending
-    const targetInMB = targetSizeMB
-      ? targetSizeUnit === 'KB'
-        ? (parseFloat(targetSizeMB) / 1024).toString()
-        : targetSizeMB
-      : '';
+    const targetInMB = targetSizeMB ? (targetSizeUnit === 'KB' ? (parseFloat(targetSizeMB) / 1024).toString() : targetSizeMB) : '';
     formData.append('targetSizeMB', targetInMB);
 
     const xhr = new XMLHttpRequest();
     let startTime = Date.now();
-
-    xhr.upload.onloadstart = () => {
-      setUploading(true);
-      startTime = Date.now();
-    };
-
+    xhr.upload.onloadstart = () => { setUploading(true); startTime = Date.now(); };
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
-        const pct = Math.round((e.loaded / e.total) * 100);
-        setUploadProgress(pct);
+        setUploadProgress(Math.round((e.loaded / e.total) * 100));
         setUploadedBytes(e.loaded);
         const elapsed = (Date.now() - startTime) / 1000;
-        const speed = elapsed > 0 ? e.loaded / elapsed : 0;
-        setUploadSpeed(speed);
+        setUploadSpeed(elapsed > 0 ? e.loaded / elapsed : 0);
       }
     };
-
-    xhr.upload.onload = () => {
-      setUploadProgress(100);
-      setUploading(false);
-    };
-
+    xhr.upload.onload = () => { setUploadProgress(100); setUploading(false); };
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         const contentDisp = xhr.getResponseHeader('Content-Disposition');
         let filename = `pdfbazaar-${toolId}-result.pdf`;
-        if (contentDisp && contentDisp.includes('filename=')) {
+        if (contentDisp?.includes('filename=')) {
           const match = contentDisp.match(/filename="?([^"]+)"?/);
-          if (match && match[1]) filename = match[1];
+          if (match?.[1]) filename = match[1];
         }
         const contentType = xhr.getResponseHeader('Content-Type') || '';
         if (contentType.includes('zip')) filename = `pdfbazaar-${toolId}-result.zip`;
-
         const blob = xhr.response;
         setResultSize(blob.size);
         const url = URL.createObjectURL(blob);
-        setResultUrl(url);
-        setResultName(filename);
-
+        setResultUrl(url); setResultName(filename);
         const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
+        link.href = url; link.download = filename;
+        document.body.appendChild(link); link.click();
         document.body.removeChild(link);
       } else {
         let msg = `Server error ${xhr.status}`;
         try { const j = JSON.parse(xhr.responseText); msg = j.error || msg; } catch (e) { }
         setErrorMsg(msg);
       }
-      setProcessing(false);
-      setUploading(false);
+      setProcessing(false); setUploading(false);
     };
-
-    xhr.onerror = () => {
-      setErrorMsg('Connection failed. Please check if the server is running.');
-      setProcessing(false);
-      setUploading(false);
-    };
-
+    xhr.onerror = () => { setErrorMsg('Connection failed. Please check if the server is running.'); setProcessing(false); setUploading(false); };
     xhr.open('POST', `${BACKEND_URL}/api/process/${toolId}`);
     xhr.responseType = 'blob';
     xhr.send(formData);
   };
+
 
   const resetTool = () => {
     setFiles([]);
