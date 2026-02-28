@@ -1,0 +1,416 @@
+export const BLOG_POSTS = [
+    // --- 1. COMPRESS PDF ---
+    {
+        id: "compress-pdf-seo",
+        title: "PDF Size Kam Kaise Kare (Mobile & PC) - Best Free PDF Compressor",
+        slug: "pdf-size-kam-kaise-kare",
+        excerpt: "SSC, Railway form ya Email ke liye kisi bhi 10MB ki PDF file ko 100KB tak compress karein. Pura process step-by-step Hindi mein.",
+        date: "2026-03-01",
+        author: "PDFbazaar.com SEO Expert",
+        category: "Compress PDF",
+        content: `
+            <h2>PDF Size Kam Kaise Kare? (How to Compress PDF in Hindi)</h2>
+            <p>Aaj kal har sarkari form jaise <strong>SSC, Railway, Banking Exams, ya college admissions</strong> mein documents online upload karne hote hain. Lekin un portals par ek limit hoti hai—jaise aapki PDF file ka size <strong>50KB se 200KB</strong> ke beech hona chahiye. Agar aapke document ka size 5MB ya 10MB hai, toh aapko "File Size Exceeded" ka error aayega.</p>
+            <p>Is article mein hum aapko batayenge ki kisi bhi badi PDF file ka size quality khoye bina (without losing quality) kaise kam karein.</p>
+            <h3>What is PDF Compression? (PDF Compression Kya Hai)</h3>
+            <p>PDF compression ek aisi technique hai jisme background software file ki code structure aur images ko optimize karta hai. Ye high-quality photos ke DPI aur unseen metadata ko remove karke file ka size 80% tak chota kar deta hai, jabki padhne mein text ekdum clear rehta hai.</p>
+            <h3>Steps to Reduce PDF File Size Online Free:</h3>
+            <ol>
+                <li>Sabse pehle hamare free <a href="/tool/compress-pdf">Compress PDF</a> tool par click karein.</li>
+                <li><strong>Select PDF file</strong> par click karke apne mobile ya PC se apna form, Aadhaar, ya Marksheet upload karein.</li>
+                <li>Aapko 3 options dikhenge: Extreme, Recommended, Less Compression.</li>
+                <li>Ab <strong>Compress PDF</strong> button par click karein.</li>
+                <li>Keval 2 seconds mein aapki chhoti aur optimized PDF download hone ke liye ready ho jayegi!</li>
+            </ol>
+        `
+    },
+    // --- 2. MERGE PDF ---
+    {
+        id: "merge-pdf-seo",
+        title: "Multiple PDF File Ko Ek Sath Kaise Jode (Merge PDF in Hindi)",
+        slug: "multiple-pdf-ko-ek-sath-kaise-jode",
+        excerpt: "Office ki files ya semester notes ki alag-alag PDFs ko ek hi file me jodne ka sabse aasan aur tezz tarika. Drag and drop se order change karein.",
+        date: "2026-02-28",
+        author: "PDFbazaar.com SEO Expert",
+        category: "Merge PDF",
+        content: `
+            <h2>PDF Files Ko Combine / Jode Kaise? (How to Merge PDF Files Free)</h2>
+            <p>Kai baar humare paas alag-alag documents hote hain—kisi company ki report ke 5 alag page, ya phir college notes ke alag chapter ki pictures jinhe humne PDF banaya ho. Un sabhi files ko ek-ek karke email karna bahut mushkil aur unprofessional lagta hai. Iska sabse best solution hai: <strong>PDF Merging (PDF Jodna)</strong>.</p>
+            <h3>PDF Jodne Ke Fayde (Benefits of Combining PDFs):</h3>
+            <ul>
+                <li><strong>Time Saving:</strong> Ek list me 10 documents bhejne ke bajay sirf ek file bhej sakte hain.</li>
+                <li><strong>Better Organization:</strong> Har ek subject ya project ka summary ek jagah par rakha ja sakta hai.</li>
+            </ul>
+            <h3>PDF Merge Kaise Karein? (Step-by-Step Guide)</h3>
+            <ol>
+                <li>PDFbazaar.com ki website par <a href="/tool/merge-pdf">Merge PDF</a> page kholiye.</li>
+                <li>Apne system se wo saari PDF files select ya drag-and-drop karein jinhe aap jodna chahte hain.</li>
+                <li>Aap in files ko <strong>uthakar aage-peeche (drag & drop)</strong> kar sakte hain taaki pages sahi order me aayen.</li>
+                <li>Jab aap order se satisfy ho jayein, toh red color ke <strong>Merge PDF</strong> button ko press karde.</li>
+            </ol>
+        `
+    },
+    // --- 3. JPG TO PDF ---
+    {
+        id: "jpg-to-pdf-seo",
+        title: "Mobile Se Photo Ka PDF Kaise Banaye (JPG to PDF High Quality)",
+        slug: "photo-ka-pdf-kaise-banaye",
+        excerpt: "Phone camera se khinchi hui homework/assignment ki photos (JPG/PNG) ko PDF file format mein badalne ka no. 1 free tarika.",
+        date: "2026-02-27",
+        author: "PDFbazaar.com Teacher",
+        category: "JPG to PDF",
+        content: `
+            <h2>Image se PDF Kaise Banaye (How to Convert JPG to PDF Online)</h2>
+            <p>Online classes, exams, homework submissions ya office documents—kayi bar hum physical paper ki picture mobile se khinch lete hain, jo JPG, JPEG ya PNG format mein save ho jati hai. Par online portals accept sirf PDF format aayega. Isi problem ko solve karne ke liye aapko <strong>Image to PDF Converter</strong> ki zarurat padti hai.</p>
+            <h3>Free Me PDF Banane Ka Tarika:</h3>
+            <ol>
+                <li>Hamare free <a href="/tool/jpg-to-pdf">Image to PDF Converter</a> me jayein.</li>
+                <li><strong>Select Images</strong> button dabayein aur apni gallery se vo photo chun lein.</li>
+                <li>PDFbazaar.com ka advanced viewer aapko dikhaayega ki konsi image pehle aur konsi baad me aayegi. Unko interchange karke order set karein.</li>
+                <li>Ab Convert to PDF button par press karein.</li>
+            </ol>
+            <p>Jab aap image ko PDF format mein block kardete hain, to image ki metadata protect ho jati hai aur file size organized ho jata hai.</p>
+        `
+    },
+    // --- 4. UNLOCK PDF ---
+    {
+        id: "unlock-aadhaar-pan-pdf",
+        title: "Aadhaar Card aur PAN Card PDF Password Kaise Hataye / Unlock Karein",
+        slug: "aadhaar-pan-pdf-password-remove",
+        excerpt: "Baar-baar password daalne ki magajmari khatam. Apne e-PAN, e-Aadhaar aur Bank passbook statement ki password permanently remove karein.",
+        date: "2026-02-26",
+        author: "Privacy & Security Expert",
+        category: "Unlock PDF",
+        content: `
+            <h2>PDF Se Password Hamesha Ke Liye Kaise Remove Karein (Unlock PDF in Hindi)</h2>
+            <p>Government of India (UIDAI aur NSDL) har citizen ki email par digital id bhejti hai. Jaise jab aap e-Aadhaar ya e-PAN download karte hain, tab wo hamesha ek password se secured aati hai.</p>
+            <h3>Aadhaar Ka Password Kya Hota Hai?</h3>
+            <p>e-Aadhaar ka default password aam-tor par aapke naam ke <strong>pehle 4 akshar (CAPITAL MEIN)</strong> aur <strong>paidaish ka saal (Year of Birth)</strong> hota hai. Jaise: <strong>RAHU1995</strong>.</p>
+            <h3>PAN Card Ka Password Kya Hota Hai?</h3>
+            <p>e-PAN card hamesha aapki <strong>Date of Birth (DDMMYYYY)</strong> aadharit hoti hai. Jaise 12 April 2001 hogi: <strong>12042001</strong>.</p>
+            <h3>Permanently Password Hatane (Remove) ke Steps:</h3>
+            <ol>
+                <li>Hamare secure <a href="/tool/unlock-pdf">Unlock PDF</a> page par jayein.</li>
+                <li>Aapni locked PDF (Aadhar/Pan/Bank) ko upload karein.</li>
+                <li>Right side Options Box mein password (jo apko pehlese pta hai) maanghega.</li>
+                <li>Us password ko dalkar <strong>Unlock PDF</strong> dabayein.</li>
+            </ol>
+        `
+    },
+    // --- 5. PDF TO WORD ---
+    {
+        id: "pdf-to-word-seo",
+        title: "PDF ko Word me Kaise Convert Kare (Edit Document Free)",
+        slug: "pdf-ko-word-me-kaise-badle",
+        excerpt: "Bina Formatting khoe (loss of formatting) apne PDF contract, resume ya assignment ko Microsoft Word (.docx) file mein badlein aur edit karein.",
+        date: "2026-02-25",
+        author: "PDFbazaar.com Pro",
+        category: "PDF to Word",
+        content: `
+            <h2>PDF Ko MS Word Mein Kaise Badle (Convert PDF to Word Online)</h2>
+            <p>PDF banaya gaya tha taki formatting fix rahe. Lekin is chakkar mein hum manually PDF text me koi alteration/changes nahi kar pate. Agar manager ne kisi business contract mein ek line change karne ko keh dia, toh isaliye aapko Word file ki zarurat padti hai.</p>
+            <p>Aap <strong>PDFbazaar.com To Word Converter</strong> se us file ka .docx extraction le lein, jisme tables, bullets and colors wasie hi rehte hain.</p>
+            <h3>Best Guide to Switch PDF format to DOCX:</h3>
+            <ol>
+                <li>Click karein iss link pe: <a href="/tool/pdf-to-word">PDF to Word Tool</a> par.</li>
+                <li>Upload container me apna PDF daley.</li>
+                <li>"Convert to Word" command push kardein.</li>
+                <li>Microsoft Word file ko download karke PC mein Application mein open karein aur aaraam se <strong>Edit</strong> karein!</li>
+            </ol>
+        `
+    },
+    // --- 6. SPLIT PDF ---
+    {
+        id: "split-pdf-seo",
+        title: "Bade PDF File Se Page Kaise Alag Kare (Split PDF Pages)",
+        slug: "pdf-se-page-kaise-alag-kare",
+        excerpt: "100 pages wali eBook ya research paper mein se bas apna manchaaha page number 5 ya 10 ko separate/cut kaise karein online.",
+        date: "2026-02-24",
+        author: "PDFbazaar.com Expert",
+        category: "Split PDF",
+        content: `
+            <h2>PDF File Ko Bich Me Se Cut/Split Kaise Kare?</h2>
+            <p>Agar apke paas ek e-Book hai jo ki 500 pages badi hai, lekin apko book ke andar sirf chapter 3 (Page 45 to 60) padhna ya print karwana hai. Toh puri book ka print dena bohot expensive hota hai.</p>
+            <p>Yaha Use hota hai: <strong>PDF Splitting Tool</strong>. Aap bas software ko batayein ki konsa page kaatna hai, aur wo ek blade ki tarah sirf wahi panno wala naya PDF de deta hai.</p>
+            <h3>Online PDF Se Page Nikalne Wala Tool:</h3>
+            <ol>
+                <li>Site par aaiye aur <a href="/tool/split-pdf">Split PDF</a> click karein.</li>
+                <li>Puri 500 pages ki file upload karede.</li>
+                <li>Options panel me aapse <strong>'Extract Pages Range'</strong> pocha jayega. (Jaise "45-60").</li>
+                <li>Button press kar dein aur 1 second me hi apka extra new file tyar!</li>
+            </ol>
+        `
+    },
+    // --- 7. PROTECT PDF ---
+    {
+        id: "protect-pdf-seo",
+        title: "PDF Me Password Kaise Lagaye (Lock PDF File Securely)",
+        slug: "pdf-me-password-kaise-lagaye",
+        excerpt: "Apni confidential photo, bank record, aur business agreements par 256-bit encryption password kaise set karein takki koi dusra na dekh sake.",
+        date: "2026-02-23",
+        author: "Security Admin",
+        category: "Protect PDF",
+        content: `
+            <h2>Apni Personal PDF File Par Encryption Lock/Password Setting Kaise Karein</h2>
+            <p>Privacy aaj ke time ki sabse badi need hai. Kisi CA ne apko company ka audit bheja ho, ya aap kisi developer ko file transfer kar rahe ho WhatsApp ke upar—Hamesha risk rehta hai.</p>
+            <p>Solution? File ko protect karo ek standard <strong>Password Encryption Lock</strong> se.</p>
+            <h3>How to Encrypt PDF Online with PDFbazaar.com</h3>
+            <ol>
+                <li>Navigate karein: <a href="/tool/protect-pdf">Protect PDF Tool</a> par.</li>
+                <li>Drag karke sensitive file upload karein.</li>
+                <li>Sidebar menu mein apni strong <strong>Password</strong> type karein (Jaise: Ramesh@2024).</li>
+                <li>Aur uske baad protection process shuru karwayen.</li>
+            </ol>
+        `
+    },
+    // --- 8. DELETE PDF PAGES ---
+    {
+        id: "delete-page-seo",
+        title: "PDF Se Faltu Page (Blank ya Wrong) Kaise Delete Kare",
+        slug: "pdf-se-page-kaise-delete-kare",
+        excerpt: "Bahut badi PDF me beech me faltu blank pages fas gaye hain? Janie 1 click software se kisi v specific page ko kaise clean aur delete remove karein.",
+        date: "2026-02-22",
+        author: "Formatting Guru",
+        category: "Delete PDF Pages",
+        content: `
+            <h2>PDF me Unwanted Pages Kaise Hataein (Remove PDF Pages Free)</h2>
+            <p>Aksar hum Word se ya Excel se koi print list ko as PDF nikalte he to pata chalta hai ki ek extra blank page uske last me print hokar aagaya hai.</p>
+            <h3>Step By Step Deletion Procedure:</h3>
+            <ol>
+                <li>Sabse upar meny menu se chunye <a href="/tool/delete-pdf-pages">Delete PDF Pages</a> option.</li>
+                <li>File select kare jisme galti ho chuki hai.</li>
+                <li>System currently last page delete function perform karta hai immediately (useful for trailing blanks).</li>
+                <li>Apply instruction par click kare aur saaf file download karein.</li>
+            </ol>
+        `
+    },
+    // --- 9. WORD TO PDF ---
+    {
+        id: "word-to-pdf-seo",
+        title: "MS Word (.DOCX) Document Ko PDF Me Kaise Badlein",
+        slug: "word-to-pdf-converter-guide",
+        excerpt: "Word documents kisi doosre computer par ajeeb dislay karte hain kyuynki fonts missing hote hain. Apni word file ko direct non-editable PDF format me freeze krein.",
+        date: "2026-02-21",
+        author: "Office Specialist",
+        category: "Word to PDF",
+        content: `
+            <h2>Microsoft Word Document ko Safe PDF me Badalne Ka Tarika</h2>
+            <p>Word document ka sabse bada disadvantage hai: "Font missing problem". Aap ghar mein bade mehnat se CV/Resume banayenge kisi pyare font mein. Aur print ki shop pe jate hi uska layout barbad!</p>
+            <p>Iseliye dunia ek format manti he "Portable Document Format (PDF)". PDF freeze framework use krta he.</p>
+            <h3>How Converter Works:</h3>
+            <p>PDFbazaar.com <a href="/tool/word-to-pdf">Word To PDF converter</a> background par Libreoffice engine chalata hai jisse formatting 100% zinda rehti hai.</p>
+        `
+    },
+    // --- 10. SIGN PDF ---
+    {
+        id: "sign-pdf-digital-seo",
+        title: "PDF File Par Digital Signature Kaise Kare (Mobile / PC)",
+        slug: "pdf-par-signature-kaise-kare",
+        excerpt: "Paper pe physical sign karne ki aur scan karne ki zarurat ab nhi. Digital era mein document par apney tablet/phone se sign attach karna sikhein.",
+        date: "2026-02-20",
+        author: "Tech Innovations",
+        category: "Sign PDF",
+        content: `
+            <h2>Bina Print Nikale PDF par Signature Attach Karna (E-Sign PDF Free)</h2>
+            <p>Old tarika hai ki aap paper print layein, kaale pen se sign karein, aur scan karein. Ye slow hai.</p>
+            <p>Modern time mein electronic overlay signatures lagaye jate hain screen ke upar! Yahi <strong><a href="/tool/sign-pdf">Sign PDF Tool</a></strong> apko ek smooth interface deta hai.</p>
+            <p>Business environment aur speed track working module ke liye e-signing feature best value deta hai.</p>
+        `
+    },
+    // --- 11. EXCEL TO PDF ---
+    {
+        id: "excel-to-pdf-seo",
+        title: "Excel Sheet Ko PDF Me Kaise Convert Kare (Format Maintain)",
+        slug: "excel-to-pdf-convert-kaise-kare",
+        excerpt: "Excel spreadsheet (.xlsx/.xls) ko bina margin bigade PDF layout me convert karein takki data dusre computer par change na ho paye.",
+        date: "2026-02-19",
+        author: "Office Specialist",
+        category: "Excel to PDF",
+        content: `
+            <h2>Excel (XLSX) Spreadsheet ko PDF format me Print ya Convert kaise karein?</h2>
+            <p>Jab aap kisi client ko invoice ya attendance sheet Excel format me bhejte hain, toh wo us data ko easily alter ya manipulate kar sakta hai. Isse bachne ke liye Excel Data ko <strong>PDF me share karna zaruri hai</strong> jisse numbers freeze ho jate hain.</p>
+            <h3>Excel Margin Cut Problem Fix:</h3>
+            <p>PDFbazaar.com ka <a href="/tool/excel-to-pdf">Excel to PDF Tool</a> automatically columns scaling adjust kar leta hai taaki aadhi table dusre page par na kat jaye. Ekdum clean PDF layout tayar hoti hai.</p>
+        `
+    },
+    // --- 12. PPT TO PDF ---
+    {
+        id: "ppt-to-pdf-seo",
+        title: "PowerPoint (PPT / PPTX) Presentation Ko PDF Kaise Banaye",
+        slug: "powerpoint-ko-pdf-kaise-banaye",
+        excerpt: "PPT slides ko sabhi devices (mobile aur Mac) par padhne ke liye PDF notes me export/convert karne ka guide.",
+        date: "2026-02-18",
+        author: "Student Guide",
+        category: "PPT to PDF",
+        content: `
+            <h2>Slide Presentation ko Handouts ya PDF me Kaise badle?</h2>
+            <p>College me P.P.T presentation banate waqt aap bohat saare animations and templates lagate hain. Lekin teacher ko email karte samay wo PowerPoint file slow chalti hai ya layout hil jata hai. Isliye <strong>PPT to PDF conversion</strong> best rehta hai. Isse size light ho jata hai aur file easily scroll hoti hai.</p>
+            <p>Aap easily apni presentation ko hamare <a href="/tool/ppt-to-pdf">PPT to PDF Tool</a> me upload karein aur slides automatically high definition PDF pages me convert ho jayengi.</p>
+        `
+    },
+    // --- 13. HTML TO PDF ---
+    {
+        id: "html-to-pdf-seo",
+        title: "Webpage / HTML File Ko PDF me Kaise Save Kare",
+        slug: "html-webpage-to-pdf-generator",
+        excerpt: "Kisi bhi webpage article, bill receipt, ya HTML code file ko pure CSS formatting ke sath high-quality PDF Document me transform karein.",
+        date: "2026-02-17",
+        author: "Tech Innovations",
+        category: "HTML to PDF",
+        content: `
+            <h2>Web Page or HTML code to PDF document Converter</h2>
+            <p>Agar aapko kisi website ka confirmation page save karna ho, lekin browser ka "Ctrl+P (Print)" sahi margin nahi de raha, ya fir ek local .html file hai jiska proof nikalna hai, to Web to PDF engine useful hota hai.</p>
+            <p>Bina kisi ad ya cookie overlap ke, hamara <a href="/tool/html-to-pdf">HTML to PDF</a> engine page ko server-side render karta hai aur exact UI snapshot theek margins ke sath generate karke aapke phone mein PDF format me save karta hai.</p>
+        `
+    },
+    // --- 14. PDF TO EXCEL ---
+    {
+        id: "pdf-to-excel-seo",
+        title: "PDF ko Excel Me Badle (Extract PDF Table to Excel)",
+        slug: "pdf-table-ko-excel-sheet-me-kaise-laye",
+        excerpt: "Agar aapko bank statement ki PDF se data filter karna hai to usse copy krne ke bajae completely Excel calculation sheet me tabdil karein.",
+        date: "2026-02-16",
+        author: "Data Analyst",
+        category: "PDF to Excel",
+        content: `
+            <h2>PDF me Rakkhey Data ko Excel (.xlsx) Chart me Kaise Laayein?</h2>
+            <p>Banks hamesha Account Statements PDF me bhejti hain. Lekin aapko agar kharcha (expense) tally karna ho excel formulo ke sath toh normal Copy-paste PDF table row ko bigaad deta hai.</p>
+            <p>Yahan par <strong>AI based Object-Table Recognition</strong> tool ka use kiya jata hai. Aapki file hamare <a href="/tool/pdf-to-excel">PDF to Excel</a> engine me di jati hai. Engine directly PDF ke columns aur rows ko padh ke exact spread grid XLS/XLSX me rebuild karta hai.</p>
+        `
+    },
+    // --- 15. PDF TO PPT ---
+    {
+        id: "pdf-to-ppt-seo",
+        title: "PDF Ko PowerPoint Slide (.PPTX) Kaise Banayein (Hindi)",
+        slug: "pdf-to-powerpoint-presentation-converter",
+        excerpt: "PDF report se presentation deni hai? Janiye PDF ke text, heading aur graphics ko automatically editable slides mein badalne ka nuskha.",
+        date: "2026-02-15",
+        author: "Office Specialist",
+        category: "PDF to PPT",
+        content: `
+            <h2>PDF Book ya Report se Smart Presentation Slides banana</h2>
+            <p>Imagine kijiye company me apko 20 page ki survey PDF di gayi hai aur bola gaya hai ki meeting me iski presentation dijiye. Manually ek-ek slide me text copy karna time taking hai. PDFbazaar.com aapka samay bacha sakta hai.</p>
+            <p>Hamara <a href="/tool/pdf-to-ppt">PDF to PPT Tool</a> directly paragraphs aur image positions analyze karta hai aur usey as standard PowerPoint (PPTX) slide blocks allocate kar deta hai. Download kijiye aur MS Powerpoint par directly edit karke show shuru karein.</p>
+        `
+    },
+    // --- 16. PDF TO JPG ---
+    {
+        id: "pdf-to-jpg-seo",
+        title: "PDF File me se Image / Photo Kaise Nikale (PDF to JPG)",
+        slug: "pdf-ke-page-ko-jpg-image-kaise-banaye",
+        excerpt: "PDF documents se saari photos nikalna (extract) ya fir pure PDF pages ko High Quality JPEG images banakar share karna.",
+        date: "2026-02-14",
+        author: "Design Guru",
+        category: "PDF to JPG",
+        content: `
+            <h2>PDF Se Image Extract ya Convert Kaise Kare?</h2>
+            <p>Do situations ho sakti hain: Ya to apko PDF ke har ek panned ko as Image gallery upload karna ho (Instagram/Status par lgane k liye), Ya PDF file me lagi hui choti photos (jaise Aadhaar photo) ko crop kiye bina raw file size me baahar nikaalna ho.</p>
+            <p>Apna document hamare secure <a href="/tool/pdf-to-jpg">PDF to JPG Tool</a> par dalein. Processing engine dono options provide karta hai: Page to JPG, and Extract embedded Images as ZIP block!</p>
+        `
+    },
+    // --- 17. ADD WATERMARK ---
+    {
+        id: "add-watermark-seo",
+        title: "PDF Document Par Apna Naam / Watermark Kaise Lagayein",
+        slug: "pdf-file-me-watermark-text-naam-kaise-dalein",
+        excerpt: "Company reports ya assignment copy na ho paye iske liye document ke beecho-beech transparent watermark (Stamp) set karein free mein.",
+        date: "2026-02-13",
+        author: "PDFbazaar.com Pro",
+        category: "Add Watermark",
+        content: `
+            <h2>Copying Rokne Ke Liye PDF me Transparent Watermark Stamp Lagayein</h2>
+            <p>Content piracy aaj ke time pe common hai. Agar aap ek teacher hain aur notes bachon ko bhejte hain, aur apni mehnat ko copyright protect krna chahte hain, toh uspar apna naam as a <strong>Watermark</strong> chipkana bohut aavashyak hai.</p>
+            <p>Hamare <a href="/tool/add-watermark">Add Watermark</a> tool apko customization deta hai. Aap word select krein jaise "Do Not Copy" ya "By Ramesh Sir". Tool usey automatically file ke har page par diagonally (tircha), grey opaque color me set kr dega. Is text ko edit karna almost naamumkin hai.</p>
+        `
+    },
+    // --- 18. EDIT PDF ---
+    {
+        id: "edit-pdf-seo",
+        title: "PDF Me Text aur Photo Kaise Edit ya Add Karein",
+        slug: "pdf-file-ko-edit-kaise-karein-free",
+        excerpt: "Kisi form par tick lagana ho, galti se galat detail dal gai ho thik karni ho ya nya paragraph likhna ho, best free visual format Editor for India.",
+        date: "2026-02-12",
+        author: "Formatting Guru",
+        category: "Edit PDF",
+        content: `
+            <h2>Online Free PDF Editor (Bina Software Download Kiye)</h2>
+            <p>Jyadatar PDF Editors jaise Adobe kafi mehnge monthly subscription mangte hain. Normal general editing like spelling error theek karna, ya kisi purane form number par whitenar (white shape) pherr kar nya number likhne ki aam zarurat padti hai.</p>
+            <p>Ab aap apne hi browser pe directly MS Paint aur MS Word ke mila-jula mixture jaise <a href="/tool/edit-pdf">Edit PDF Engine</a> pe file modify kar sakte hain. Shapes, Typebox, Marker Highlight sab free use karke document complete kiye jaa sakte hain.</p>
+        `
+    },
+    // --- 19. OCR PDF ---
+    {
+        id: "ocr-pdf-seo",
+        title: "Image PDF Ko Text Me Kaise Badle (OCR in Hindi / English)",
+        slug: "ocr-pdf-text-recognizer-online",
+        excerpt: "Aapne kisi kitab ka photo leke PDF banaya ho, aur ab usme likha text copy krna chahte ho—to best Optical Character Recognition (OCR) scanner ka use sikhein.",
+        date: "2026-02-11",
+        author: "Tech Innovations",
+        category: "OCR PDF",
+        content: `
+            <h2>OCR Kya Hota Hai? Photo Wali PDF Se Text Copy Kaise Karein?</h2>
+            <p>Normal PDF ko hum easily copy-paste karlete hain Word mei. Lekin kisi Scan kiye hue printed form ya book ki PDF jo essentially image hoti hai - wahan mouse dragging kaam nahi ata. Aisi image wale text ko samajhne ka kaam <strong>OCR (Optical Character Recognition)</strong> karta hai.</p>
+            <p>Server hamara <a href="/tool/ocr-pdf">OCR PDF Tool</a> aapki picture file me likhi hui shapes ko pehchanta hai aur use actual searchable font me translate karta hai, allowing you to completely copy the entire page's Hindi/English text easily.</p>
+        `
+    },
+    // --- 20. CROP PDF ---
+    {
+        id: "crop-pdf-seo",
+        title: "PDF File Ka Page Crop Kaise Karein (Margin Size Reduce)",
+        slug: "pdf-page-cut-crop-size-chota-kaise-karein",
+        excerpt: "PDF pages me as-pas useless blank margin ko hatana aur sirf zaroori text (center piece) ko crop/trim karke paper bachaana ya mobile display fit banana.",
+        date: "2026-02-10",
+        author: "Design Guru",
+        category: "Crop PDF",
+        content: `
+            <h2>PDF Content Ko Aas-Paas Se Trim/Crop Kaise Kiya Jaye?</h2>
+            <p>Kayi baar Internet se download ki gayi research material ya papers mein kinare kinare (Edges par) bohut saari khaali extra space (white margin) hoti hai. Jab aap unhe chote screen waly mobile me zoom out karke read krte hain to font bahut small lagte hain.</p>
+            <p>By using the <a href="/tool/crop-pdf">Crop PDF Tool</a>, aap un unused useless background frames ko blade ki tarah crop out mar sakte ho. File perfectly mobile layout ke bare screen frame (Text focus) format par adjust ho jati hai!</p>
+        `
+    },
+    // --- 21. RESIZE PDF ---
+    {
+        id: "resize-pdf-seo",
+        title: "PDF Ka Page Size A4, Letter, ya Legal Size me Kaise Change Karein",
+        slug: "pdf-page-size-a4-change",
+        excerpt: "Print lene jaa rahe hain lekin document size US Letter hai? Ek click mein apne paper printing standards ko (A4/Legal) aspect ratio mein convert aur standardize karein.",
+        date: "2026-02-09",
+        author: "PDFbazaar.com Wiki",
+        category: "Resize PDF",
+        content: `
+            <h2>PDF ko Perfect A4 Standard Printing Size Me Badle</h2>
+            <p>Jyadatar foreign downloaded forms US-Letter measurement par aate hain jo humaare Indian standard desktop printers me correctly margins fit nahi ho paate (Dukaan wala page print kaatt dega).</p>
+            <p>Is dimension issue ko sort out karne ke lie document ko forcefully resize scale process se guzara jata hai. <a href="/tool/resize-pdf">Resize PDF</a> widget k andar format type <strong>"A4" ya "Legal Size"</strong> mention krke print dimensions globally set kiye jaate hain, taki file physical paper per flawlessly stamp ho.</p>
+        `
+    },
+    // --- 22. ORGANIZE PDF ---
+    {
+        id: "organize-pdf-seo",
+        title: "PDF Ke Pages Ko Aage Peeche Kaise Kare (Reorder & Organize PDF)",
+        slug: "pdf-pages-aage-peeche-kaise-karein-organize",
+        excerpt: "PDF mein page order mistakes ko correct karna seekhein. Blank file hatayein aur content hierarchy ko file upload system (Drag N Drop) pe setup karein.",
+        date: "2026-02-08",
+        author: "PDFbazaar.com Expert",
+        category: "Organize PDF",
+        content: `
+            <h2>Pages Ko Shuffling Ya Re-Ordering Kaise De (Assemble PDF Online)</h2>
+            <p>Agar aapne assignment ke chapters random orders mein merge kar diye hain, yani Chapter 5, Chapter 1 ke pehle aagaya hai, toh file firse start se generate krne ki mehnat ki koi load nahi karni.</p>
+            <p>PDFbazaar.com <a href="/tool/organize-pdf">Organize PDF Suite</a> me file bhejte hi, ek visual block grid on ho jata hai. Un grid images blocks (thumbnails) ko touch se hold karke unki true appropriate location/index par <strong>drag karke drop</strong> karein, and boom aapka file sequence complete error-free ban ke wapas aa jata hai.</p>
+        `
+    },
+    // --- 23. ROTATE PDF ---
+    {
+        id: "rotate-pdf-seo",
+        title: "Teda PDF Seedha Kaise Kare (Rotate PDF Tool 90 to 180 Angles)",
+        slug: "ultha-pdf-ko-seedha-kaise-karein-rotate-angles",
+        excerpt: "Mobile scanner se li hui documents kabhi kabhi ulti ya tedi save ho jati hain. Landscape/Portrait angle issue ko ek click me permanently theek aur overwrite karna janie.",
+        date: "2026-02-07",
+        author: "Student Guide",
+        category: "Rotate PDF",
+        content: `
+            <h2>Inverted (Ulat Gaye) PDF Document ko Seedha Karna</h2>
+            <p>Mobile scanner apps aksar image ke metadata orientation (landscape vs portrait mode) confuse kar daltej hain , vishesh karke certificate ya degree photo scanner ke dooran. Result me client ko mili pdf ko ghooma ghooma ke padhna padta hai, and vo temporary rotate software viewer function next time open karne per ud jata hai.</p>
+            <p>Permanent File structure me rotation lock krwane par aao.  <a href="/tool/rotate-pdf">Rotate PDF</a> me file dalkar permanently save angle (Jaise Right-90 Degree , Left-90 Degree) mention krke export mark kar dein. Resultant copy humesha hi sahi display aspect retain kregi.</p>
+        `
+    }
+];
