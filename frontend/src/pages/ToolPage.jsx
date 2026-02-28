@@ -62,11 +62,43 @@ const ToolPage = () => {
   };
 
   // ── BROWSER-SIDE INSTANT PROCESSING (no server needed) ──
-  const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf'];
+  const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf', 'compress-pdf'];
 
   const processBrowserSide = async () => {
     const { degrees, rgb, StandardFonts } = await import('pdf-lib');
     const buffers = await Promise.all(files.map(f => f.arrayBuffer()));
+
+    if (toolId === 'compress-pdf') {
+      // For extreme compression or large files (>10MB) or target size → use server (Ghostscript)
+      const fileSize = files[0]?.size || 0;
+      const isLarge = fileSize > 10 * 1024 * 1024;
+      if (compressLevel === 'extreme' || isLarge || targetSizeMB) return null; // fall back to server
+
+      // Fast browser-side compression with pdf-lib
+      const buf = await files[0].arrayBuffer();
+      const doc = await PDFDocument.load(buf, { ignoreEncryption: true });
+
+      // Remove metadata to save space
+      doc.setTitle('');
+      doc.setAuthor('');
+      doc.setSubject('');
+      doc.setKeywords([]);
+      doc.setProducer('');
+      doc.setCreator('');
+
+      const compressedBytes = await doc.save({
+        useObjectStreams: true,   // Cross-reference streams (smaller)
+        addDefaultPage: false,
+        objectsPerTick: 50,
+      });
+
+      // Only return browser result if we actually saved space (at least 5%)
+      if (compressedBytes.length < fileSize * 0.95) {
+        return { bytes: compressedBytes, ext: 'pdf', name: 'pdfbazaar-compress-result.pdf' };
+      }
+      // Not enough reduction — send to server for Ghostscript deep compression
+      return null;
+    }
 
     if (toolId === 'merge-pdf') {
       const merged = await PDFDocument.create();
