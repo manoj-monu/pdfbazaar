@@ -64,7 +64,8 @@ const ToolPage = () => {
   };
 
   // ── BROWSER-SIDE INSTANT PROCESSING (no server needed) ──
-  const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf', 'compress-pdf'];
+  const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf'];
+  // NOTE: compress-pdf always uses server (Ghostscript) — pdf-lib cannot compress images
 
   const processBrowserSide = async () => {
     const { degrees, rgb, StandardFonts } = await import('pdf-lib');
@@ -724,24 +725,36 @@ const ToolPage = () => {
             <CheckCircle size={48} />
           </div>
           {toolId === 'compress-pdf' && originalSize > 0 && resultSize > 0 ? (
-            <>
-              <h2 style={{ fontSize: '28px', marginBottom: '8px', color: '#222' }}>PDFs have been compressed!</h2>
-              {/* Compression stats circle */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px', margin: '24px 0', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '5px solid #E5322D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                  <span style={{ fontSize: '20px', color: '#E5322D' }}>
-                    {Math.round((1 - resultSize / originalSize) * 100)}%
-                  </span>
-                  <span style={{ fontSize: '10px', color: '#888' }}>SAVED</span>
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                  <p style={{ color: '#555', margin: '0 0 4px' }}>Your PDF is now {Math.round((1 - resultSize / originalSize) * 100)}% smaller!</p>
-                  <p style={{ color: '#333', fontWeight: 'bold', margin: 0 }}>
-                    {(originalSize / 1048576).toFixed(2)} MB → {resultSize < 1048576 ? (resultSize / 1024).toFixed(2) + ' KB' : (resultSize / 1048576).toFixed(2) + ' MB'}
-                  </p>
-                </div>
-              </div>
-            </>
+            (() => {
+              const savedPct = Math.max(0, Math.round((1 - resultSize / originalSize) * 100));
+              const isAlreadyOptimized = savedPct < 2;
+              return (
+                <>
+                  <h2 style={{ fontSize: '28px', marginBottom: '8px', color: '#222' }}>
+                    {isAlreadyOptimized ? 'PDF Already Optimized!' : 'PDFs have been compressed!'}
+                  </h2>
+                  {/* Compression stats circle */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '24px', margin: '24px 0', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: `5px solid ${isAlreadyOptimized ? '#22c55e' : '#E5322D'}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                      <span style={{ fontSize: '20px', color: isAlreadyOptimized ? '#22c55e' : '#E5322D' }}>
+                        {isAlreadyOptimized ? '✓' : `${savedPct}%`}
+                      </span>
+                      <span style={{ fontSize: '10px', color: '#888' }}>{isAlreadyOptimized ? 'OPTIMAL' : 'SAVED'}</span>
+                    </div>
+                    <div style={{ textAlign: 'left' }}>
+                      {isAlreadyOptimized ? (
+                        <p style={{ color: '#555', margin: '0 0 4px' }}>This PDF is already well compressed. Try <strong>Extreme</strong> mode for deeper compression.</p>
+                      ) : (
+                        <p style={{ color: '#555', margin: '0 0 4px' }}>Your PDF is now {savedPct}% smaller!</p>
+                      )}
+                      <p style={{ color: '#333', fontWeight: 'bold', margin: 0 }}>
+                        {(originalSize / 1048576).toFixed(2)} MB → {resultSize < 1048576 ? (resultSize / 1024).toFixed(2) + ' KB' : (resultSize / 1048576).toFixed(2) + ' MB'}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              );
+            })()
           ) : (
             <>
               <h2 style={{ fontSize: '28px', marginBottom: '16px' }}>Success!</h2>
