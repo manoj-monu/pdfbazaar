@@ -1,11 +1,15 @@
 FROM node:18-slim
 
-# Install Ghostscript and Puppeteer dependencies
+# Install Ghostscript, Puppeteer deps, and LibreOffice for Word-to-PDF
 RUN apt-get update && apt-get install -y \
     ghostscript \
+    libreoffice \
+    libreoffice-writer \
+    fonts-liberation \
+    fonts-noto \
+    fonts-noto-cjk \
     wget \
     ca-certificates \
-    fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
