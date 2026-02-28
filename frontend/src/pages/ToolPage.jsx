@@ -251,9 +251,25 @@ const ToolPage = () => {
       {/* Processing (after upload done) */}
       {processing && !uploading && !resultUrl && (
         <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
-          <Loader2 size={48} className="animate-spin" style={{ color: '#E5322D', marginBottom: '16px' }} />
-          <h3 style={{ fontSize: '20px', color: '#333' }}>Processing your file...</h3>
-          <p style={{ color: '#888', marginTop: '8px' }}>Please wait, this may take a few seconds.</p>
+          <Loader2 size={48} className="animate-spin" style={{ color: '#E5322D', marginBottom: '20px' }} />
+          <h3 style={{ fontSize: '22px', color: '#222', marginBottom: '8px' }}>Processing your file...</h3>
+          {originalSize > 10 * 1048576 ? (
+            <p style={{ color: '#E5322D', fontSize: '14px', marginBottom: '16px' }}>
+              ⚠️ Large file ({(originalSize / 1048576).toFixed(1)} MB) — This may take 1-2 minutes. Please wait!
+            </p>
+          ) : (
+            <p style={{ color: '#888', fontSize: '14px', marginBottom: '16px' }}>Almost done, please wait a moment.</p>
+          )}
+          {/* Animated indeterminate progress bar */}
+          <div style={{ width: '100%', height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              width: '40%',
+              background: 'linear-gradient(90deg, transparent, #E5322D, transparent)',
+              borderRadius: '3px',
+              animation: 'indeterminate 1.5s ease-in-out infinite'
+            }} />
+          </div>
         </div>
       )}
 
