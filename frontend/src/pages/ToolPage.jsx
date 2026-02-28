@@ -362,9 +362,20 @@ const ToolPage = () => {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
             Your document has been processed successfully.
           </p>
-          <a href={resultUrl} download={resultName} className="btn-download">
-            Download {tool.name.split(' ')[0]} PDF
-          </a>
+          <button
+            className="btn-download"
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = resultUrl;
+              link.setAttribute('download', resultName || `pdfbazaar-${toolId}-result.pdf`);
+              link.style.display = 'none';
+              document.body.appendChild(link);
+              link.click();
+              setTimeout(() => document.body.removeChild(link), 300);
+            }}
+          >
+            Download {resultName || `${tool.name} Result`}
+          </button>
           <div className="action-links">
             <a href="#" className="action-link" onClick={(e) => { e.preventDefault(); resetTool(); }}>
               <RotateCw size={16} /> Start Over
