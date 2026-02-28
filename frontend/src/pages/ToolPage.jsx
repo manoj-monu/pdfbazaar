@@ -546,6 +546,9 @@ const ToolPage = () => {
           >
             Download {toolId === 'compress-pdf' ? 'Compressed PDF' : (resultName || `${tool.name} Result`)}
           </button>
+          {/* Ad after download — highest engagement moment */}
+          <AdsPlacement slot="2965247838" format="auto" style={{ width: '100%', maxWidth: '600px', margin: '24px 0' }} />
+
           {/* Continue to section */}
           <div style={{ width: '100%', maxWidth: '600px', borderTop: '1px solid #eee', paddingTop: '24px', marginTop: '8px' }}>
             <p style={{ color: '#888', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>Continue to...</p>
@@ -579,7 +582,7 @@ const ToolPage = () => {
       )}
 
       <div style={{ marginTop: 'auto', padding: '60px 0 20px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <AdsPlacement type="rectangle" style={{ margin: '0 auto' }} />
+        <AdsPlacement slot="9711322411" format="auto" style={{ margin: '0 auto', width: '100%' }} />
       </div>
 
     </div>

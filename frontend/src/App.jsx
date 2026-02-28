@@ -20,7 +20,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Navbar />
-      <AdsPlacement type="leaderboard" />
+      <AdsPlacement slot="2004166750" format="auto" />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tool/:toolId" element={<ToolPage />} />
@@ -33,6 +33,7 @@ function App() {
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/disclaimer" element={<Disclaimer />} />
       </Routes>
+      <AdsPlacement slot="2965247838" format="auto" style={{ margin: '16px 0' }} />
       <Footer />
     </Router>
   );

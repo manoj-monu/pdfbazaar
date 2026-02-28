@@ -20,7 +20,7 @@ const Blog = () => {
                 </p>
             </div>
 
-            <AdsPlacement type="leaderboard" style={{ marginBottom: '40px' }} />
+            <AdsPlacement slot="9711322411" format="auto" style={{ marginBottom: '40px' }} />
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
                 {BLOG_POSTS.map(post => (

@@ -446,33 +446,49 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                         });
                     });
 
-                    // ── Remove near-empty trailing pages ──
+                    // ── Remove truly blank trailing pages (robust approach) ──
                     if (sofficeDone && fs.existsSync(processedFilePath)) {
                         try {
                             const pdfBytes = fs.readFileSync(processedFilePath);
                             const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
                             const pageCount = pdfDoc.getPageCount();
                             if (pageCount > 1) {
-                                // Remove trailing pages whose raw content is very sparse
-                                let lastPageToKeep = pageCount - 1;
+                                // Helper: isolate each page into its own single-page PDF and check size.
+                                // A truly blank page (no text, no images) will produce a very small PDF (< 5KB).
+                                // A page with real content (like Aadhaar card) produces a much larger file.
+                                const isPageBlank = async (srcDoc, pageIndex) => {
+                                    try {
+                                        const testDoc = await PDFDocument.create();
+                                        const [copiedPage] = await testDoc.copyPages(srcDoc, [pageIndex]);
+                                        testDoc.addPage(copiedPage);
+                                        const testBytes = await testDoc.save();
+                                        // Blank pages in PDF are typically < 5 KB
+                                        return testBytes.length < 5120;
+                                    } catch (e) {
+                                        return false; // On error, assume not blank (safe default)
+                                    }
+                                };
+
+                                let pagesToRemove = [];
+                                // Only scan from the end, stop at first non-blank page
                                 for (let i = pageCount - 1; i >= 1; i--) {
-                                    const page = pdfDoc.getPage(i);
-                                    const { width, height } = page.getSize();
-                                    // Estimate content by checking operators in content streams
-                                    const contentStreamSize = JSON.stringify(page).length;
-                                    if (contentStreamSize < 2000) {
-                                        lastPageToKeep = i - 1;
+                                    if (await isPageBlank(pdfDoc, i)) {
+                                        pagesToRemove.push(i);
                                     } else {
                                         break;
                                     }
                                 }
-                                if (lastPageToKeep < pageCount - 1) {
-                                    for (let i = pageCount - 1; i > lastPageToKeep; i--) {
-                                        pdfDoc.removePage(i);
+
+                                if (pagesToRemove.length > 0) {
+                                    // Remove in reverse order (highest index first)
+                                    for (const idx of pagesToRemove) {
+                                        pdfDoc.removePage(idx);
                                     }
                                     const cleaned = await pdfDoc.save();
                                     fs.writeFileSync(processedFilePath, cleaned);
-                                    console.log(`Removed ${pageCount - lastPageToKeep - 1} near-empty trailing page(s)`);
+                                    console.log(`Removed ${pagesToRemove.length} truly blank trailing page(s)`);
+                                } else {
+                                    console.log('No blank trailing pages found, keeping all pages.');
                                 }
                             }
                         } catch (cleanErr) {

@@ -39,7 +39,7 @@ const BlogPost = () => {
                 </div>
             </div>
 
-            <AdsPlacement type="rectangle" style={{ float: 'right', margin: '0 0 24px 24px' }} />
+            <AdsPlacement slot="9711322411" format="auto" style={{ marginBottom: '32px' }} />
 
             <div
                 className="blog-content"
@@ -47,7 +47,7 @@ const BlogPost = () => {
                 dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            <AdsPlacement type="leaderboard" style={{ marginTop: '60px' }} />
+            <AdsPlacement slot="2965247838" format="auto" style={{ marginTop: '60px' }} />
         </div>
     );
 };
