@@ -422,40 +422,95 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                     const mammoth = require('mammoth');
                     const puppeteer = require('puppeteer');
 
-                    // Convert DOCX to HTML
-                    const result = await mammoth.convertToHtml({ path: inputFile });
-                    const htmlContent = `
-                        <html>
-                            <head>
-                                <style>
-                                    body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; }
-                                    img { max-width: 100%; height: auto; }
-                                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-                                    td, th { border: 1px solid #ddd; padding: 8px; }
-                                </style>
-                            </head>
-                            <body>${result.value}</body>
-                        </html>
-                    `;
+                    // Convert DOCX to HTML with image support
+                    const result = await mammoth.convertToHtml(
+                        { path: inputFile },
+                        {
+                            convertImage: mammoth.images.imgElement(async (image) => {
+                                const imageBuffer = await image.read();
+                                const base64 = imageBuffer.toString('base64');
+                                return { src: `data:${image.contentType};base64,${base64}` };
+                            })
+                        }
+                    );
 
-                    // Convert HTML to PDF using Puppeteer
+                    const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 2cm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    margin-top: 12pt; margin-bottom: 6pt;
+  }
+  p {
+    margin: 0 0 8pt 0;
+    orphans: 3; widows: 3;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    page-break-inside: avoid;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 12pt;
+    page-break-inside: avoid;
+  }
+  td, th {
+    border: 1px solid #ccc;
+    padding: 6pt 8pt;
+    vertical-align: top;
+    word-wrap: break-word;
+  }
+  th { background-color: #f2f2f2; font-weight: bold; }
+  ul, ol { margin: 0 0 8pt 20pt; page-break-inside: avoid; }
+  li { margin-bottom: 4pt; }
+  /* Prevent blank pages from empty elements */
+  br:last-child { display: none; }
+  /* Colored backgrounds from Word */
+  [style*="background"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+</style>
+</head>
+<body>${result.value}</body>
+</html>`;
+
                     const browser = await puppeteer.launch({
                         headless: 'new',
-                        args: ['--no-sandbox', '--disable-setuid-sandbox']
+                        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
                     });
                     const page = await browser.newPage();
                     try {
-                        await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
-                        await page.pdf({ path: processedFilePath, format: 'A4', margin: { top: '2cm', right: '2cm', bottom: '2cm', left: '2cm' }, printBackground: false });
+                        await page.setContent(htmlContent, { waitUntil: 'networkidle2', timeout: 30000 });
+                        await page.pdf({
+                            path: processedFilePath,
+                            format: 'A4',
+                            margin: { top: '2cm', right: '1.5cm', bottom: '2cm', left: '1.5cm' },
+                            printBackground: true,
+                            preferCSSPageSize: false
+                        });
                     } finally {
                         await browser.close();
                     }
                 } catch (convErr) {
-                    console.error('Word-to-PDF Fallback Error:', convErr);
-                    // Use a more descriptive error if it still fails
+                    console.error('Word-to-PDF Error:', convErr);
                     return res.status(500).json({
                         error: 'Processing Error',
-                        details: 'Could not convert Word to PDF. If this continues, please try uploading a standard .docx file.'
+                        details: 'Could not convert Word to PDF. Please ensure the file is a valid .docx file.'
                     });
                 }
             } else {
