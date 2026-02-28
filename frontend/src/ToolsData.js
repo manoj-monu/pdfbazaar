@@ -7,6 +7,7 @@ export const TOOLS_CATEGORIES = [
     {
         title: "Organize PDF",
         tools: [
+            { id: "compress-pdf", name: "Compress PDF", desc: "Reduce file size while optimizing for maximal PDF quality.", icon: FileDown, color: "#4CAF50", bgColor: "#ebf7ec" },
             { id: "merge-pdf", name: "Merge PDF", desc: "Combine PDFs in the order you want with the easiest PDF merger available.", icon: FilePlus2, color: "#E5322D", bgColor: "#ffe8e8" },
             { id: "split-pdf", name: "Split PDF", desc: "Separate one page or a whole set for easy conversion into independent PDF files.", icon: Divide, color: "#FF6900", bgColor: "#fff0e5" },
             { id: "rotate-pdf", name: "Rotate PDF", desc: "Rotate your PDFs the way you need them. You can even rotate multiple PDFs at once!", icon: RotateCw, color: "#1976D2", bgColor: "#e8f1fa" },
@@ -17,7 +18,6 @@ export const TOOLS_CATEGORIES = [
     {
         title: "Optimize PDF",
         tools: [
-            { id: "compress-pdf", name: "Compress PDF", desc: "Reduce file size while optimizing for maximal PDF quality.", icon: FileDown, color: "#4CAF50", bgColor: "#ebf7ec" },
             { id: "grayscale-pdf", name: "Grayscale PDF", desc: "Convert all images and text in your PDF to grayscale.", icon: PaintBucket, color: "#607D8B", bgColor: "#eceff1" }
         ]
     },

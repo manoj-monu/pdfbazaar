@@ -33,6 +33,8 @@ const ToolPage = () => {
   const [password, setPassword] = useState('');
   const [ocrMode, setOcrMode] = useState('no_ocr');
   const [htmlUrl, setHtmlUrl] = useState('');
+  const [originalSize, setOriginalSize] = useState(0);
+  const [resultSize, setResultSize] = useState(0);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -69,6 +71,9 @@ const ToolPage = () => {
         formData.append('url', htmlUrl);
       } else {
         if (files.length === 0) return;
+        // Calculate original size
+        const totalOriginalSize = files.reduce((sum, f) => sum + f.size, 0);
+        setOriginalSize(totalOriginalSize);
         files.forEach((file) => {
           formData.append('files', file);
         });
@@ -109,11 +114,12 @@ const ToolPage = () => {
       }
 
       const blob = await response.blob();
+      setResultSize(blob.size);
       const url = URL.createObjectURL(blob);
       setResultUrl(url);
       setResultName(filename);
 
-      // Programmatically trigger download immediately like iLovePDF
+      // Auto-trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
@@ -358,12 +364,34 @@ const ToolPage = () => {
           <div className="success-icon">
             <CheckCircle size={48} />
           </div>
-          <h2 style={{ fontSize: '28px', marginBottom: '16px' }}>Success!</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-            Your document has been processed successfully.
-          </p>
+          {toolId === 'compress-pdf' && originalSize > 0 && resultSize > 0 ? (
+            <>
+              <h2 style={{ fontSize: '28px', marginBottom: '8px', color: '#222' }}>PDFs have been compressed!</h2>
+              {/* Compression stats circle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '24px', margin: '24px 0', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '5px solid #E5322D', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: '20px', color: '#E5322D' }}>
+                    {Math.round((1 - resultSize / originalSize) * 100)}%
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#888' }}>SAVED</span>
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <p style={{ color: '#555', margin: '0 0 4px' }}>Your PDF is now {Math.round((1 - resultSize / originalSize) * 100)}% smaller!</p>
+                  <p style={{ color: '#333', fontWeight: 'bold', margin: 0 }}>
+                    {(originalSize / 1048576).toFixed(2)} MB → {resultSize < 1048576 ? (resultSize / 1024).toFixed(2) + ' KB' : (resultSize / 1048576).toFixed(2) + ' MB'}
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 style={{ fontSize: '28px', marginBottom: '16px' }}>Success!</h2>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Your document has been processed successfully.</p>
+            </>
+          )}
           <button
             className="btn-download"
+            style={{ marginBottom: '24px' }}
             onClick={() => {
               const link = document.createElement('a');
               link.href = resultUrl;
@@ -374,9 +402,30 @@ const ToolPage = () => {
               setTimeout(() => document.body.removeChild(link), 300);
             }}
           >
-            Download {resultName || `${tool.name} Result`}
+            Download {toolId === 'compress-pdf' ? 'Compressed PDF' : (resultName || `${tool.name} Result`)}
           </button>
-          <div className="action-links">
+          {/* Continue to section */}
+          <div style={{ width: '100%', maxWidth: '600px', borderTop: '1px solid #eee', paddingTop: '24px', marginTop: '8px' }}>
+            <p style={{ color: '#888', fontSize: '14px', marginBottom: '16px', textAlign: 'center' }}>Continue to...</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px' }}>
+              {['merge-pdf', 'split-pdf', 'rotate-pdf', 'protect-pdf', 'add-watermark', 'add-page-numbers'].filter(id => id !== toolId).slice(0, 6).map(id => {
+                const relTool = getToolById(id);
+                if (!relTool) return null;
+                return (
+                  <a key={id} href={`/tool/${id}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', borderRadius: '8px', border: '1px solid #eee', textDecoration: 'none', color: '#333', fontSize: '13px', fontWeight: '500', transition: 'background 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#f5f5f5'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <span style={{ width: '30px', height: '30px', borderRadius: '6px', background: relTool.bgColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <relTool.icon size={16} color={relTool.color} />
+                    </span>
+                    {relTool.name}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+          <div className="action-links" style={{ marginTop: '20px' }}>
             <a href="#" className="action-link" onClick={(e) => { e.preventDefault(); resetTool(); }}>
               <RotateCw size={16} /> Start Over
             </a>
