@@ -62,6 +62,14 @@ const getGsCommand = () => {
     return process.platform === 'win32' ? 'gswin64c' : 'gs';
 };
 
+const getSofficeCommand = () => {
+    if (process.platform === 'win32') {
+        const winPath = 'C:\\Program Files\\LibreOffice\\program\\soffice.exe';
+        return fs.existsSync(winPath) ? `"${winPath}"` : 'soffice';
+    }
+    return 'soffice';
+};
+
 // Helper functions for pdf-lib based tools
 async function processPdfLibTool(toolId, buffers, options) {
     try {
@@ -422,7 +430,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                 let sofficeDone = false;
                 try {
                     await new Promise((resolve, reject) => {
-                        const cmd = `soffice --headless --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
+                        const sofficePath = getSofficeCommand();
+                        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
                         exec(cmd, { timeout: 60000 }, (err) => {
                             const outName = path.parse(inputFile).name + '.pdf';
                             const loPath = path.join(uploadDir, outName);
@@ -431,6 +440,7 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                                 sofficeDone = true;
                                 resolve();
                             } else {
+                                console.log('soffice error:', err?.message);
                                 reject(new Error('soffice not available'));
                             }
                         });
