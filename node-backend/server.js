@@ -325,7 +325,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
 
             const inputFile = files[0].path;
             const gsCmd = getGsCommand();
-            const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${processedFilePath}" "${inputFile}"`;
+            // Multi-threaded + fast settings for speed
+            const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -sOutputFile="${processedFilePath}" "${inputFile}"`;
 
             await new Promise((resolve) => exec(command, resolve));
 
@@ -407,8 +408,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                     });
                     const page = await browser.newPage();
                     try {
-                        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-                        await page.pdf({ path: processedFilePath, format: 'A4', margin: { top: '2cm', right: '2cm', bottom: '2cm', left: '2cm' } });
+                        await page.setContent(htmlContent, { waitUntil: 'domcontentloaded' });
+                        await page.pdf({ path: processedFilePath, format: 'A4', margin: { top: '2cm', right: '2cm', bottom: '2cm', left: '2cm' }, printBackground: false });
                     } finally {
                         await browser.close();
                     }
