@@ -41,6 +41,7 @@ const ToolPage = () => {
   const [uploading, setUploading] = useState(false);
   const [customDpi, setCustomDpi] = useState('auto');
   const [targetSizeMB, setTargetSizeMB] = useState('');
+  const [targetSizeUnit, setTargetSizeUnit] = useState('MB');
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -90,7 +91,13 @@ const ToolPage = () => {
     formData.append('watermarkText', watermarkText);
     formData.append('password', password);
     formData.append('customDpi', customDpi);
-    formData.append('targetSizeMB', targetSizeMB);
+    // Convert KB to MB before sending
+    const targetInMB = targetSizeMB
+      ? targetSizeUnit === 'KB'
+        ? (parseFloat(targetSizeMB) / 1024).toString()
+        : targetSizeMB
+      : '';
+    formData.append('targetSizeMB', targetInMB);
 
     const xhr = new XMLHttpRequest();
     let startTime = Date.now();
@@ -361,16 +368,42 @@ const ToolPage = () => {
                     <input
                       type="number"
                       className="input-field"
-                      placeholder="e.g. 2"
-                      min="0.1"
-                      step="0.1"
+                      placeholder={targetSizeUnit === 'KB' ? 'e.g. 500' : 'e.g. 2'}
+                      min="1"
+                      step={targetSizeUnit === 'KB' ? '50' : '0.1'}
                       value={targetSizeMB}
                       onChange={e => setTargetSizeMB(e.target.value)}
                       style={{ flex: 1, padding: '8px 12px', fontSize: '14px' }}
                     />
-                    <span style={{ color: '#555', fontWeight: '500', whiteSpace: 'nowrap' }}>MB</span>
+                    {/* KB / MB toggle */}
+                    <div style={{ display: 'flex', border: '1px solid #ddd', borderRadius: '6px', overflow: 'hidden', flexShrink: 0 }}>
+                      <button
+                        type="button"
+                        onClick={() => setTargetSizeUnit('KB')}
+                        style={{
+                          padding: '8px 12px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '600',
+                          background: targetSizeUnit === 'KB' ? '#E5322D' : '#f5f5f5',
+                          color: targetSizeUnit === 'KB' ? '#fff' : '#555',
+                          transition: 'all 0.2s'
+                        }}
+                      >KB</button>
+                      <button
+                        type="button"
+                        onClick={() => setTargetSizeUnit('MB')}
+                        style={{
+                          padding: '8px 12px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '600',
+                          background: targetSizeUnit === 'MB' ? '#E5322D' : '#f5f5f5',
+                          color: targetSizeUnit === 'MB' ? '#fff' : '#555',
+                          transition: 'all 0.2s'
+                        }}
+                      >MB</button>
+                    </div>
                   </div>
-                  <p style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>Leave blank to auto-compress. Set a target like "1" for ~1 MB.</p>
+                  <p style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>
+                    {targetSizeUnit === 'KB'
+                      ? 'e.g. 500 for ~500 KB output. Leave blank to auto-compress.'
+                      : 'e.g. 2 for ~2 MB output. Leave blank to auto-compress.'}
+                  </p>
                 </div>
               )}
 
