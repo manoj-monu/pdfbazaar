@@ -418,100 +418,85 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             const inputFile = files[0].path;
 
             if (toolId === 'word-to-pdf') {
+                // ── Try LibreOffice first (perfect layout) ──
+                let sofficeDone = false;
                 try {
-                    const mammoth = require('mammoth');
-                    const puppeteer = require('puppeteer');
+                    await new Promise((resolve, reject) => {
+                        const cmd = `soffice --headless --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
+                        exec(cmd, { timeout: 60000 }, (err) => {
+                            const outName = path.parse(inputFile).name + '.pdf';
+                            const loPath = path.join(uploadDir, outName);
+                            if (!err && fs.existsSync(loPath)) {
+                                fs.renameSync(loPath, processedFilePath);
+                                sofficeDone = true;
+                                resolve();
+                            } else {
+                                reject(new Error('soffice not available'));
+                            }
+                        });
+                    });
+                } catch (_) { /* soffice not installed, use mammoth fallback */ }
 
-                    // Convert DOCX to HTML with image support
-                    const result = await mammoth.convertToHtml(
-                        { path: inputFile },
-                        {
-                            convertImage: mammoth.images.imgElement(async (image) => {
-                                const imageBuffer = await image.read();
-                                const base64 = imageBuffer.toString('base64');
-                                return { src: `data:${image.contentType};base64,${base64}` };
-                            })
-                        }
-                    );
+                // ── Fallback: mammoth + Puppeteer ──
+                if (!sofficeDone) {
+                    try {
+                        const mammoth = require('mammoth');
+                        const puppeteer = require('puppeteer');
 
-                    const htmlContent = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
+                        const result = await mammoth.convertToHtml(
+                            { path: inputFile },
+                            {
+                                convertImage: mammoth.images.imgElement(async (image) => {
+                                    const imageBuffer = await image.read();
+                                    const base64 = imageBuffer.toString('base64');
+                                    return { src: `data:${image.contentType};base64,${base64}` };
+                                })
+                            }
+                        );
+
+                        const htmlContent = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
 <style>
   @page { size: A4; margin: 2cm; }
   * { box-sizing: border-box; }
-  body {
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 11pt;
-    line-height: 1.5;
-    color: #000;
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    page-break-after: avoid;
-    page-break-inside: avoid;
-    margin-top: 12pt; margin-bottom: 6pt;
-  }
-  p {
-    margin: 0 0 8pt 0;
-    orphans: 3; widows: 3;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    page-break-inside: avoid;
-  }
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-bottom: 12pt;
-    page-break-inside: avoid;
-  }
-  td, th {
-    border: 1px solid #ccc;
-    padding: 6pt 8pt;
-    vertical-align: top;
-    word-wrap: break-word;
-  }
+  body { font-family: 'Calibri', 'Arial', sans-serif; font-size: 11pt; line-height: 1.5; color: #000; margin: 0; padding: 0; background: white; }
+  h1, h2, h3, h4, h5, h6 { page-break-after: avoid; page-break-inside: avoid; margin-top: 12pt; margin-bottom: 6pt; }
+  p { margin: 0 0 8pt 0; orphans: 3; widows: 3; }
+  img { max-width: 100%; height: auto; display: block; page-break-inside: avoid; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 12pt; page-break-inside: avoid; }
+  td, th { border: 1px solid #ccc; padding: 6pt 8pt; vertical-align: top; word-wrap: break-word; }
   th { background-color: #f2f2f2; font-weight: bold; }
   ul, ol { margin: 0 0 8pt 20pt; page-break-inside: avoid; }
   li { margin-bottom: 4pt; }
-  /* Prevent blank pages from empty elements */
   br:last-child { display: none; }
-  /* Colored backgrounds from Word */
   [style*="background"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-</style>
-</head>
-<body>${result.value}</body>
-</html>`;
+</style></head>
+<body>${result.value}</body></html>`;
 
-                    const browser = await puppeteer.launch({
-                        headless: 'new',
-                        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-                    });
-                    const page = await browser.newPage();
-                    try {
-                        await page.setContent(htmlContent, { waitUntil: 'networkidle2', timeout: 30000 });
-                        await page.pdf({
-                            path: processedFilePath,
-                            format: 'A4',
-                            margin: { top: '2cm', right: '1.5cm', bottom: '2cm', left: '1.5cm' },
-                            printBackground: true,
-                            preferCSSPageSize: false
+                        const browser = await puppeteer.launch({
+                            headless: 'new',
+                            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
                         });
-                    } finally {
-                        await browser.close();
+                        const page = await browser.newPage();
+                        try {
+                            await page.setContent(htmlContent, { waitUntil: 'networkidle2', timeout: 30000 });
+                            await page.pdf({
+                                path: processedFilePath,
+                                format: 'A4',
+                                margin: { top: '2cm', right: '1.5cm', bottom: '2cm', left: '1.5cm' },
+                                printBackground: true,
+                                preferCSSPageSize: false
+                            });
+                        } finally {
+                            await browser.close();
+                        }
+                    } catch (convErr) {
+                        console.error('Word-to-PDF Error:', convErr);
+                        return res.status(500).json({
+                            error: 'Processing Error',
+                            details: 'Could not convert Word to PDF. Please ensure the file is a valid .docx file.'
+                        });
                     }
-                } catch (convErr) {
-                    console.error('Word-to-PDF Error:', convErr);
-                    return res.status(500).json({
-                        error: 'Processing Error',
-                        details: 'Could not convert Word to PDF. Please ensure the file is a valid .docx file.'
-                    });
                 }
             } else {
                 // For Excel and PPT, we still need soffice as there isn't a reliable JS only fallback as simple as mammoth
