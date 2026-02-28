@@ -39,6 +39,8 @@ const ToolPage = () => {
   const [uploadSpeed, setUploadSpeed] = useState(0);
   const [uploadedBytes, setUploadedBytes] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [browserProcessing, setBrowserProcessing] = useState(false); // for browser-side tools
+  const [browserProgress, setBrowserProgress] = useState(0);
   const [customDpi, setCustomDpi] = useState('auto');
   const [targetSizeMB, setTargetSizeMB] = useState('');
   const [targetSizeUnit, setTargetSizeUnit] = useState('MB');
@@ -250,7 +252,27 @@ const ToolPage = () => {
     // ── Try browser-side instant processing first ──
     if (BROWSER_TOOLS.includes(toolId)) {
       try {
-        const result = await processBrowserSide();
+        // Show iLovePDF-style progress screen with animated progress
+        setBrowserProcessing(true);
+        setBrowserProgress(0);
+
+        // Animate progress bar: 0% → 90% while processing
+        let prog = 0;
+        const progInterval = setInterval(() => {
+          prog = Math.min(prog + Math.random() * 25, 90);
+          setBrowserProgress(Math.round(prog));
+        }, 120);
+
+        // Ensure minimum display time of 400ms for visual feedback
+        const [result] = await Promise.all([
+          processBrowserSide(),
+          new Promise(r => setTimeout(r, 400))
+        ]);
+
+        clearInterval(progInterval);
+        setBrowserProgress(100);
+        await new Promise(r => setTimeout(r, 200)); // Brief 100% flash
+
         if (result) {
           const blob = new Blob([result.bytes], { type: result.ext === 'zip' ? 'application/zip' : 'application/pdf' });
           setResultSize(blob.size);
@@ -261,11 +283,14 @@ const ToolPage = () => {
           link.href = url; link.download = result.name;
           document.body.appendChild(link); link.click();
           document.body.removeChild(link);
+          setBrowserProcessing(false);
           setProcessing(false);
           return; // Done! No server needed.
         }
+        setBrowserProcessing(false);
       } catch (err) {
         console.warn('Browser processing failed, falling back to server:', err.message);
+        setBrowserProcessing(false);
         // Fall through to server
       }
     }
@@ -400,7 +425,30 @@ const ToolPage = () => {
         </>
       )}
 
-      {/* Upload Progress Screen */}
+      {/* ── Browser-Side Processing Screen (iLovePDF style) ── */}
+      {browserProcessing && (
+        <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
+          <h3 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '8px' }}>
+            Processing file 1 of {files.length}
+          </h3>
+          {files[0] && (
+            <p style={{ color: '#666', marginBottom: '24px' }}>
+              {files[0].name} ({(files[0].size / 1048576).toFixed(2)} MB)
+            </p>
+          )}
+          <p style={{ color: '#888', marginBottom: '12px', fontSize: '14px' }}>
+            ⚡ Processing in your browser — no upload needed
+          </p>
+          {/* Progress Bar */}
+          <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden', marginBottom: '16px' }}>
+            <div style={{ width: `${browserProgress}%`, height: '100%', background: '#E5322D', borderRadius: '4px', transition: 'width 0.15s ease' }} />
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#222' }}>{browserProgress}%</div>
+          <div style={{ color: '#888', fontSize: '16px', marginTop: '4px' }}>PROCESSED</div>
+        </div>
+      )}
+
+      {/* Upload Progress Screen (server-side) */}
       {processing && uploading && (
         <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
           <h3 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '8px' }}>
@@ -424,6 +472,7 @@ const ToolPage = () => {
           <div style={{ color: '#888', fontSize: '16px', marginTop: '4px' }}>UPLOADED</div>
         </div>
       )}
+
 
       {/* Processing (after upload done) */}
       {processing && !uploading && !resultUrl && (
