@@ -320,8 +320,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
         } else if (toolId === 'compress-pdf') {
             const { compressLevel, customDpi, targetSizeMB } = options || {};
             const inputFile = files[0].path;
-            const inputBuffer = fs.readFileSync(inputFile);
-            const originalSize = inputBuffer.length;
+            const originalSize = fs.statSync(inputFile).size;
+            const isLargeFile = originalSize > 15 * 1024 * 1024; // >15MB = large
 
             // Determine DPI
             const dpi = customDpi && customDpi !== 'auto' ? parseInt(customDpi) : 96;
@@ -337,22 +337,27 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                 if (compressLevel === 'less') gsQuality = '/ebook';
             }
 
-            // ── Layer 1: Fast pure-JS compression (pdf-lib) ──
-            let fastResultBytes;
-            try {
-                const { PDFDocument } = require('pdf-lib');
-                const pdfDoc = await PDFDocument.load(inputBuffer, { ignoreEncryption: true });
-                fastResultBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
-            } catch (e) { fastResultBytes = null; }
+            let usedFastResult = false;
 
-            const targetBytes = targetSizeMB ? parseFloat(targetSizeMB) * 1048576 : null;
-            const fastReduced = fastResultBytes && fastResultBytes.length < originalSize * 0.92;
-            const fastHitsTarget = targetBytes && fastResultBytes && fastResultBytes.length <= targetBytes;
+            // ── Layer 1: Fast pure-JS (only for small files <15MB) ──
+            if (!isLargeFile) {
+                try {
+                    const inputBuffer = fs.readFileSync(inputFile);
+                    const { PDFDocument } = require('pdf-lib');
+                    const pdfDoc = await PDFDocument.load(inputBuffer, { ignoreEncryption: true });
+                    const fastBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
+                    const targetBytes = targetSizeMB ? parseFloat(targetSizeMB) * 1048576 : null;
+                    const fastReduced = fastBytes.length < originalSize * 0.92;
+                    const fastHitsTarget = targetBytes && fastBytes.length <= targetBytes;
+                    if ((fastReduced && compressLevel !== 'extreme' && !targetSizeMB) || fastHitsTarget) {
+                        fs.writeFileSync(processedFilePath, fastBytes);
+                        usedFastResult = true;
+                    }
+                } catch (e) { /* fall through to GS */ }
+            }
 
-            if ((fastReduced && compressLevel !== 'extreme' && !targetSizeMB) || fastHitsTarget) {
-                fs.writeFileSync(processedFilePath, fastResultBytes);
-            } else {
-                // ── Layer 2: Ghostscript with custom DPI ──
+            // ── Layer 2: Ghostscript (for large files or when pdf-lib not enough) ──
+            if (!usedFastResult) {
                 const gsCmd = getGsCommand();
                 const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Subsample -dGrayImageDownsampleType=/Subsample -dMonoImageDownsampleType=/Subsample -dColorImageResolution=${dpi} -dGrayImageResolution=${dpi} -dMonoImageResolution=${Math.max(dpi, 150)} -sOutputFile="${processedFilePath}" "${inputFile}"`;
 
@@ -360,13 +365,6 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                     if (err && !fs.existsSync(processedFilePath)) reject(err);
                     else resolve();
                 }));
-
-                if (fastResultBytes && fs.existsSync(processedFilePath)) {
-                    const gsSize = fs.statSync(processedFilePath).size;
-                    if (fastResultBytes.length < gsSize) {
-                        fs.writeFileSync(processedFilePath, fastResultBytes);
-                    }
-                }
             }
 
         } else if (toolId === 'grayscale-pdf') {
