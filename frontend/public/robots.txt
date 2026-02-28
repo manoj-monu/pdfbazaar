@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
-Sitemap: https://smartpdf.in/sitemap.xml
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+Sitemap: https://pdfbazaar.com/sitemap.xml

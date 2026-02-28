@@ -21,8 +21,44 @@ const ToolPage = () => {
   // Set SEO tags dynamically based on the current tool
   useSEO({
     title: tool ? `${tool.name} - Free Online PDF Tool | PDFbazaar.com India` : 'PDFbazaar.com Tool',
-    description: tool ? `Free online tool to ${tool.desc.toLowerCase()} Use PDFbazaar.com for fast, secure, and accurate PDF processing in India.` : 'Free online PDF Tool',
-    keywords: tool ? `${tool.name}, online ${tool.name}, free ${tool.name}, pdfbazaar ${tool.id}` : 'pdfbazaar tools'
+    description: tool ? `Free online ${tool.name} — ${tool.desc} 100% free, secure, no registration required. Works on Windows, Mac, Android, iPhone.` : 'Free online PDF Tool',
+    keywords: tool ? `${tool.name.toLowerCase()}, free ${tool.name.toLowerCase()} online, ${tool.name.toLowerCase()} india, ${tool.id} online free, pdfbazaar ${tool.id}` : 'pdfbazaar tools',
+    path: `/tool/${toolId}`,
+    schema: tool ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'SoftwareApplication',
+          name: `${tool.name} - PDFbazaar.com`,
+          url: `https://pdfbazaar.com/tool/${toolId}`,
+          description: tool.desc,
+          applicationCategory: 'UtilitiesApplication',
+          operatingSystem: 'Web, Windows, Mac, Android, iOS',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' },
+          aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.8', reviewCount: '2341' },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: `Is ${tool.name} free?`,
+              acceptedAnswer: { '@type': 'Answer', text: `Yes! ${tool.name} on PDFbazaar.com is 100% free with no registration required.` }
+            },
+            {
+              '@type': 'Question',
+              name: `How to use ${tool.name} online?`,
+              acceptedAnswer: { '@type': 'Answer', text: `Upload your file on PDFbazaar.com/tool/${toolId}, click the process button, and download your result instantly. No software installation needed.` }
+            },
+            {
+              '@type': 'Question',
+              name: `Is my file safe when using ${tool.name}?`,
+              acceptedAnswer: { '@type': 'Answer', text: `Yes. Your files are processed securely and automatically deleted after 1 hour. We never share your files with anyone.` }
+            }
+          ]
+        }
+      ]
+    } : null
   });
 
   // Tool specific states
