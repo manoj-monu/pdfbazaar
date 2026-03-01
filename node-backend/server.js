@@ -294,7 +294,9 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             } finally {
                 await browser.close();
             }
-            return res.download(htmlProcessedPath, `pdfbazaar-html-result.pdf`);
+            const token = path.basename(htmlProcessedPath);
+            const fileSize = fs.statSync(htmlProcessedPath).size;
+            return res.json({ token, filename: 'pdfbazaar-html-result.pdf', size: fileSize });
         }
 
         if (!files || files.length === 0) {
