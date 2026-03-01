@@ -638,7 +638,6 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             const inputFile = files[0].path;
             const sofficePath = getSofficeCommand();
 
-            // Map toolId to LibreOffice conversion format and output extension
             const convMap = {
                 'pdf-to-excel': { format: 'xlsx', ext: 'xlsx' },
                 'pdf-to-word': { format: 'docx', ext: 'docx' },
@@ -648,22 +647,94 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             ext = outExt;
             processedFilePath = path.join(uploadDir, `processed-${Date.now()}.${ext}`);
 
-            await new Promise((resolve, reject) => {
-                const cmd = `${sofficePath} --headless --convert-to ${format} --outdir "${uploadDir}" "${inputFile}"`;
-                console.log(`[${toolId}] Command: ${cmd}`);
-                exec(cmd, { timeout: 120000 }, (error, stdout, stderr) => {
-                    // LibreOffice outputs file with same basename as input but new extension
-                    const baseName = path.parse(inputFile).name;
-                    const loOutPath = path.join(uploadDir, `${baseName}.${format}`);
-                    if (fs.existsSync(loOutPath)) {
-                        fs.renameSync(loOutPath, processedFilePath);
-                        resolve();
-                    } else {
-                        console.error(`[${toolId}] soffice error:`, error?.message, stderr);
-                        reject(new Error(`Conversion failed. LibreOffice (soffice) may not be installed on the server. Error: ${error?.message || stderr}`));
-                    }
+            // ── Try LibreOffice first (Docker/system with soffice) ──
+            let libreOfficeDone = false;
+            try {
+                await new Promise((resolve, reject) => {
+                    const cmd = `${sofficePath} --headless --convert-to ${format} --outdir "${uploadDir}" "${inputFile}"`;
+                    console.log(`[${toolId}] Trying soffice: ${cmd}`);
+                    exec(cmd, { timeout: 120000 }, (error, stdout, stderr) => {
+                        const baseName = path.parse(inputFile).name;
+                        const loOutPath = path.join(uploadDir, `${baseName}.${format}`);
+                        if (!error && fs.existsSync(loOutPath)) {
+                            fs.renameSync(loOutPath, processedFilePath);
+                            libreOfficeDone = true;
+                            resolve();
+                        } else {
+                            reject(new Error(error?.message || 'soffice not available'));
+                        }
+                    });
                 });
-            });
+            } catch (sofficErr) {
+                console.log(`[${toolId}] soffice not available: ${sofficErr.message}. Using JS fallback.`);
+            }
+
+            // ── JS Fallback: pdf-parse + xlsx (no external tools needed) ──
+            if (!libreOfficeDone) {
+                if (toolId === 'pdf-to-excel') {
+                    const pdfParse = require('pdf-parse');
+                    const XLSX = require('xlsx');
+
+                    const pdfBuffer = fs.readFileSync(inputFile);
+                    const pdfData = await pdfParse(pdfBuffer);
+
+                    // Split text into rows and columns (tab/space separated)
+                    const rows = pdfData.text
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .map(line => line.split(/\t|  +/).map(cell => cell.trim()));
+
+                    const wb = XLSX.utils.book_new();
+                    const ws = XLSX.utils.aoa_to_sheet(rows);
+                    XLSX.utils.book_append_sheet(wb, ws, 'PDF Data');
+                    const xlsxBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+                    fs.writeFileSync(processedFilePath, xlsxBuffer);
+                    console.log(`[pdf-to-excel] JS fallback done. Rows: ${rows.length}`);
+
+                } else if (toolId === 'pdf-to-word') {
+                    // Return DOCX with extracted text using basic structure
+                    const pdfParse = require('pdf-parse');
+                    const pdfBuffer = fs.readFileSync(inputFile);
+                    const pdfData = await pdfParse(pdfBuffer);
+
+                    // Build a minimal valid DOCX using Office Open XML
+                    const AdmZip = require('adm-zip');
+                    const zip = new AdmZip();
+                    const paragraphs = pdfData.text
+                        .split('\n')
+                        .map(line => `<w:p><w:r><w:t xml:space="preserve">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</w:t></w:r></w:p>`)
+                        .join('');
+
+                    const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>${paragraphs}<w:sectPr/></w:body>
+</w:document>`;
+                    const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+                    const wordRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`;
+                    const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+                    zip.addFile('[Content_Types].xml', Buffer.from(contentTypes));
+                    zip.addFile('_rels/.rels', Buffer.from(relsXml));
+                    zip.addFile('word/document.xml', Buffer.from(docXml));
+                    zip.addFile('word/_rels/document.xml.rels', Buffer.from(wordRelsXml));
+                    fs.writeFileSync(processedFilePath, zip.toBuffer());
+                    console.log(`[pdf-to-word] JS fallback done.`);
+
+                } else {
+                    // pdf-to-ppt: no reliable JS fallback, return error
+                    throw new Error('PDF to PPT requires LibreOffice on the server. Please contact support.');
+                }
+            }
 
         } else {
             processedFilePath = files[0].path;
