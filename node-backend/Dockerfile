@@ -1,12 +1,17 @@
 FROM node:18-slim
 
-# Install only what's needed - Ghostscript for PDF compression + Puppeteer deps
+# Install Ghostscript, LibreOffice, and Puppeteer dependencies
 RUN apt-get update && apt-get install -y \
     ghostscript \
+    libreoffice \
+    libreoffice-calc \
+    libreoffice-writer \
+    libreoffice-impress \
     wget \
     gnupg \
     ca-certificates \
     fonts-liberation \
+    fonts-noto \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -35,6 +40,9 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
+
+# Set HOME so LibreOffice can write its user profile
+ENV HOME=/tmp
 
 WORKDIR /usr/src/app
 
