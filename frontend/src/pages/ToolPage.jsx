@@ -548,22 +548,49 @@ const ToolPage = () => {
         <div className="workspace">
           <div className="workspace-main">
             <div className="preview-grid">
-              {files.map((file, idx) => (
-                <div key={idx} className="file-preview">
-                  <div className="file-preview-remove" onClick={() => removeFile(idx)}>
-                    <X size={16} />
+              {files.map((file, idx) => {
+                const sizeKB = file.size / 1024;
+                const sizeLabel = sizeKB >= 1024
+                  ? (sizeKB / 1024).toFixed(2) + ' MB'
+                  : sizeKB.toFixed(1) + ' KB';
+                const ext = file.name.split('.').pop().toUpperCase();
+                return (
+                  <div key={idx} className="file-preview-card">
+                    {/* Remove button */}
+                    <button className="file-card-remove" onClick={() => removeFile(idx)} title="Remove">
+                      <X size={14} strokeWidth={2.5} />
+                    </button>
+
+                    {/* PDF Document Icon */}
+                    <div className="file-card-icon">
+                      <svg viewBox="0 0 64 80" width="64" height="80" xmlns="http://www.w3.org/2000/svg">
+                        {/* Page body */}
+                        <path d="M4 0 H44 L60 16 V76 Q60 80 56 80 H4 Q0 80 0 76 V4 Q0 0 4 0Z" fill="#fff" stroke="#e0e0e0" strokeWidth="1.5" />
+                        {/* Folded corner */}
+                        <path d="M44 0 L44 16 L60 16Z" fill="#e5322d" opacity="0.15" />
+                        <path d="M44 0 L60 16 H44Z" fill="#e5322d" opacity="0.3" />
+                        {/* Red banner for PDF label */}
+                        <rect x="0" y="30" width="50" height="20" rx="2" fill="#e5322d" />
+                        <text x="25" y="44" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="Arial,sans-serif">{ext}</text>
+                      </svg>
+                    </div>
+
+                    {/* File info */}
+                    <div className="file-card-name" title={file.name}>{file.name}</div>
+                    <div className="file-card-size">{sizeLabel}</div>
                   </div>
-                  <FileIcon size={64} className="file-preview-icon" />
-                  <div className="file-preview-name">{file.name}</div>
-                </div>
-              ))}
-              <div {...getRootProps()} className="file-preview" style={{ border: '2px dashed var(--border-color)', background: 'transparent', cursor: 'pointer', justifyContent: 'center' }}>
+                );
+              })}
+
+              {/* Add more files card */}
+              <div {...getRootProps()} className="file-preview-card file-preview-add">
                 <input {...getInputProps()} />
-                <UploadCloud size={24} style={{ color: 'var(--text-secondary)' }} />
-                <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Add more</div>
+                <UploadCloud size={32} strokeWidth={1.5} style={{ color: '#aaa', marginBottom: '8px' }} />
+                <div style={{ fontSize: '12px', color: '#aaa', fontWeight: '500' }}>Add more</div>
               </div>
             </div>
           </div>
+
           <div className="workspace-sidebar">
             <div className="workspace-sidebar-title">{tool.name} Options</div>
             <div style={{ flex: 1, color: 'var(--text-secondary)', fontSize: '14px', paddingTop: '16px' }}>
