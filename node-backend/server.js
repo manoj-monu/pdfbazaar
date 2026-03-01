@@ -485,17 +485,68 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             const inputFile = files[0].path;
 
             if (toolId === 'word-to-pdf') {
+                // ── Pre-process: strip floating text boxes from docx ──
+                // Word docs like Aadhaar cards have text boxes overlaid on top of images.
+                // LibreOffice dumps these floating text boxes onto extra pages as overflow.
+                // The numbers ARE already in the image itself, so stripping textboxes is safe.
+                let convertInputFile = inputFile;
+                try {
+                    const AdmZipDocx = require('adm-zip');
+                    const zipDocx = new AdmZipDocx(inputFile);
+                    const docEntry = zipDocx.getEntry('word/document.xml');
+                    if (docEntry) {
+                        let docXml = zipDocx.readAsText(docEntry);
+                        const originalLen = docXml.length;
+
+                        // Remove mc:AlternateContent blocks containing text boxes
+                        docXml = docXml.replace(/<mc:AlternateContent[\s\S]*?<\/mc:AlternateContent>/g, (match) => {
+                            if (match.includes('v:textbox') || match.includes('txbxContent') || match.includes('wps:txbx')) {
+                                return '';
+                            }
+                            return match;
+                        });
+
+                        // Remove old-style VML text boxes
+                        docXml = docXml.replace(/<v:shape[\s\S]*?<\/v:shape>/g, (match) => {
+                            if (match.includes('v:textbox')) return '';
+                            return match;
+                        });
+
+                        // Remove wps text boxes (modern Word format)
+                        docXml = docXml.replace(/<wps:txbx[\s\S]*?<\/wps:txbx>/g, '');
+
+                        if (docXml.length !== originalLen) {
+                            console.log(`[word-to-pdf] Stripped ${originalLen - docXml.length} chars of textbox content from docx`);
+                            zipDocx.updateFile('word/document.xml', Buffer.from(docXml, 'utf8'));
+                            const modifiedPath = inputFile + '.notxbx.docx';
+                            zipDocx.writeZip(modifiedPath);
+                            convertInputFile = modifiedPath;
+                        } else {
+                            console.log('[word-to-pdf] No text boxes found in docx');
+                        }
+                    }
+                } catch (txbxErr) {
+                    console.log('[word-to-pdf] Text box stripping skipped:', txbxErr.message);
+                    convertInputFile = inputFile; // fallback to original
+                }
+
                 try {
                     await new Promise((resolve, reject) => {
                         const sofficePath = getSofficeCommand();
-                        const cmd = `${sofficePath} --headless --norestore --nofirststartwizard --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
+                        const cmd = `${sofficePath} --headless --norestore --nofirststartwizard --convert-to pdf --outdir "${uploadDir}" "${convertInputFile}"`;
                         console.log(`[word-to-pdf] Running: ${cmd}`);
+
                         exec(cmd, { timeout: 90000 }, (err, stdout, stderr) => {
-                            const outName = path.parse(inputFile).name + '.pdf';
+                            // LibreOffice names output after the INPUT file it converted
+                            const outName = path.parse(convertInputFile).name + '.pdf';
                             const loPath = path.join(uploadDir, outName);
                             console.log(`[word-to-pdf] soffice err=${err?.message}, loPath=${loPath}, exists=${fs.existsSync(loPath)}`);
                             if (!err && fs.existsSync(loPath)) {
                                 fs.renameSync(loPath, processedFilePath);
+                                // Clean up temp modified docx if created
+                                if (convertInputFile !== inputFile && fs.existsSync(convertInputFile)) {
+                                    try { fs.unlinkSync(convertInputFile); } catch (e) { }
+                                }
                                 resolve();
                             } else {
                                 console.log('[word-to-pdf] soffice failed, stdout:', stdout, 'stderr:', stderr);
