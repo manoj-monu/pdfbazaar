@@ -504,31 +504,42 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                         });
                     });
 
-                    // Remove truly blank trailing pages
+                    // Remove blank/overflow trailing pages (LibreOffice puts floating textbox content on extra pages)
                     if (fs.existsSync(processedFilePath)) {
                         try {
                             const pdfBytes = fs.readFileSync(processedFilePath);
                             const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
                             const pageCount = pdfDoc.getPageCount();
                             if (pageCount > 1) {
-                                const isPageBlank = async (srcDoc, pageIndex) => {
+                                // Measure byte-size of each page individually
+                                const pageSizes = [];
+                                for (let i = 0; i < pageCount; i++) {
                                     try {
                                         const testDoc = await PDFDocument.create();
-                                        const [copiedPage] = await testDoc.copyPages(srcDoc, [pageIndex]);
-                                        testDoc.addPage(copiedPage);
+                                        const [cp] = await testDoc.copyPages(pdfDoc, [i]);
+                                        testDoc.addPage(cp);
                                         const testBytes = await testDoc.save();
-                                        return testBytes.length < 5120;
+                                        pageSizes.push(testBytes.length);
                                     } catch (e) {
-                                        return false;
+                                        pageSizes.push(999999); // assume real content on error
                                     }
-                                };
+                                }
 
+                                // Page 1 (index 0) is the reference — real Aadhaar card / real content
+                                const page1Size = pageSizes[0];
+                                console.log(`[word-to-pdf] Page sizes (bytes): ${pageSizes.join(', ')}`);
+
+                                // Remove trailing pages that are < 30% of page1 size.
+                                // These are "overflow" pages from floating text boxes in Word.
+                                // Example: Aadhaar page1 = 300KB, overflow page2 = 10KB → remove page2.
                                 let pagesToRemove = [];
                                 for (let i = pageCount - 1; i >= 1; i--) {
-                                    if (await isPageBlank(pdfDoc, i)) {
+                                    const ratio = pageSizes[i] / page1Size;
+                                    console.log(`[word-to-pdf] Page ${i + 1} ratio vs page1: ${(ratio * 100).toFixed(1)}%`);
+                                    if (ratio < 0.30) {
                                         pagesToRemove.push(i);
                                     } else {
-                                        break;
+                                        break; // Stop — this page has real content
                                     }
                                 }
 
@@ -538,7 +549,9 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                                     }
                                     const cleaned = await pdfDoc.save();
                                     fs.writeFileSync(processedFilePath, cleaned);
-                                    console.log(`Removed ${pagesToRemove.length} truly blank trailing page(s)`);
+                                    console.log(`[word-to-pdf] Removed ${pagesToRemove.length} overflow trailing page(s). Final pages: ${pageCount - pagesToRemove.length}`);
+                                } else {
+                                    console.log(`[word-to-pdf] All ${pageCount} pages have real content — keeping all.`);
                                 }
                             }
                         } catch (cleanErr) {
