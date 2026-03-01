@@ -16,6 +16,7 @@ const ToolPage = () => {
   const [processing, setProcessing] = useState(false);
   const [resultUrl, setResultUrl] = useState(null);
   const [resultName, setResultName] = useState(null);
+  const [resultBlob, setResultBlob] = useState(null); // store raw blob for reliable download
   const [errorMsg, setErrorMsg] = useState(null);
 
   // Set SEO tags dynamically based on the current tool
@@ -100,16 +101,28 @@ const ToolPage = () => {
   };
 
   // ── Reliable download helper — ensures .pdf/.zip extension is preserved ──
-  const triggerDownload = (url, filename) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.setAttribute('download', filename);  // setAttribute is more reliable than .download
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-    }, 500); // wait 500ms before removing so browser processes the click
+  // Uses stored blob + File API + dispatchEvent (more reliable than a.click() in Chrome)
+  const triggerDownload = (blob, filename) => {
+    try {
+      // Create a named File from the blob — Chrome uses File.name when download attr is set
+      const mimeType = filename.endsWith('.zip') ? 'application/zip' : 'application/pdf';
+      const namedFile = new File([blob], filename, { type: mimeType });
+      const url = URL.createObjectURL(namedFile);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      // dispatchEvent is more reliable than .click() for file downloads in Chrome
+      a.dispatchEvent(new MouseEvent('click', { bubbles: false, cancelable: true, view: window }));
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 1000);
+    } catch (e) {
+      // Fallback: open blob URL in new tab
+      window.open(URL.createObjectURL(blob));
+    }
   };
 
   // ── BROWSER-SIDE INSTANT PROCESSING (no server needed) ──
@@ -329,10 +342,11 @@ const ToolPage = () => {
           const url = URL.createObjectURL(blob);
           setResultUrl(url);
           setResultName(result.name);
-          triggerDownload(url, result.name);
+          setResultBlob(blob); // store blob for download button
+          // NO AUTO-DOWNLOAD — let user click the button (user gesture = Chrome honors filename)
           setBrowserProcessing(false);
           setProcessing(false);
-          return; // Done! No server needed.
+          return;
         }
         setBrowserProcessing(false);
       } catch (err) {
@@ -412,7 +426,8 @@ const ToolPage = () => {
         setResultSize(blob.size);
         const url = URL.createObjectURL(blob);
         setResultUrl(url); setResultName(filename);
-        triggerDownload(url, filename);
+        setResultBlob(blob); // store blob for download button
+        // NO AUTO-DOWNLOAD — let user click the button (user gesture = Chrome honors filename)
       } else {
         let msg = `Server error ${xhr.status}`;
         try { const j = JSON.parse(xhr.responseText); msg = j.error || msg; } catch (e) { }
@@ -435,6 +450,7 @@ const ToolPage = () => {
     setFiles([]);
     setResultUrl(null);
     setResultName(null);
+    setResultBlob(null);
     setErrorMsg(null);
     setUploadProgress(0);
   };
@@ -922,7 +938,15 @@ const ToolPage = () => {
           <button
             className="btn-download"
             style={{ marginBottom: '40px' }}
-            onClick={() => triggerDownload(resultUrl, resultName || `pdfbazaar-${toolId}-result.pdf`)}
+            onClick={() => {
+              const name = resultName || `pdfbazaar-${toolId}-result.pdf`;
+              if (resultBlob) {
+                triggerDownload(resultBlob, name);
+              } else if (resultUrl) {
+                // fallback: open in new tab
+                window.open(resultUrl, '_blank');
+              }
+            }}
           >
             Download {toolId === 'compress-pdf' ? 'Compressed PDF' : (resultName || `${tool.name} Result`)}
           </button>
