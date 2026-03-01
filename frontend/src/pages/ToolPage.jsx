@@ -99,6 +99,19 @@ const ToolPage = () => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
+  // ── Reliable download helper — ensures .pdf/.zip extension is preserved ──
+  const triggerDownload = (url, filename) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.setAttribute('download', filename);  // setAttribute is more reliable than .download
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+    }, 500); // wait 500ms before removing so browser processes the click
+  };
+
   // ── BROWSER-SIDE INSTANT PROCESSING (no server needed) ──
   const BROWSER_TOOLS = ['merge-pdf', 'split-pdf', 'rotate-pdf', 'add-watermark', 'delete-pdf-pages', 'add-page-numbers', 'jpg-to-pdf', 'crop-pdf', 'resize-pdf'];
   // NOTE: compress-pdf always uses server (Ghostscript) — pdf-lib cannot compress images
@@ -316,10 +329,7 @@ const ToolPage = () => {
           const url = URL.createObjectURL(blob);
           setResultUrl(url);
           setResultName(result.name);
-          const link = document.createElement('a');
-          link.href = url; link.download = result.name;
-          document.body.appendChild(link); link.click();
-          document.body.removeChild(link);
+          triggerDownload(url, result.name);
           setBrowserProcessing(false);
           setProcessing(false);
           return; // Done! No server needed.
@@ -402,10 +412,7 @@ const ToolPage = () => {
         setResultSize(blob.size);
         const url = URL.createObjectURL(blob);
         setResultUrl(url); setResultName(filename);
-        const link = document.createElement('a');
-        link.href = url; link.download = filename;
-        document.body.appendChild(link); link.click();
-        document.body.removeChild(link);
+        triggerDownload(url, filename);
       } else {
         let msg = `Server error ${xhr.status}`;
         try { const j = JSON.parse(xhr.responseText); msg = j.error || msg; } catch (e) { }
@@ -915,15 +922,7 @@ const ToolPage = () => {
           <button
             className="btn-download"
             style={{ marginBottom: '40px' }}
-            onClick={() => {
-              const link = document.createElement('a');
-              link.href = resultUrl;
-              link.setAttribute('download', resultName || `pdfbazaar-${toolId}-result.pdf`);
-              link.style.display = 'none';
-              document.body.appendChild(link);
-              link.click();
-              setTimeout(() => document.body.removeChild(link), 300);
-            }}
+            onClick={() => triggerDownload(resultUrl, resultName || `pdfbazaar-${toolId}-result.pdf`)}
           >
             Download {toolId === 'compress-pdf' ? 'Compressed PDF' : (resultName || `${tool.name} Result`)}
           </button>
