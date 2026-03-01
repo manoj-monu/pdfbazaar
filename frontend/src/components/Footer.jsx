@@ -7,8 +7,11 @@ const Footer = () => {
             <div className="container">
                 <div className="footer-grid">
                     <div className="footer-col" style={{ gridColumn: 'span 2' }}>
-                        <Link to="/" className="nav-brand" style={{ marginBottom: '24px' }}>
-                            <img src="/logo.png" alt="PDFbazaar" style={{ height: '80px', width: 'auto', objectFit: 'contain' }} />
+                        <Link to="/" className="nav-brand" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '2px', textDecoration: 'none' }}>
+                            <img src="/pdf-icon.png" alt="PDF icon" style={{ height: '60px', width: '60px', objectFit: 'contain' }} />
+                            <span style={{ fontFamily: "'Roboto', sans-serif", fontWeight: '900', fontSize: '30px', color: '#cc1a1a', letterSpacing: '-0.5px', lineHeight: 1 }}>
+                                Bazaar.com
+                            </span>
                         </Link>
                         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.6' }}>
                             Every tool you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
