@@ -639,15 +639,16 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             processedFilePath = files[0].path;
         }
 
-        // Return processed file
+        // Return JSON with download token — client will use GET /api/download/:token
         if (fs.existsSync(processedFilePath)) {
             const dlFileName = ext !== 'pdf' ? `pdfbazaar-${toolId}-result.${ext}` : `pdfbazaar-${toolId}-result.pdf`;
-            res.download(processedFilePath, dlFileName, (err) => {
-                if (err) console.error('Download error:', err);
-                files.forEach(f => { if (fs.existsSync(f.path)) fs.unlinkSync(f.path); });
-            });
+            const token = path.basename(processedFilePath);
+            const fileSize = fs.statSync(processedFilePath).size;
+            // Clean up uploaded input files (NOT the processed output)
+            files.forEach(f => { if (f.path && f.path !== processedFilePath && fs.existsSync(f.path)) fs.unlinkSync(f.path); });
+            return res.json({ token, filename: dlFileName, size: fileSize });
         } else {
-            res.status(500).json({ error: 'Processing failed, result file not found.' });
+            return res.status(500).json({ error: 'Processing failed, result file not found.' });
         }
 
     } catch (error) {
@@ -655,6 +656,27 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
         res.status(500).json({ error: 'Server Error during processing.', details: error.message });
     }
 });
+
+// ── GET /api/download/:token — serve processed file with correct filename ──
+app.get('/api/download/:token', (req, res) => {
+    const { token } = req.params;
+    if (!token || token.includes('..') || token.includes('/') || token.includes('\\') || token.includes('\0')) {
+        return res.status(400).json({ error: 'Invalid token' });
+    }
+    const filePath = path.join(uploadDir, token);
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File expired. Please re-process.' });
+    }
+    const ext = path.extname(token).slice(1) || 'pdf';
+    const friendlyName = req.query.name ? decodeURIComponent(req.query.name) : `pdfbazaar-result.${ext}`;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.download(filePath, friendlyName, (err) => {
+        if (err) console.error('Download serve error:', err);
+        setTimeout(() => { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); }, 5000);
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

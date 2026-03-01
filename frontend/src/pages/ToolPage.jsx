@@ -414,23 +414,23 @@ const ToolPage = () => {
     xhr.onload = () => {
       clearInterval(simInterval);
       if (xhr.status >= 200 && xhr.status < 300) {
-        const contentDisp = xhr.getResponseHeader('Content-Disposition');
-        let filename = `pdfbazaar-${toolId}-result.pdf`;
-        if (contentDisp?.includes('filename=')) {
-          const match = contentDisp.match(/filename="?([^"]+)"?/);
-          if (match?.[1]) filename = match[1];
+        const data = xhr.response; // JSON: { token, filename, size }
+        if (data && data.token) {
+          // Build real download URL — browser will use server's Content-Disposition for filename
+          const downloadUrl = `${BACKEND_URL}/api/download/${encodeURIComponent(data.token)}?name=${encodeURIComponent(data.filename || `pdfbazaar-${toolId}-result.pdf`)}`;
+          setResultSize(data.size || 0);
+          setResultUrl(downloadUrl);
+          setResultName(data.filename || `pdfbazaar-${toolId}-result.pdf`);
+          setResultBlob(null); // server-side: no blob stored
+        } else {
+          setErrorMsg('Server returned unexpected response.');
         }
-        const contentType = xhr.getResponseHeader('Content-Type') || '';
-        if (contentType.includes('zip')) filename = `pdfbazaar-${toolId}-result.zip`;
-        const blob = xhr.response;
-        setResultSize(blob.size);
-        const url = URL.createObjectURL(blob);
-        setResultUrl(url); setResultName(filename);
-        setResultBlob(blob); // store blob for download button
-        // NO AUTO-DOWNLOAD — let user click the button (user gesture = Chrome honors filename)
       } else {
         let msg = `Server error ${xhr.status}`;
-        try { const j = JSON.parse(xhr.responseText); msg = j.error || msg; } catch (e) { }
+        try {
+          const j = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.responseText);
+          msg = j?.error || msg;
+        } catch (e) { }
         setErrorMsg(msg);
       }
       setProcessing(false); setUploading(false);
@@ -441,7 +441,7 @@ const ToolPage = () => {
       setProcessing(false); setUploading(false);
     };
     xhr.open('POST', `${BACKEND_URL}/api/process/${toolId}`);
-    xhr.responseType = 'blob';
+    xhr.responseType = 'json';
     xhr.send(formData);
   };
 
@@ -941,10 +941,20 @@ const ToolPage = () => {
             onClick={() => {
               const name = resultName || `pdfbazaar-${toolId}-result.pdf`;
               if (resultBlob) {
+                // Browser-side processed (merge, rotate, etc.) — use File API
                 triggerDownload(resultBlob, name);
               } else if (resultUrl) {
-                // fallback: open in new tab
-                window.open(resultUrl, '_blank');
+                // Server-side processed — navigate directly to server URL
+                // Server sends Content-Disposition: attachment; filename="pdfbazaar-xxx.pdf"
+                // Browser handles filename correctly via HTTP header
+                const a = document.createElement('a');
+                a.href = resultUrl;
+                a.download = name;
+                a.target = '_blank';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 1000);
               }
             }}
           >
