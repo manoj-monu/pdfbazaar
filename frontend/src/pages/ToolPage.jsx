@@ -492,6 +492,29 @@ const ToolPage = () => {
         </>
       )}
 
+      {/* iLovePDF-style Horizontal Banner Ad — below upload/file area */}
+      {!resultUrl && !processing && !browserProcessing && (
+        <div style={{
+          width: '100%',
+          maxWidth: '760px',
+          margin: '24px auto 0',
+          display: 'flex',
+          justifyContent: 'center',
+        }}>
+          <AdsPlacement
+            slot="2004166750"
+            format="horizontal"
+            responsive={false}
+            style={{
+              width: '728px',
+              height: '90px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+            }}
+          />
+        </div>
+      )}
+
       {/* ── Browser-Side Processing Screen (iLovePDF style) ── */}
       {browserProcessing && (
         <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
