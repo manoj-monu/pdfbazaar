@@ -674,39 +674,65 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             // ── JS Fallback: pdf-parse + xlsx (no external tools needed) ──
             if (!libreOfficeDone) {
                 if (toolId === 'pdf-to-excel') {
-                    const pdfParse = require('pdf-parse');
                     const XLSX = require('xlsx');
+                    let rows = [];
 
-                    const pdfBuffer = fs.readFileSync(inputFile);
-                    const pdfData = await pdfParse(pdfBuffer);
+                    // Try to extract text from PDF
+                    try {
+                        const pdfParse = require('pdf-parse');
+                        const pdfBuffer = fs.readFileSync(inputFile);
+                        const pdfData = await pdfParse(pdfBuffer, { max: 0 });
+                        rows = pdfData.text
+                            .split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0)
+                            .map(line => line.split(/\t|  +/).map(cell => cell.trim()));
+                        console.log(`[pdf-to-excel] Extracted ${rows.length} rows from PDF text`);
+                    } catch (parseErr) {
+                        console.log(`[pdf-to-excel] pdf-parse failed (likely image/encrypted PDF): ${parseErr.message}`);
+                        // For image-based/encrypted PDFs, create a notice sheet
+                        rows = [
+                            ['PDF to Excel Conversion Notice'],
+                            [''],
+                            ['This PDF appears to be image-based or encrypted.'],
+                            ['Text extraction requires a text-based PDF.'],
+                            ['Tip: Use a PDF with selectable text for best results.'],
+                        ];
+                    }
 
-                    // Split text into rows and columns (tab/space separated)
-                    const rows = pdfData.text
-                        .split('\n')
-                        .map(line => line.trim())
-                        .filter(line => line.length > 0)
-                        .map(line => line.split(/\t|  +/).map(cell => cell.trim()));
+                    if (rows.length === 0) {
+                        rows = [['No text content found in this PDF.']];
+                    }
 
                     const wb = XLSX.utils.book_new();
                     const ws = XLSX.utils.aoa_to_sheet(rows);
                     XLSX.utils.book_append_sheet(wb, ws, 'PDF Data');
                     const xlsxBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
                     fs.writeFileSync(processedFilePath, xlsxBuffer);
-                    console.log(`[pdf-to-excel] JS fallback done. Rows: ${rows.length}`);
+                    console.log(`[pdf-to-excel] Done. Rows: ${rows.length}`);
 
                 } else if (toolId === 'pdf-to-word') {
-                    // Return DOCX with extracted text using basic structure
-                    const pdfParse = require('pdf-parse');
-                    const pdfBuffer = fs.readFileSync(inputFile);
-                    const pdfData = await pdfParse(pdfBuffer);
+                    const AdmZip = require('adm-zip');
+                    let textContent = '';
+
+                    try {
+                        const pdfParse = require('pdf-parse');
+                        const pdfBuffer = fs.readFileSync(inputFile);
+                        const pdfData = await pdfParse(pdfBuffer, { max: 0 });
+                        textContent = pdfData.text;
+                        console.log(`[pdf-to-word] Extracted ${textContent.length} chars`);
+                    } catch (parseErr) {
+                        console.log(`[pdf-to-word] pdf-parse failed: ${parseErr.message}`);
+                        textContent = 'This PDF appears to be image-based or encrypted.\nText extraction requires a text-based PDF.\nTip: Use a PDF with selectable text for best results.';
+                    }
 
                     // Build a minimal valid DOCX using Office Open XML
-                    const AdmZip = require('adm-zip');
                     const zip = new AdmZip();
-                    const paragraphs = pdfData.text
+                    const paragraphs = textContent
                         .split('\n')
                         .map(line => `<w:p><w:r><w:t xml:space="preserve">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</w:t></w:r></w:p>`)
                         .join('');
+
 
                     const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"

@@ -430,7 +430,9 @@ const ToolPage = () => {
         try {
           const j = typeof xhr.response === 'object' ? xhr.response : JSON.parse(xhr.responseText);
           msg = j?.error || msg;
+          if (j?.details) msg += ` — ${j.details}`;
         } catch (e) { }
+
         setErrorMsg(msg);
       }
       setProcessing(false); setUploading(false);
