@@ -490,20 +490,23 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                 try {
                     await new Promise((resolve, reject) => {
                         const sofficePath = getSofficeCommand();
-                        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
-                        exec(cmd, { timeout: 60000 }, (err) => {
+                        const cmd = `${sofficePath} --headless --norestore --nofirststartwizard --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
+                        console.log(`[word-to-pdf] Running: ${cmd}`);
+                        exec(cmd, { timeout: 90000 }, (err, stdout, stderr) => {
                             const outName = path.parse(inputFile).name + '.pdf';
                             const loPath = path.join(uploadDir, outName);
+                            console.log(`[word-to-pdf] soffice err=${err?.message}, loPath=${loPath}, exists=${fs.existsSync(loPath)}`);
                             if (!err && fs.existsSync(loPath)) {
                                 fs.renameSync(loPath, processedFilePath);
                                 sofficeDone = true;
                                 resolve();
                             } else {
-                                console.log('soffice error:', err?.message);
+                                console.log('[word-to-pdf] soffice failed, stdout:', stdout, 'stderr:', stderr);
                                 reject(new Error('soffice not available'));
                             }
                         });
                     });
+
 
                     // ── Remove truly blank trailing pages (robust approach) ──
                     if (sofficeDone && fs.existsSync(processedFilePath)) {
