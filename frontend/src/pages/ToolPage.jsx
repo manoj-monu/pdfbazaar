@@ -389,10 +389,11 @@ const ToolPage = () => {
 
     const simInterval = setInterval(() => {
       if (realProgressReceived) { clearInterval(simInterval); return; }
-      // Ease towards 90% but never reach it (leaves room for real events)
-      simulatedProg = Math.min(simulatedProg + (90 - simulatedProg) * (100 / estimatedMs), 89);
+      // Ease towards 99% but never reach 100% until actual finish
+      simulatedProg = Math.min(simulatedProg + (99 - simulatedProg) * (100 / estimatedMs), 99);
       setUploadProgress(Math.round(simulatedProg));
     }, 100);
+
 
     xhr.upload.onloadstart = () => { startTime = Date.now(); };
     xhr.upload.onprogress = (e) => {
@@ -597,12 +598,19 @@ const ToolPage = () => {
           </div>
           <div style={{ fontSize: '48px', fontWeight: '800', color: '#E5322D', lineHeight: 1 }}>{uploadProgress}%</div>
           <div style={{ color: '#aaa', fontSize: '13px', marginTop: '8px', letterSpacing: '1px', textTransform: 'uppercase' }}>Uploading</div>
-          {uploadSpeed > 0 && (
+          {uploadSpeed > 0 && uploadProgress < 100 ? (
             <p style={{ color: '#888', marginTop: '12px', fontSize: '13px' }}>
               {(uploadSpeed / 1024).toFixed(1)} KB/s
             </p>
+          ) : (
+            uploadProgress > 90 && (
+              <p style={{ color: '#888', marginTop: '12px', fontSize: '14px', fontStyle: 'italic', maxWidth: '350px', margin: '12px auto 0' }}>
+                Hold on, our server is receiving the file. It might take up to a minute on the first run as the server wakes up.
+              </p>
+            )
           )}
         </div>
+
       )}
 
 

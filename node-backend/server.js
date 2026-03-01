@@ -371,11 +371,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                     // Steps: try quality levels from best to worst until we hit the target
                     const attempts = [
                         { quality: '/ebook', dpi: 150 },
-                        { quality: '/screen', dpi: 120 },
                         { quality: '/screen', dpi: 96 },
-                        { quality: '/screen', dpi: 72 },
                         { quality: '/screen', dpi: 60 },
-                        { quality: '/screen', dpi: 48 },
                     ];
 
                     // If user explicitly set a custom DPI, start from that DPI
