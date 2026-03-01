@@ -634,10 +634,41 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                     });
                 });
             }
-        }
-        else {
+        } else if (['pdf-to-excel', 'pdf-to-word', 'pdf-to-ppt'].includes(toolId)) {
+            const inputFile = files[0].path;
+            const sofficePath = getSofficeCommand();
+
+            // Map toolId to LibreOffice conversion format and output extension
+            const convMap = {
+                'pdf-to-excel': { format: 'xlsx', ext: 'xlsx' },
+                'pdf-to-word': { format: 'docx', ext: 'docx' },
+                'pdf-to-ppt': { format: 'pptx', ext: 'pptx' },
+            };
+            const { format, ext: outExt } = convMap[toolId];
+            ext = outExt;
+            processedFilePath = path.join(uploadDir, `processed-${Date.now()}.${ext}`);
+
+            await new Promise((resolve, reject) => {
+                const cmd = `${sofficePath} --headless --convert-to ${format} --outdir "${uploadDir}" "${inputFile}"`;
+                console.log(`[${toolId}] Command: ${cmd}`);
+                exec(cmd, { timeout: 120000 }, (error, stdout, stderr) => {
+                    // LibreOffice outputs file with same basename as input but new extension
+                    const baseName = path.parse(inputFile).name;
+                    const loOutPath = path.join(uploadDir, `${baseName}.${format}`);
+                    if (fs.existsSync(loOutPath)) {
+                        fs.renameSync(loOutPath, processedFilePath);
+                        resolve();
+                    } else {
+                        console.error(`[${toolId}] soffice error:`, error?.message, stderr);
+                        reject(new Error(`Conversion failed. LibreOffice (soffice) may not be installed on the server. Error: ${error?.message || stderr}`));
+                    }
+                });
+            });
+
+        } else {
             processedFilePath = files[0].path;
         }
+
 
         // Return JSON with download token — client will use GET /api/download/:token
         if (fs.existsSync(processedFilePath)) {
