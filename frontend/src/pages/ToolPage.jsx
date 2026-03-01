@@ -764,6 +764,11 @@ const ToolPage = () => {
             (() => {
               const savedPct = Math.max(0, Math.round((1 - resultSize / originalSize) * 100));
               const isAlreadyOptimized = savedPct < 2;
+              const targetBytes = targetSizeMB && parseFloat(targetSizeMB) > 0
+                ? Math.round(parseFloat(targetSizeMB) * (targetSizeUnit === 'KB' ? 1024 : 1048576))
+                : null;
+              const targetMissed = targetBytes && resultSize > targetBytes;
+              const targetHit = targetBytes && resultSize <= targetBytes;
               return (
                 <>
                   <h2 style={{ fontSize: '28px', marginBottom: '8px', color: '#222' }}>
@@ -788,9 +793,21 @@ const ToolPage = () => {
                       </p>
                     </div>
                   </div>
+                  {/* Target size feedback */}
+                  {targetHit && (
+                    <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px', padding: '10px 16px', marginBottom: '8px', fontSize: '14px', color: '#166534', maxWidth: '480px' }}>
+                      ✅ Target size achieved! ({targetSizeMB} {targetSizeUnit})
+                    </div>
+                  )}
+                  {targetMissed && (
+                    <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', padding: '10px 16px', marginBottom: '8px', fontSize: '13px', color: '#92400e', maxWidth: '480px' }}>
+                      ⚠️ Target {targetSizeMB} {targetSizeUnit} fully achieve nahi hua — yeh is PDF ka maximum compression hai. Lower DPI ya Extreme mode try karein.
+                    </div>
+                  )}
                 </>
               );
             })()
+
           ) : (
             <>
               <h2 style={{ fontSize: '28px', marginBottom: '16px' }}>Success!</h2>

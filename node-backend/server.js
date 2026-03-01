@@ -330,49 +330,109 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             const inputFile = files[0].path;
             const originalSize = fs.statSync(inputFile).size;
             const isLargeFile = originalSize > 15 * 1024 * 1024; // >15MB = large
+            const gsCmd = getGsCommand();
 
-            // Determine DPI
-            const dpi = customDpi && customDpi !== 'auto' ? parseInt(customDpi) : 96;
-
-            // GS quality based on targetSizeMB or compressLevel
-            let gsQuality = '/screen';
-            if (targetSizeMB && parseFloat(targetSizeMB) > 0) {
-                const ratio = (parseFloat(targetSizeMB) * 1048576) / originalSize;
-                if (ratio > 0.7) gsQuality = '/printer';
-                else if (ratio > 0.4) gsQuality = '/ebook';
-                else gsQuality = '/screen';
-            } else {
-                if (compressLevel === 'less') gsQuality = '/ebook';
-            }
+            const runGhostscript = (srcFile, outFile, quality, dpi) => {
+                const cmd = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${quality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Bicubic -dGrayImageDownsampleType=/Bicubic -dMonoImageDownsampleType=/Subsample -dColorImageResolution=${dpi} -dGrayImageResolution=${dpi} -dMonoImageResolution=${Math.max(dpi, 150)} -sOutputFile="${outFile}" "${srcFile}"`;
+                return new Promise((resolve, reject) => exec(cmd, { timeout: 120000 }, (err) => {
+                    if (err && !fs.existsSync(outFile)) reject(err);
+                    else resolve();
+                }));
+            };
 
             let usedFastResult = false;
+            const targetBytes = targetSizeMB && parseFloat(targetSizeMB) > 0
+                ? Math.round(parseFloat(targetSizeMB) * 1048576)
+                : null;
 
-            // ── Layer 1: Fast pure-JS (only for small files <15MB) ──
-            if (!isLargeFile) {
+            // ── Layer 1: Fast pure-JS (only for small files <15MB, no target or target is easily met) ──
+            if (!isLargeFile && compressLevel !== 'extreme') {
                 try {
                     const inputBuffer = fs.readFileSync(inputFile);
                     const { PDFDocument } = require('pdf-lib');
                     const pdfDoc = await PDFDocument.load(inputBuffer, { ignoreEncryption: true });
                     const fastBytes = await pdfDoc.save({ useObjectStreams: true, addDefaultPage: false });
-                    const targetBytes = targetSizeMB ? parseFloat(targetSizeMB) * 1048576 : null;
                     const fastReduced = fastBytes.length < originalSize * 0.92;
                     const fastHitsTarget = targetBytes && fastBytes.length <= targetBytes;
-                    if ((fastReduced && compressLevel !== 'extreme' && !targetSizeMB) || fastHitsTarget) {
+                    if ((fastReduced && !targetSizeMB) || fastHitsTarget) {
                         fs.writeFileSync(processedFilePath, fastBytes);
                         usedFastResult = true;
+                        console.log(`[compress-pdf] pdf-lib fast pass: ${originalSize} → ${fastBytes.length} bytes`);
                     }
                 } catch (e) { /* fall through to GS */ }
             }
 
-            // ── Layer 2: Ghostscript (for large files or when pdf-lib not enough) ──
+            // ── Layer 2: Ghostscript ──
             if (!usedFastResult) {
-                const gsCmd = getGsCommand();
-                const command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=${gsQuality} -dNOPAUSE -dQUIET -dBATCH -dNumRenderingThreads=4 -dNOGC -dColorImageDownsampleType=/Subsample -dGrayImageDownsampleType=/Subsample -dMonoImageDownsampleType=/Subsample -dColorImageResolution=${dpi} -dGrayImageResolution=${dpi} -dMonoImageResolution=${Math.max(dpi, 150)} -sOutputFile="${processedFilePath}" "${inputFile}"`;
+                if (targetBytes) {
+                    // ── Iterative mode: try progressively lower DPI until target is met ──
+                    // Steps: try quality levels from best to worst until we hit the target
+                    const attempts = [
+                        { quality: '/ebook', dpi: 150 },
+                        { quality: '/screen', dpi: 120 },
+                        { quality: '/screen', dpi: 96 },
+                        { quality: '/screen', dpi: 72 },
+                        { quality: '/screen', dpi: 60 },
+                        { quality: '/screen', dpi: 48 },
+                    ];
 
-                await new Promise((resolve, reject) => exec(command, { timeout: 120000 }, (err) => {
-                    if (err && !fs.existsSync(processedFilePath)) reject(err);
-                    else resolve();
-                }));
+                    // If user explicitly set a custom DPI, start from that DPI
+                    const userDpi = customDpi && customDpi !== 'auto' ? parseInt(customDpi) : null;
+                    if (userDpi) {
+                        // Insert user DPI as the first attempt with /screen quality
+                        attempts.unshift({ quality: '/screen', dpi: userDpi });
+                    }
+
+                    let bestPath = null;
+                    let bestSize = Infinity;
+                    let hitTarget = false;
+
+                    for (const attempt of attempts) {
+                        const tmpPath = path.join(uploadDir, `compress-attempt-${Date.now()}-${attempt.dpi}.pdf`);
+                        try {
+                            await runGhostscript(inputFile, tmpPath, attempt.quality, attempt.dpi);
+                            if (!fs.existsSync(tmpPath)) continue;
+                            const resultSize = fs.statSync(tmpPath).size;
+                            console.log(`[compress-pdf] Attempt DPI=${attempt.dpi}: ${resultSize} bytes (target=${targetBytes})`);
+
+                            if (resultSize < bestSize) {
+                                // Clean up previous best (if any)
+                                if (bestPath && fs.existsSync(bestPath)) fs.unlinkSync(bestPath);
+                                bestSize = resultSize;
+                                bestPath = tmpPath;
+                            } else {
+                                fs.unlinkSync(tmpPath); // not better, discard
+                            }
+
+                            if (resultSize <= targetBytes) {
+                                hitTarget = true;
+                                break; // Target met — stop iterating
+                            }
+                        } catch (e) {
+                            console.warn(`[compress-pdf] Attempt DPI=${attempt.dpi} failed:`, e.message);
+                            if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+                        }
+                    }
+
+                    if (bestPath && fs.existsSync(bestPath)) {
+                        fs.renameSync(bestPath, processedFilePath);
+                        if (!hitTarget) {
+                            console.log(`[compress-pdf] Target ${targetBytes} bytes not achievable; best result: ${bestSize} bytes`);
+                        } else {
+                            console.log(`[compress-pdf] Target met! Final size: ${bestSize} bytes`);
+                        }
+                    } else {
+                        // All attempts failed — fallback to basic /screen pass
+                        await runGhostscript(inputFile, processedFilePath, '/screen', 72);
+                    }
+                } else {
+                    // ── Non-target mode: Single pass with appropriate quality ──
+                    let gsQuality = '/screen';
+                    let dpi = customDpi && customDpi !== 'auto' ? parseInt(customDpi) : 96;
+                    if (compressLevel === 'less') { gsQuality = '/ebook'; dpi = Math.max(dpi, 150); }
+                    else if (compressLevel === 'extreme') { gsQuality = '/screen'; dpi = Math.min(dpi, 72); }
+                    await runGhostscript(inputFile, processedFilePath, gsQuality, dpi);
+                }
             }
 
         } else if (toolId === 'grayscale-pdf') {
