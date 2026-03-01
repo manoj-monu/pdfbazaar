@@ -352,17 +352,43 @@ const ToolPage = () => {
 
     const xhr = new XMLHttpRequest();
     let startTime = Date.now();
-    xhr.upload.onloadstart = () => { setUploading(true); startTime = Date.now(); };
+
+    // ── Simulated progress: smoothly fills bar even if browser doesn't fire onprogress ──
+    // Estimate: ~200 KB/s upload speed as a conservative baseline
+    const totalBytes = files.reduce((s, f) => s + f.size, 0);
+    const estimatedMs = Math.max(2000, (totalBytes / (200 * 1024)) * 1000); // at least 2s
+    let simulatedProg = 0;
+    let realProgressReceived = false;
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    const simInterval = setInterval(() => {
+      if (realProgressReceived) { clearInterval(simInterval); return; }
+      // Ease towards 90% but never reach it (leaves room for real events)
+      simulatedProg = Math.min(simulatedProg + (90 - simulatedProg) * (100 / estimatedMs), 89);
+      setUploadProgress(Math.round(simulatedProg));
+    }, 100);
+
+    xhr.upload.onloadstart = () => { startTime = Date.now(); };
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
-        setUploadProgress(Math.round((e.loaded / e.total) * 100));
+        realProgressReceived = true;
+        clearInterval(simInterval);
+        const pct = Math.round((e.loaded / e.total) * 100);
+        setUploadProgress(pct);
         setUploadedBytes(e.loaded);
         const elapsed = (Date.now() - startTime) / 1000;
         setUploadSpeed(elapsed > 0 ? e.loaded / elapsed : 0);
       }
     };
-    xhr.upload.onload = () => { setUploadProgress(100); setUploading(false); };
+    xhr.upload.onload = () => {
+      clearInterval(simInterval);
+      setUploadProgress(100);
+      setTimeout(() => setUploading(false), 300);
+    };
     xhr.onload = () => {
+      clearInterval(simInterval);
       if (xhr.status >= 200 && xhr.status < 300) {
         const contentDisp = xhr.getResponseHeader('Content-Disposition');
         let filename = `pdfbazaar-${toolId}-result.pdf`;
@@ -387,7 +413,11 @@ const ToolPage = () => {
       }
       setProcessing(false); setUploading(false);
     };
-    xhr.onerror = () => { setErrorMsg('Connection failed. Please check if the server is running.'); setProcessing(false); setUploading(false); };
+    xhr.onerror = () => {
+      clearInterval(simInterval);
+      setErrorMsg('Connection failed. Please check if the server is running.');
+      setProcessing(false); setUploading(false);
+    };
     xhr.open('POST', `${BACKEND_URL}/api/process/${toolId}`);
     xhr.responseType = 'blob';
     xhr.send(formData);
@@ -488,27 +518,45 @@ const ToolPage = () => {
       {/* Upload Progress Screen (server-side) */}
       {processing && uploading && (
         <div style={{ width: '100%', maxWidth: '600px', textAlign: 'center', padding: '60px 20px' }}>
-          <h3 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '8px' }}>
-            Uploading file {files.length > 0 ? `1 of ${files.length}` : ''}
+          <h3 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '6px', color: '#222' }}>
+            Uploading file {files.length > 0 ? `1 of ${files.length}` : ''}...
           </h3>
           {files[0] && (
-            <p style={{ color: '#666', marginBottom: '24px' }}>
-              {files[0].name} ({(files[0].size / 1048576).toFixed(2)} MB)
+            <p style={{ color: '#666', marginBottom: '28px', fontSize: '14px' }}>
+              {files[0].name} &nbsp;·&nbsp; {(files[0].size / 1048576).toFixed(2)} MB
             </p>
           )}
-          {uploadSpeed > 0 && (
-            <p style={{ color: '#888', marginBottom: '12px', fontSize: '14px' }}>
-              Upload speed {(uploadSpeed / 1024).toFixed(1)} KB/S
-            </p>
-          )}
-          {/* Progress Bar */}
-          <div style={{ width: '100%', height: '8px', background: '#eee', borderRadius: '4px', overflow: 'hidden', marginBottom: '16px' }}>
-            <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#E5322D', borderRadius: '4px', transition: 'width 0.3s ease' }} />
+          {/* Progress Bar — thick with gradient + shimmer */}
+          <div style={{ width: '100%', height: '14px', background: '#f0f0f0', borderRadius: '99px', overflow: 'hidden', marginBottom: '18px', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)' }}>
+            <div style={{
+              width: `${uploadProgress}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #e5322d, #ff6b6b)',
+              borderRadius: '99px',
+              transition: 'width 0.25s ease',
+              position: 'relative',
+              overflow: 'hidden',
+              minWidth: uploadProgress > 0 ? '24px' : '0px',
+            }}>
+              {/* Shimmer animation overlay */}
+              <div style={{
+                position: 'absolute', top: 0, left: '-60%',
+                width: '50%', height: '100%',
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)',
+                animation: 'shimmer 1.2s infinite',
+              }} />
+            </div>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#222' }}>{uploadProgress}%</div>
-          <div style={{ color: '#888', fontSize: '16px', marginTop: '4px' }}>UPLOADED</div>
+          <div style={{ fontSize: '48px', fontWeight: '800', color: '#E5322D', lineHeight: 1 }}>{uploadProgress}%</div>
+          <div style={{ color: '#aaa', fontSize: '13px', marginTop: '8px', letterSpacing: '1px', textTransform: 'uppercase' }}>Uploading</div>
+          {uploadSpeed > 0 && (
+            <p style={{ color: '#888', marginTop: '12px', fontSize: '13px' }}>
+              {(uploadSpeed / 1024).toFixed(1)} KB/s
+            </p>
+          )}
         </div>
       )}
+
 
 
       {/* Processing (after upload done) */}

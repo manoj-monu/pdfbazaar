@@ -41,6 +41,17 @@
   }
 }
 
+/* Shimmer for upload progress bar */
+@keyframes shimmer {
+  0% {
+    left: -60%;
+  }
+
+  100% {
+    left: 110%;
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
