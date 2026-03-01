@@ -38,6 +38,13 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxss1 \
     libxtst6 \
+    fonts-indic \
+    fonts-noto-core \
+    fonts-noto-extra \
+    fonts-noto-ui-core \
+    ttf-dejavu \
+    ttf-ubuntu-font-family \
+    ttf-freefont \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
