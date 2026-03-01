@@ -485,8 +485,6 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             const inputFile = files[0].path;
 
             if (toolId === 'word-to-pdf') {
-                // ── Try LibreOffice first (perfect layout) ──
-                let sofficeDone = false;
                 try {
                     await new Promise((resolve, reject) => {
                         const sofficePath = getSofficeCommand();
@@ -498,41 +496,34 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                             console.log(`[word-to-pdf] soffice err=${err?.message}, loPath=${loPath}, exists=${fs.existsSync(loPath)}`);
                             if (!err && fs.existsSync(loPath)) {
                                 fs.renameSync(loPath, processedFilePath);
-                                sofficeDone = true;
                                 resolve();
                             } else {
                                 console.log('[word-to-pdf] soffice failed, stdout:', stdout, 'stderr:', stderr);
-                                reject(new Error('soffice not available'));
+                                reject(new Error(`LibreOffice Error: ${stderr || stdout || err?.message}`));
                             }
                         });
                     });
 
-
-                    // ── Remove truly blank trailing pages (robust approach) ──
-                    if (sofficeDone && fs.existsSync(processedFilePath)) {
+                    // Remove truly blank trailing pages
+                    if (fs.existsSync(processedFilePath)) {
                         try {
                             const pdfBytes = fs.readFileSync(processedFilePath);
                             const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
                             const pageCount = pdfDoc.getPageCount();
                             if (pageCount > 1) {
-                                // Helper: isolate each page into its own single-page PDF and check size.
-                                // A truly blank page (no text, no images) will produce a very small PDF (< 5KB).
-                                // A page with real content (like Aadhaar card) produces a much larger file.
                                 const isPageBlank = async (srcDoc, pageIndex) => {
                                     try {
                                         const testDoc = await PDFDocument.create();
                                         const [copiedPage] = await testDoc.copyPages(srcDoc, [pageIndex]);
                                         testDoc.addPage(copiedPage);
                                         const testBytes = await testDoc.save();
-                                        // Blank pages in PDF are typically < 5 KB
                                         return testBytes.length < 5120;
                                     } catch (e) {
-                                        return false; // On error, assume not blank (safe default)
+                                        return false;
                                     }
                                 };
 
                                 let pagesToRemove = [];
-                                // Only scan from the end, stop at first non-blank page
                                 for (let i = pageCount - 1; i >= 1; i--) {
                                     if (await isPageBlank(pdfDoc, i)) {
                                         pagesToRemove.push(i);
@@ -542,86 +533,26 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                                 }
 
                                 if (pagesToRemove.length > 0) {
-                                    // Remove in reverse order (highest index first)
                                     for (const idx of pagesToRemove) {
                                         pdfDoc.removePage(idx);
                                     }
                                     const cleaned = await pdfDoc.save();
                                     fs.writeFileSync(processedFilePath, cleaned);
                                     console.log(`Removed ${pagesToRemove.length} truly blank trailing page(s)`);
-                                } else {
-                                    console.log('No blank trailing pages found, keeping all pages.');
                                 }
                             }
                         } catch (cleanErr) {
                             console.log('Page cleanup skipped:', cleanErr.message);
                         }
                     }
-                } catch (_) { /* soffice not installed, use mammoth fallback */ }
-
-                // ── Fallback: mammoth + Puppeteer ──
-                if (!sofficeDone) {
-                    try {
-                        const mammoth = require('mammoth');
-                        const puppeteer = require('puppeteer');
-
-                        const result = await mammoth.convertToHtml(
-                            { path: inputFile },
-                            {
-                                convertImage: mammoth.images.imgElement(async (image) => {
-                                    const imageBuffer = await image.read();
-                                    const base64 = imageBuffer.toString('base64');
-                                    return { src: `data:${image.contentType};base64,${base64}` };
-                                })
-                            }
-                        );
-
-                        const htmlContent = `<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<style>
-  @page { size: A4; margin: 2cm; }
-  * { box-sizing: border-box; }
-  body { font-family: 'Calibri', 'Arial', sans-serif; font-size: 11pt; line-height: 1.5; color: #000; margin: 0; padding: 0; background: white; }
-  h1, h2, h3, h4, h5, h6 { page-break-after: avoid; page-break-inside: avoid; margin-top: 12pt; margin-bottom: 6pt; }
-  p { margin: 0 0 8pt 0; orphans: 3; widows: 3; }
-  img { max-width: 100%; height: auto; display: block; page-break-inside: avoid; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 12pt; page-break-inside: avoid; }
-  td, th { border: 1px solid #ccc; padding: 6pt 8pt; vertical-align: top; word-wrap: break-word; }
-  th { background-color: #f2f2f2; font-weight: bold; }
-  ul, ol { margin: 0 0 8pt 20pt; page-break-inside: avoid; }
-  li { margin-bottom: 4pt; }
-  br:last-child { display: none; }
-  [style*="background"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-</style></head>
-<body>${result.value}</body></html>`;
-
-                        const browser = await puppeteer.launch({
-                            headless: 'new',
-                            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-                        });
-                        const page = await browser.newPage();
-                        try {
-                            await page.setContent(htmlContent, { waitUntil: 'networkidle2', timeout: 30000 });
-                            await page.pdf({
-                                path: processedFilePath,
-                                format: 'A4',
-                                margin: { top: '2cm', right: '1.5cm', bottom: '2cm', left: '1.5cm' },
-                                printBackground: true,
-                                preferCSSPageSize: false
-                            });
-                        } finally {
-                            await browser.close();
-                        }
-                    } catch (convErr) {
-                        console.error('Word-to-PDF Error:', convErr);
-                        return res.status(500).json({
-                            error: 'Processing Error',
-                            details: 'Could not convert Word to PDF. Please ensure the file is a valid .docx file.'
-                        });
-                    }
+                } catch (err) {
+                    return res.status(500).json({
+                        error: 'LibreOffice Error',
+                        details: err.message
+                    });
                 }
             } else {
-                // For Excel and PPT, we still need soffice as there isn't a reliable JS only fallback as simple as mammoth
+                // For Excel and PPT
                 const command = `soffice --headless --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
                 await new Promise((resolve, reject) => {
                     exec(command, (error, stdout, stderr) => {
