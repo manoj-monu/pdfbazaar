@@ -8,7 +8,7 @@ const Footer = () => {
                 <div className="footer-grid">
                     <div className="footer-col" style={{ gridColumn: 'span 2' }}>
                         <Link to="/" className="nav-brand" style={{ marginBottom: '24px' }}>
-                            <img src="/logo.png" alt="PDFbazaar" style={{ height: '105px', objectFit: 'contain' }} />
+                            <img src="/logo.png" alt="PDFbazaar" style={{ height: '80px', width: 'auto', objectFit: 'contain' }} />
                         </Link>
                         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.6' }}>
                             Every tool you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.

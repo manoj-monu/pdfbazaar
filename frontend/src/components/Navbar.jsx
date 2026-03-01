@@ -9,7 +9,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="container nav-container">
                 <Link to="/" className="nav-brand">
-                    <img src="/logo.png" alt="PDFbazaar" style={{ height: '95px', objectFit: 'contain' }} />
+                    <img src="/logo.png" alt="PDFbazaar" style={{ height: '65px', width: 'auto', objectFit: 'contain' }} />
                 </Link>
 
                 <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
