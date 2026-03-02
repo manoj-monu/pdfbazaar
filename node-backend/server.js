@@ -619,15 +619,18 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                 // For Excel and PPT
                 const sofficePath = getSofficeCommand();
                 const command = `${sofficePath} --headless --norestore --nofirststartwizard --convert-to pdf --outdir "${uploadDir}" "${inputFile}"`;
+                console.log(`[excel/ppt-to-pdf] Running: ${command}`);
                 await new Promise((resolve, reject) => {
-                    exec(command, (error, stdout, stderr) => {
+                    exec(command, { timeout: 90000 }, (error, stdout, stderr) => {
                         const outName = path.parse(inputFile).name + '.pdf';
                         const loPath = path.join(uploadDir, outName);
-                        if (fs.existsSync(loPath)) {
+                        console.log(`[excel/ppt-to-pdf] soffice error=${error?.message}, loPath=${loPath}, exists=${fs.existsSync(loPath)}`);
+                        if (!error && fs.existsSync(loPath)) {
                             fs.renameSync(loPath, processedFilePath);
                             resolve();
                         } else {
-                            reject(new Error('Office conversion failed. Ensure LibreOffice (soffice) is installed.'));
+                            console.log('[excel/ppt-to-pdf] soffice failed, stdout:', stdout, 'stderr:', stderr);
+                            reject(new Error(`LibreOffice Error: ${stderr || stdout || error?.message || 'File not generated'}`));
                         }
                     });
                 });
