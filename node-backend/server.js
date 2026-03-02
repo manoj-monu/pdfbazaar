@@ -303,6 +303,11 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             return res.status(400).json({ error: 'No files uploaded.' });
         }
 
+        if (files.some(f => f.size === 0)) {
+            files.forEach(f => { if (fs.existsSync(f.path)) fs.unlinkSync(f.path); });
+            return res.status(400).json({ error: 'Uploaded file is empty (0.0 KB). Please select a valid file containing data.' });
+        }
+
         console.log(`Processing tool [${toolId}] with ${files.length} files.`);
 
         // Determine tool category based on toolId
@@ -630,7 +635,8 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                             resolve();
                         } else {
                             console.log('[excel/ppt-to-pdf] soffice failed, stdout:', stdout, 'stderr:', stderr);
-                            reject(new Error(`LibreOffice Error: ${stderr || stdout || error?.message || 'File not generated'}`));
+                            let cleanErr = (stderr || stdout || error?.message || 'File not generated').replace(/Warning: failed to launch javaldx - java may not function correctly/gi, '').trim();
+                            reject(new Error(`LibreOffice Error: ${cleanErr}`));
                         }
                     });
                 });
