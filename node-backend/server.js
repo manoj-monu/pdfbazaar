@@ -658,7 +658,10 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
             let libreOfficeDone = false;
             try {
                 await new Promise((resolve, reject) => {
-                    const cmd = `${sofficePath} --headless --norestore --nofirststartwizard --convert-to ${format} --outdir "${uploadDir}" "${inputFile}"`;
+                    let infilterObj = '';
+                    if (toolId === 'pdf-to-word') infilterObj = '--infilter="writer_pdf_import"';
+                    if (toolId === 'pdf-to-ppt') infilterObj = '--infilter="impress_pdf_import"';
+                    const cmd = `${sofficePath} --headless --norestore --nofirststartwizard ${infilterObj} --convert-to ${format} --outdir "${uploadDir}" "${inputFile}"`;
                     console.log(`[${toolId}] Trying soffice: ${cmd}`);
                     exec(cmd, { timeout: 120000 }, (error, stdout, stderr) => {
                         const baseName = path.parse(inputFile).name;
