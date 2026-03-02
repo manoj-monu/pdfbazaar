@@ -678,6 +678,10 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
 
             // ── JS Fallback: pdf-parse + xlsx (no external tools needed) ──
             if (!libreOfficeDone) {
+                if (toolId === 'pdf-to-word' || toolId === 'pdf-to-ppt') {
+                    throw new Error(`PDF to ${format.toUpperCase()} requires LibreOffice on the server. Please contact support or install it.`);
+                }
+
                 if (toolId === 'pdf-to-excel') {
                     const XLSX = require('xlsx');
                     let rows = [];
