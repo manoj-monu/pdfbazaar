@@ -80,7 +80,10 @@ export default function ToolProcessor({ tools }) {
     const isMultiple = tool.id === 'merge' || tool.id === 'jpg-to-pdf';
     let acceptedTypes = 'application/pdf';
     if (tool.id === 'jpg-to-pdf') acceptedTypes = 'image/jpeg,image/png';
-    if (tool.id === 'word-to-pdf') acceptedTypes = '.docx';
+    if (tool.id === 'word-to-pdf') acceptedTypes = '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    if (tool.id === 'excel-to-pdf') acceptedTypes = '.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    if (tool.id === 'ppt-to-pdf') acceptedTypes = '.ppt,.pptx,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation';
+    if (tool.id === 'html-to-pdf') acceptedTypes = '.html,.htm';
 
     let extension = 'pdf';
     if (tool.id === 'split' || tool.id === 'pdf-to-jpg') extension = 'zip';

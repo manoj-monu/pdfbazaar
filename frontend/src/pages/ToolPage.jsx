@@ -87,13 +87,15 @@ const ToolPage = () => {
     setErrorMsg(null);
   }, []);
 
+  let acceptedTypes = { 'application/pdf': ['.pdf'] };
+  if (toolId === 'word-to-pdf') acceptedTypes = { 'application/msword': ['.doc'], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'] };
+  else if (toolId === 'excel-to-pdf') acceptedTypes = { 'application/vnd.ms-excel': ['.xls'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] };
+  else if (toolId === 'ppt-to-pdf') acceptedTypes = { 'application/vnd.ms-powerpoint': ['.ppt'], 'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'] };
+  else if (toolId === 'jpg-to-pdf') acceptedTypes = { 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'] };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      ...(toolId.includes('jpg') ? { 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'] } : {}),
-      ...(toolId.includes('word') ? { 'application/msword': ['.doc'], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'] } : {}),
-    }
+    accept: acceptedTypes
   });
 
   const removeFile = (index) => {
