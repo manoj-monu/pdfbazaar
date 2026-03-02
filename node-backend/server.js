@@ -311,7 +311,7 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
         console.log(`Processing tool [${toolId}] with ${files.length} files.`);
 
         // Determine tool category based on toolId
-        const isPdfLibTool = ['merge-pdf', 'split-pdf', 'add-watermark', 'rotate-pdf', 'delete-pdf-pages', 'jpg-to-pdf', 'add-page-numbers', 'pdf-to-txt', 'pdf-to-word', 'crop-pdf', 'resize-pdf'].includes(toolId);
+        const isPdfLibTool = ['merge-pdf', 'split-pdf', 'add-watermark', 'rotate-pdf', 'delete-pdf-pages', 'jpg-to-pdf', 'add-page-numbers', 'crop-pdf', 'resize-pdf'].includes(toolId);
 
         let ext = 'pdf';
         let processedFilePath = path.join(uploadDir, `processed-${Date.now()}.${ext}`);
