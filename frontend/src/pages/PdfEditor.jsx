@@ -82,34 +82,77 @@ const PdfEditor = () => {
         } else if (mode === 'edit-text') {
             if (e.target.tagName.toLowerCase() === 'span') {
                 const span = e.target;
-                const spanRect = span.getBoundingClientRect();
-
-                // Use CLICK position for Y (accurate to what user sees on canvas)
-                // Use span's left for X (start of the word/text)
-                const x = spanRect.left - rect.left;
-                const y = e.clientY - rect.top - spanRect.height / 2;
-
                 const compStyle = window.getComputedStyle(span);
+                const spanRect = span.getBoundingClientRect();
+                const pageRect = pageRef.current.getBoundingClientRect();
                 const size = parseFloat(compStyle.fontSize) || 12;
+                const editId = Date.now().toString();
 
-                const newEdit = {
-                    id: Date.now().toString(),
+                // ✅ PROFESSIONAL METHOD: Create input inside span.parentNode
+                // with SAME CSS transform → pixel-perfect positioning!
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = span.textContent.trim();
+
+                const spanTransform = compStyle.transform;
+                Object.assign(input.style, {
+                    position: 'absolute',
+                    left: '0px',
+                    top: '0px',
+                    transform: spanTransform !== 'none' ? spanTransform : '',
+                    transformOrigin: '0% 0%',
+                    width: Math.max(spanRect.width, 80) + 'px',
+                    height: Math.max(spanRect.height, size * 1.4) + 'px',
+                    fontSize: compStyle.fontSize,
+                    fontFamily: compStyle.fontFamily,
+                    border: '1.5px dashed #E5322D',
+                    background: 'rgba(255,255,255,0.98)',
+                    outline: 'none',
+                    zIndex: '200',
+                    padding: '0',
+                    margin: '0',
+                    boxSizing: 'border-box',
+                    color: '#000',
+                    whiteSpace: 'pre',
+                    minWidth: '60px',
+                });
+
+                span.style.visibility = 'hidden';
+                span.parentNode.appendChild(input);
+                input.focus();
+                input.select();
+
+                const editData = {
+                    id: editId,
                     text: span.textContent.trim(),
-                    x,
-                    y: Math.max(0, y),
-                    width: Math.max(spanRect.width, 60),
+                    x: spanRect.left - pageRect.left,
+                    y: spanRect.top - pageRect.top,
+                    width: spanRect.width,
                     height: spanRect.height,
                     size
                 };
 
-                // Hide original text by making it transparent
-                span.style.color = 'transparent';
+                setEdits(prev => ({ ...prev, [pageIndex]: [...(prev[pageIndex] || []), editData] }));
+                setActiveTextId(editId);
 
-                setEdits(prev => ({
-                    ...prev,
-                    [pageIndex]: [...(prev[pageIndex] || []), newEdit]
-                }));
-                setActiveTextId(newEdit.id);
+                input.addEventListener('input', (evt) => {
+                    setEdits(prev => ({
+                        ...prev,
+                        [pageIndex]: (prev[pageIndex] || []).map(ed =>
+                            ed.id === editId ? { ...ed, text: evt.target.value } : ed
+                        )
+                    }));
+                });
+
+                input.addEventListener('blur', () => {
+                    span.textContent = input.value;
+                    span.style.visibility = 'visible';
+                    input.remove();
+                    setActiveTextId(null);
+                });
+
+                e.stopPropagation();
+                return;
             } else {
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
@@ -549,49 +592,7 @@ const PdfEditor = () => {
                                         </div>
                                     ))}
 
-                                    {/* Overlay for edits on this page (modifying existing text) */}
-                                    {(edits[currentPage] || []).map(e => (
-                                        <div key={e.id} style={{
-                                            position: 'absolute',
-                                            left: e.x,
-                                            top: e.y,
-                                            width: e.width,
-                                            height: e.height,
-                                            border: activeTextId === e.id ? '1px dashed #E5322D' : 'none',
-                                            backgroundColor: '#fff', // whiteout background
-                                            zIndex: 25,
-                                            transform: `rotate(-${rotatedPages[currentPage] || 0}deg)`
-                                        }}
-                                            onClick={(evt) => { evt.stopPropagation(); setActiveTextId(e.id); }}
-                                        >
-                                            <input
-                                                type="text"
-                                                value={e.text}
-                                                onChange={(evt) => handleTextChange(currentPage, e.id, evt.target.value, true)}
-                                                style={{
-                                                    background: 'transparent',
-                                                    border: 'none',
-                                                    outline: 'none',
-                                                    fontSize: `${e.size}px`,
-                                                    fontFamily: 'Helvetica, sans-serif',
-                                                    color: 'black',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    margin: 0,
-                                                    padding: 0
-                                                }}
-                                                autoFocus={activeTextId === e.id}
-                                            />
-                                            {activeTextId === e.id && (
-                                                <button
-                                                    onClick={(evt) => { evt.stopPropagation(); setEdits(prev => ({ ...prev, [currentPage]: prev[currentPage].filter(i => i.id !== e.id) })); }}
-                                                    style={{ position: 'absolute', right: '-20px', top: '-10px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}
-                                                >
-                                                    <X size={12} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
+                                    {/* Edit overlays handled via direct DOM in span.parentNode for exact positioning */}
 
                                     {/* Realtime Canvas Overlay for Drawings */}
                                     <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
