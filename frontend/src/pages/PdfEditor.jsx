@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFDocument, rgb, degrees } from 'pdf-lib';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { UploadCloud, FileText, ArrowRight, Loader2, Type, Image as ImageIcon, Download, Trash2, Edit3, X, CheckCircle, RotateCw, Settings, Shield, ZoomIn, ZoomOut } from 'lucide-react';
+import { UploadCloud, FileText, ArrowRight, Loader2, Type, Image as ImageIcon, Download, Trash2, Edit3, X, CheckCircle, RotateCw, Settings, Shield, ZoomIn, ZoomOut, MousePointer2, Undo, Redo, Eraser, Highlighter, Pencil, Circle, PenTool, StickyNote, Link, MoreHorizontal, Layout, Copy, Scissors, Square, Grid } from 'lucide-react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -503,49 +503,120 @@ const PdfEditor = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#f5f5f5' }}>
-            {/* Top Toolbar */}
-            <div style={{ height: '60px', background: '#333', color: 'white', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between', zIndex: 10 }}>
+            {/* Top Navbar */}
+            <div style={{ height: '60px', background: '#fff', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', padding: '0 20px', justifyContent: 'space-between', zIndex: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <strong style={{ fontSize: '18px' }}>Pro PDF Editor</strong>
-                    <span style={{ color: '#aaa', fontSize: '12px' }}>{file.name}</span>
+                    <strong style={{ fontSize: '24px', color: '#E5322D', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FileText size={28} /> Pdfbazaar.com
+                    </strong>
+                    <div style={{ border: '1px solid #ddd', borderRadius: '4px', padding: '4px 12px', fontSize: '13px', color: '#555', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Edit3 size={14} /> {file.name}
+                    </div>
                 </div>
 
-                {/* Editor Tools */}
-                <div style={{ display: 'flex', gap: '15px' }}>
-                    <button onClick={() => setMode('view')} style={{ padding: '8px', background: mode === 'view' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Edit3 size={16} /> Select
-                    </button>
-                    <button onClick={() => setMode('text')} style={{ padding: '8px', background: mode === 'text' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Type size={16} /> Add Text
-                    </button>
-                    <button onClick={() => setMode('edit-text')} style={{ padding: '8px', background: mode === 'edit-text' ? '#e5322d' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Type size={16} /> Edit Text
-                    </button>
-                    <button onClick={() => setMode('draw')} style={{ padding: '8px', background: mode === 'draw' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Edit3 size={16} /> Draw
-                    </button>
-                    <button onClick={() => setMode('highlight')} style={{ padding: '8px', background: mode === 'highlight' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Edit3 size={16} /> Highlight
-                    </button>
-                    <div style={{ width: '1px', background: '#666', margin: '0 10px' }} />
-                    <button onClick={rotateCurrentPage} style={{ padding: '8px', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <RotateCw size={16} /> Rotate Page
-                    </button>
-                    <button onClick={deleteCurrentPage} style={{ padding: '8px', background: 'transparent', border: 'none', color: '#ff6b6b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Trash2 size={16} /> Delete Page
-                    </button>
-                    <button onClick={performOcr} style={{ padding: '8px', background: 'transparent', border: '1px solid #666', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }} disabled={loading}>
-                        {loading ? <Loader2 size={16} className="animate-spin" /> : <Settings size={16} />} OCR (Scanner to Text)
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ display: 'flex', gap: '15px', color: '#555' }}>
+                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '11px', gap: '4px' }}><Loader2 size={18} /> Search</button>
+                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '11px', gap: '4px' }}><Layout size={18} /> Print</button>
+                        <button onClick={downloadPdf} disabled={loading} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '11px', gap: '4px', color: '#555' }}>
+                            {loading ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />}
+                            Download
+                        </button>
+                    </div>
+                    <button onClick={downloadPdf} disabled={loading} style={{ background: '#E5322D', color: '#fff', border: 'none', padding: '8px 24px', borderRadius: '6px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
+                        DONE
                     </button>
                 </div>
+            </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <input type="password" placeholder="Add Password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '6px 12px', borderRadius: '4px', border: 'none', fontSize: '12px' }} />
-                    <button className="btn btn-primary" onClick={downloadPdf} disabled={loading} style={{ background: '#E5322D', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
-                        Save PDF
-                    </button>
-                </div>
+            {/* Tools Toolbar (White) */}
+            <div style={{ background: '#fff', borderBottom: '1px solid #ddd', padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '15px', overflowX: 'auto', zIndex: 9, minHeight: '65px' }}>
+                <style>
+                    {`
+                    .toolbar-btn {
+                        background: transparent; border: none; border-radius: 4px; padding: 6px 8px; cursor: pointer;
+                        display: flex; flexDirection: column; align-items: center; justify-content: center; gap: 4px;
+                        color: #555; font-size: 11px; min-width: 60px; transition: all 0.2s;
+                    }
+                    .toolbar-btn:hover { background: #f0f0f0; }
+                    .toolbar-btn.active { color: #E5322D; background: #fff0f0; }
+                    .toolbar-btn.active svg { stroke: #E5322D; }
+                    .toolbar-divider { width: 1px; height: 30px; background: #ddd; margin: 0 5px; }
+                    `}
+                </style>
+
+                <button className="toolbar-btn" onClick={() => { }} /* Toggle Thumbnails */ >
+                    <Grid size={20} /> Thumbnails
+                </button>
+                <div className="toolbar-divider" />
+
+                <button className={`toolbar-btn ${mode === 'view' ? 'active' : ''}`} onClick={() => setMode('view')}>
+                    <MousePointer2 size={20} /> Move
+                </button>
+                <button className="toolbar-btn">
+                    <Undo size={20} /> Undo
+                </button>
+                <button className="toolbar-btn">
+                    <Redo size={20} /> Redo
+                </button>
+
+                <div className="toolbar-divider" />
+
+                <button className={`toolbar-btn ${mode === 'text' ? 'active' : ''}`} onClick={() => setMode('text')}>
+                    <Type size={20} /> Add Text
+                </button>
+                <button className={`toolbar-btn ${mode === 'edit-text' ? 'active' : ''}`} onClick={() => setMode('edit-text')}>
+                    <Edit3 size={20} /> Edit text
+                </button>
+                <button className={`toolbar-btn ${mode === 'eraser' ? 'active' : ''}`} onClick={() => setMode('eraser')}>
+                    <Eraser size={20} /> Eraser
+                </button>
+                <button className={`toolbar-btn ${mode === 'highlight' ? 'active' : ''}`} onClick={() => setMode('highlight')}>
+                    <Highlighter size={20} /> Highlight
+                </button>
+                <button className={`toolbar-btn ${mode === 'draw' ? 'active' : ''}`} onClick={() => setMode('draw')}>
+                    <Pencil size={20} /> Pencil
+                </button>
+
+                <div className="toolbar-divider" />
+
+                <button className="toolbar-btn">
+                    <ImageIcon size={20} /> Image
+                </button>
+                <button className="toolbar-btn">
+                    <Circle size={20} /> Ellipse
+                </button>
+                <button className="toolbar-btn">
+                    <X size={20} /> Cross
+                </button>
+                <button className="toolbar-btn">
+                    <CheckCircle size={20} /> Check
+                </button>
+                <button className="toolbar-btn">
+                    <PenTool size={20} /> Sign
+                </button>
+
+                <div className="toolbar-divider" />
+
+                <button className="toolbar-btn">
+                    <StickyNote size={20} /> Annotations
+                </button>
+                <button className="toolbar-btn">
+                    <Link size={20} /> Links
+                </button>
+                <button className="toolbar-btn">
+                    <MoreHorizontal size={20} /> More tools
+                </button>
+
+                <div className="toolbar-divider" />
+
+                <button className="toolbar-btn">
+                    <Layout size={20} /> Page layout
+                </button>
+                <button className="toolbar-btn">
+                    <Copy size={20} /> Manage Pages
+                </button>
             </div>
 
             {/* Main Workspace */}
