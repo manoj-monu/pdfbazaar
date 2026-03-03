@@ -80,8 +80,13 @@ const PdfEditor = () => {
             setMode('view');
             setActiveTextId(newText.id);
         } else if (mode === 'edit-text') {
-            if (e.target.tagName.toLowerCase() === 'span') {
-                const span = e.target;
+            // Find span - target itself or nearest span ancestor
+            const span = (e.target.tagName.toLowerCase() === 'span')
+                ? e.target
+                : e.target.closest('span');
+
+            if (span && span.closest('.textLayer, .react-pdf__Page__textContent')) {
+                e.preventDefault(); // prevent default browser selection behavior
                 const compStyle = window.getComputedStyle(span);
                 const spanRect = span.getBoundingClientRect();
                 const pageRect = pageRef.current.getBoundingClientRect();
@@ -119,8 +124,9 @@ const PdfEditor = () => {
 
                 span.style.visibility = 'hidden';
                 span.parentNode.appendChild(input);
-                input.focus();
-                input.select();
+
+                // Use setTimeout to ensure DOM is ready before focusing
+                setTimeout(() => { input.focus(); input.select(); }, 10);
 
                 const editData = {
                     id: editId,
@@ -151,7 +157,6 @@ const PdfEditor = () => {
                     setActiveTextId(null);
                 });
 
-                e.stopPropagation();
                 return;
             } else {
                 const x = e.clientX - rect.left;
@@ -539,10 +544,13 @@ const PdfEditor = () => {
                                 >
                                     <style>
                                         {`
+                                            /* react-pdf v10+ uses 'textLayer', older uses 'react-pdf__Page__textContent' */
+                                            .pdf-page-container.edit-text .textLayer span,
                                             .pdf-page-container.edit-text .react-pdf__Page__textContent span {
-                                                cursor: text;
-                                                pointer-events: auto;
+                                                cursor: text !important;
+                                                pointer-events: auto !important;
                                             }
+                                            .pdf-page-container.edit-text .textLayer span:hover,
                                             .pdf-page-container.edit-text .react-pdf__Page__textContent span:hover {
                                                 outline: 1px dashed red;
                                                 background-color: rgba(229, 50, 45, 0.1);
