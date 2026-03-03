@@ -84,19 +84,20 @@ const PdfEditor = () => {
                 const span = e.target;
                 const spanRect = span.getBoundingClientRect();
 
-                // Use pageRef for the container rect (most accurate)
+                // Use CLICK position for Y (accurate to what user sees on canvas)
+                // Use span's left for X (start of the word/text)
                 const x = spanRect.left - rect.left;
-                const y = spanRect.top - rect.top;
+                const y = e.clientY - rect.top - spanRect.height / 2;
 
                 const compStyle = window.getComputedStyle(span);
                 const size = parseFloat(compStyle.fontSize) || 12;
 
                 const newEdit = {
                     id: Date.now().toString(),
-                    text: span.textContent,
+                    text: span.textContent.trim(),
                     x,
-                    y,
-                    width: spanRect.width,
+                    y: Math.max(0, y),
+                    width: Math.max(spanRect.width, 60),
                     height: spanRect.height,
                     size
                 };
