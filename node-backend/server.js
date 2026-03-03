@@ -3,6 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 const { PDFDocument, rgb, degrees } = require('pdf-lib');
 const fontkit = require('@pdf-lib/fontkit');
 const { exec } = require('child_process');
@@ -889,18 +890,24 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
         const pdfBuffer = fs.readFileSync(req.file.path);
         const pdfDoc = await PDFDocument.load(pdfBuffer, { ignoreEncryption: true });
 
-        // 🔹 Support Hindi / Custom Fonts
+        // 🔹 Support All Languages via Google Noto Fonts
         pdfDoc.registerFontkit(fontkit);
-        const fontPath = path.join(__dirname, 'fonts', 'NotoSansDevanagari-Regular.ttf');
+        const FONT_MAP = [
+            { regex: /[\u0980-\u09FF]/, name: 'NotoSansBengali', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf' },
+            { regex: /[\u0A80-\u0AFF]/, name: 'NotoSansGujarati', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansGujarati/NotoSansGujarati-Regular.ttf' },
+            { regex: /[\u0B00-\u0B7F]/, name: 'NotoSansOriya', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansOriya/NotoSansOriya-Regular.ttf' },
+            { regex: /[\u0B80-\u0BFF]/, name: 'NotoSansTamil', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansTamil/NotoSansTamil-Regular.ttf' },
+            { regex: /[\u0C00-\u0C7F]/, name: 'NotoSansTelugu', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansTelugu/NotoSansTelugu-Regular.ttf' },
+            { regex: /[\u0C80-\u0CFF]/, name: 'NotoSansKannada', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansKannada/NotoSansKannada-Regular.ttf' },
+            { regex: /[\u0D00-\u0D7F]/, name: 'NotoSansMalayalam', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansMalayalam/NotoSansMalayalam-Regular.ttf' },
+            { regex: /[\u0A00-\u0A7F]/, name: 'NotoSansGurmukhi', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansGurmukhi/NotoSansGurmukhi-Regular.ttf' },
+            { regex: /[\u0600-\u06FF\u0750-\u077F]/, name: 'NotoSansArabic', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf' },
+            { regex: /[\u0900-\u097F]/, name: 'NotoSansDevanagari', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Regular.ttf' },
+            { regex: /[\u4E00-\u9FFF]/, name: 'NotoSansSC', url: 'https://raw.githubusercontent.com/googlefonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansSC-Regular.otf' },
+            { regex: /.*/, name: 'NotoSans', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf' }
+        ];
 
-        let customFont;
-        if (fs.existsSync(fontPath)) {
-            const fontBytes = fs.readFileSync(fontPath);
-            customFont = await pdfDoc.embedFont(fontBytes);
-        } else {
-            console.warn('[Warning] Missing NotoSansDevanagari font, falling back to Helvetica');
-            customFont = await pdfDoc.embedFont('Helvetica');
-        }
+        const embeddedFonts = {};
 
         const pages = pdfDoc.getPages();
 
@@ -944,11 +951,46 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
 
             // 2. Draw new text at exact same position
             if (newText.trim()) {
+                // Find custom font for this text
+                let fontInfo = FONT_MAP[FONT_MAP.length - 1]; // Default
+                for (const map of FONT_MAP) {
+                    if (map.regex.test(newText)) {
+                        fontInfo = map;
+                        break;
+                    }
+                }
+
+                if (!embeddedFonts[fontInfo.name]) {
+                    const fontPath = path.join(__dirname, 'fonts', fontInfo.name + (fontInfo.url.endsWith('.otf') ? '.otf' : '.ttf'));
+                    if (!fs.existsSync(fontPath)) {
+                        console.log(`[Font] Downloading ${fontInfo.name} for required language...`);
+                        if (!fs.existsSync(path.join(__dirname, 'fonts'))) fs.mkdirSync(path.join(__dirname, 'fonts'));
+                        await new Promise((resolve, reject) => {
+                            const file = fs.createWriteStream(fontPath);
+                            function fetchUrl(url) {
+                                https.get(url, (response) => {
+                                    if (response.statusCode === 301 || response.statusCode === 302) return fetchUrl(response.headers.location);
+                                    if (response.statusCode !== 200) return reject(new Error(`Failed to download font: ${response.statusCode}`));
+                                    response.pipe(file);
+                                    file.on('finish', () => { file.close(); resolve(); });
+                                }).on('error', (err) => {
+                                    fs.unlink(fontPath, () => { });
+                                    reject(err);
+                                });
+                            }
+                            fetchUrl(fontInfo.url);
+                        });
+                    }
+                    const fontBytes = fs.readFileSync(fontPath);
+                    embeddedFonts[fontInfo.name] = await pdfDoc.embedFont(fontBytes);
+                }
+                const activeCustomFont = embeddedFonts[fontInfo.name];
+
                 page.drawText(newText, {
                     x: finalX,
                     y: finalY + 2,
                     size: finalSize,
-                    font: customFont,
+                    font: activeCustomFont,
                     color: rgb(0, 0, 0),
                 });
             }
