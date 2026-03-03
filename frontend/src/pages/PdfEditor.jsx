@@ -30,9 +30,11 @@ const PdfEditor = () => {
     const [deletedPages, setDeletedPages] = useState(new Set());
     const [rotatedPages, setRotatedPages] = useState({});
     const [password, setPassword] = useState('');
-    // Sejda-style inline edits - array of {id, pageIndex, x, y, width, height, originalText, newText, fontSize, renderedWidth, renderedHeight}
+    // Adobe-style: inline edits with EXACT PDF coordinates
     const [inlineEdits, setInlineEdits] = useState([]);
     const [applyingSaving, setApplyingSaving] = useState(false);
+    // PDF text items extracted via pdfjs getTextContent() - exact PDF coords
+    const [pdfTextItems, setPdfTextItems] = useState({}); // { pageNum: [{str, x, y, width, height, fontSize}] }
 
     const containerRef = useRef();
     const pageRef = useRef();
@@ -48,6 +50,8 @@ const PdfEditor = () => {
             setRotatedPages({});
             setTexts({});
             setEdits({});
+            setInlineEdits([]);
+            setPdfTextItems({});
             setResultBlob(null);
         }
     }, []);
@@ -58,6 +62,44 @@ const PdfEditor = () => {
         multiple: false,
         maxSize: 25 * 1024 * 1024
     });
+
+    // ─── Adobe Method: Extract text items with exact PDF coordinates ───
+    const extractTextItems = async (pageNum) => {
+        if (pdfTextItems[pageNum]) return; // already extracted
+        if (!file) return;
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+            const page = await pdf.getPage(pageNum);
+            const textContent = await page.getTextContent();
+            const viewport = page.getViewport({ scale: 1 });
+
+            const items = textContent.items.map(item => {
+                // item.transform = [scaleX, skewX, skewY, scaleY, translateX, translateY]
+                const tx = item.transform[4]; // exact PDF X coordinate
+                const ty = item.transform[5]; // exact PDF Y coordinate (from bottom)
+                const fontSize = Math.abs(item.transform[3]); // scaleY = fontSize
+                const textWidth = item.width;
+                const textHeight = item.height || fontSize;
+
+                return {
+                    str: item.str,
+                    pdfX: tx,                    // exact PDF X (from left)
+                    pdfY: ty,                    // exact PDF Y (from bottom)
+                    pdfWidth: textWidth,         // exact width in PDF points
+                    pdfHeight: textHeight,       // exact height in PDF points
+                    fontSize: fontSize,
+                    pageWidth: viewport.width,   // PDF page width in points
+                    pageHeight: viewport.height, // PDF page height in points
+                };
+            }).filter(item => item.str.trim().length > 0);
+
+            setPdfTextItems(prev => ({ ...prev, [pageNum]: items }));
+            console.log(`[extractTextItems] Page ${pageNum}: ${items.length} text items extracted`);
+        } catch (err) {
+            console.error('[extractTextItems] Error:', err);
+        }
+    };
 
     const handlePointerDown = (e, pageIndex) => {
         // Always use pageRef for accurate coordinates relative to the page container
@@ -89,37 +131,46 @@ const PdfEditor = () => {
 
             if (span && span.closest('.textLayer, .react-pdf__Page__textContent')) {
                 e.preventDefault();
+                const spanText = span.textContent.trim();
                 const spanRect = span.getBoundingClientRect();
                 const pageRect = pageRef.current.getBoundingClientRect();
 
-                // Use CLICK position (where user sees text) - no movement!
-                const clickX = e.clientX - pageRect.left;
-                const clickY = e.clientY - pageRect.top;
+                // ✅ ADOBE METHOD: Find matching textItem with exact PDF coordinates
+                const pageItems = pdfTextItems[currentPage] || [];
+                let matchedItem = pageItems.find(item => item.str.trim() === spanText);
+
+                // If exact match not found, try partial match
+                if (!matchedItem) {
+                    matchedItem = pageItems.find(item =>
+                        item.str.trim().includes(spanText) || spanText.includes(item.str.trim())
+                    );
+                }
 
                 const editId = Date.now().toString();
-                const fontSize = parseFloat(window.getComputedStyle(span).fontSize) || 12;
+                const fontSize = matchedItem ? matchedItem.fontSize : (parseFloat(window.getComputedStyle(span).fontSize) || 12);
 
                 const newEdit = {
                     id: editId,
                     pageIndex: pageIndex - 1,
-                    x: clickX - spanRect.width / 2,  // center on click
-                    y: clickY - fontSize,
-                    width: Math.max(spanRect.width, 120),
-                    height: spanRect.height,
-                    originalText: span.textContent.trim(),
-                    newText: span.textContent.trim(),
+                    originalText: spanText,
+                    newText: spanText,
                     fontSize,
-                    renderedWidth: pageRect.width,
-                    renderedHeight: pageRect.height,
+                    // ✅ EXACT PDF coordinates - no conversion needed!
+                    pdfX: matchedItem ? matchedItem.pdfX : 0,
+                    pdfY: matchedItem ? matchedItem.pdfY : 0,
+                    pdfWidth: matchedItem ? matchedItem.pdfWidth : spanRect.width,
+                    pdfHeight: matchedItem ? matchedItem.pdfHeight : fontSize,
+                    // Rendered coords for inline overlay display
+                    displayX: spanRect.left - pageRect.left,
+                    displayY: spanRect.top - pageRect.top,
+                    displayWidth: spanRect.width,
+                    displayHeight: spanRect.height,
+                    hasMatch: !!matchedItem,
                 };
-
-                // Correct x to not go negative
-                newEdit.x = Math.max(0, newEdit.x);
-                newEdit.y = Math.max(0, newEdit.y);
 
                 setInlineEdits(prev => [...prev, newEdit]);
                 setActiveTextId(editId);
-                span.style.color = 'transparent'; // hide original
+                span.style.color = 'transparent';
                 return;
             } else {
                 const x = e.clientX - rect.left;
@@ -353,14 +404,19 @@ const PdfEditor = () => {
             formData.append('file', file);
             formData.append('replacements', JSON.stringify(inlineEdits.map(ed => ({
                 pageIndex: ed.pageIndex,
-                x: ed.x,
-                y: ed.y,
-                width: ed.width,
-                height: ed.height,
+                x: ed.displayX, // Just in case backend uses it as fallback
+                y: ed.displayY,
+                width: ed.displayWidth,
+                height: ed.displayHeight,
+                pdfX: ed.pdfX,
+                pdfY: ed.pdfY,
+                pdfWidth: ed.pdfWidth,
+                pdfHeight: ed.pdfHeight,
+                hasMatch: ed.hasMatch,
                 newText: ed.newText,
                 fontSize: ed.fontSize,
-                renderedWidth: ed.renderedWidth,
-                renderedHeight: ed.renderedHeight,
+                renderedWidth: ed.displayWidth, // not really needed if we have exact coords
+                renderedHeight: ed.displayHeight,
             }))));
 
             const res = await fetch(`${BACKEND_URL}/api/pdf-editor/replace-text`, {
@@ -561,6 +617,7 @@ const PdfEditor = () => {
                                         `}
                                     </style>
                                     <Page pageNumber={currentPage}
+                                        onLoadSuccess={() => extractTextItems(currentPage)}
                                         renderTextLayer={true}
                                         renderAnnotationLayer={true} />
 
@@ -609,8 +666,8 @@ const PdfEditor = () => {
                                     {inlineEdits.filter(ed => ed.pageIndex === currentPage - 1).map(ed => (
                                         <div key={ed.id} style={{
                                             position: 'absolute',
-                                            left: ed.x,
-                                            top: ed.y,
+                                            left: ed.displayX,
+                                            top: ed.displayY,
                                             zIndex: 50,
                                             display: 'flex',
                                             alignItems: 'center',
@@ -631,7 +688,7 @@ const PdfEditor = () => {
                                                     background: 'rgba(255,255,255,0.97)',
                                                     outline: 'none',
                                                     padding: '1px 4px',
-                                                    minWidth: `${ed.width}px`,
+                                                    minWidth: `${ed.displayWidth}px`,
                                                     color: '#000',
                                                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                                                 }}

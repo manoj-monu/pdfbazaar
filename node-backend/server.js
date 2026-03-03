@@ -891,38 +891,49 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
         const helveticaFont = await pdfDoc.embedFont('Helvetica');
 
         for (const rep of replacements) {
-            const { pageIndex, x, y, width, height, newText, fontSize, renderedWidth, renderedHeight } = rep;
+            const { pageIndex, x, y, width, height, newText, fontSize, renderedWidth, renderedHeight, hasMatch, pdfX, pdfY, pdfWidth, pdfHeight } = rep;
             if (pageIndex === undefined || newText === undefined) continue;
             const page = pages[pageIndex];
             if (!page) continue;
 
-            const { width: pdfW, height: pdfH } = page.getSize();
+            let finalX, finalY, finalW, finalH, finalSize;
 
-            // Scale from rendered pixels to PDF points
-            const scaleX = renderedWidth ? (pdfW / renderedWidth) : 1;
-            const scaleY = renderedHeight ? (pdfH / renderedHeight) : 1;
+            if (hasMatch) {
+                // ✅ ADOBE METHOD: Use exact PDF coordinates extracted from pdf.js
+                // pdf-lib's origin is bottom-left, same as pdf.js text coordinates
+                finalX = pdfX;
+                finalY = pdfY;
+                finalW = pdfWidth;
+                finalH = pdfHeight;
+                finalSize = fontSize;
+            } else {
+                // Fallback Method: Scale rendered pixels to PDF points
+                const { width: pdfPageW, height: pdfPageH } = page.getSize();
+                const scaleX = renderedWidth ? (pdfPageW / renderedWidth) : 1;
+                const scaleY = renderedHeight ? (pdfPageH / renderedHeight) : 1;
 
-            const pdfX = x * scaleX;
-            const pdfY = pdfH - (y * scaleY) - (height * scaleY); // flip Y axis
-            const pdfW2 = width * scaleX;
-            const pdfH2 = height * scaleY;
-            const pdfSize = (fontSize || 12) * scaleY;
+                finalX = x * scaleX;
+                finalY = pdfPageH - (y * scaleY) - (height * scaleY); // flip Y axis
+                finalW = width * scaleX;
+                finalH = height * scaleY;
+                finalSize = (fontSize || 12) * scaleY;
+            }
 
             // 1. White rectangle to cover original
             page.drawRectangle({
-                x: pdfX - 1,
-                y: pdfY - 2,
-                width: pdfW2 + 4,
-                height: pdfH2 + 4,
+                x: finalX - 1,
+                y: finalY - 2,
+                width: finalW + 4,
+                height: finalH + 4,
                 color: rgb(1, 1, 1),
             });
 
             // 2. Draw new text at exact same position
             if (newText.trim()) {
                 page.drawText(newText, {
-                    x: pdfX,
-                    y: pdfY + 2,
-                    size: pdfSize,
+                    x: finalX,
+                    y: finalY + 2,
+                    size: finalSize,
                     font: helveticaFont,
                     color: rgb(0, 0, 0),
                 });
