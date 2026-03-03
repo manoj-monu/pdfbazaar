@@ -1,5 +1,4 @@
 :root {
-:root {
 
   --primary: #e5322d;
   --primary-hover: #cc2521;
@@ -184,8 +183,8 @@ button {
 
 /* Base button styling */
 .btn-primary {
-  background: var(--primary);
-  color: white;
+  background-color: var(--primary, #e5322d) !important;
+  color: #ffffff !important;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
@@ -395,8 +394,8 @@ button {
 }
 
 .btn-upload {
-  background: var(--primary);
-  color: white;
+  background-color: #e5322d !important;
+  color: #ffffff !important;
   border: none;
   border-radius: 8px;
   padding: 18px 40px;
@@ -539,8 +538,8 @@ button {
 }
 
 .btn-download {
-  background: var(--primary);
-  color: white;
+  background-color: #e5322d !important;
+  color: #ffffff !important;
   padding: 18px 40px;
   border-radius: 8px;
   font-size: 20px;
