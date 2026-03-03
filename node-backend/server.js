@@ -7,6 +7,7 @@ const https = require('https');
 const { PDFDocument, rgb, degrees } = require('pdf-lib');
 const fontkit = require('@pdf-lib/fontkit');
 const { exec } = require('child_process');
+require('regenerator-runtime/runtime');
 require('dotenv').config();
 
 const app = express();
