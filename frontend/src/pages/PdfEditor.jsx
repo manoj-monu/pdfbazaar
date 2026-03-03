@@ -32,6 +32,7 @@ const PdfEditor = () => {
     const [password, setPassword] = useState('');
 
     const containerRef = useRef();
+    const pageRef = useRef(); // ref to the pdf-page-container for accurate coordinate calc
 
     const onDrop = useCallback((acceptedFiles) => {
         if (acceptedFiles.length > 0) {
@@ -56,8 +57,11 @@ const PdfEditor = () => {
     });
 
     const handlePointerDown = (e, pageIndex) => {
+        // Always use pageRef for accurate coordinates relative to the page container
+        if (!pageRef.current) return;
+        const rect = pageRef.current.getBoundingClientRect();
+
         if (mode === 'text') {
-            const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
@@ -78,14 +82,11 @@ const PdfEditor = () => {
         } else if (mode === 'edit-text') {
             if (e.target.tagName.toLowerCase() === 'span') {
                 const span = e.target;
-                const pageContainer = e.currentTarget;
-                const pageRect = pageContainer.getBoundingClientRect();
                 const spanRect = span.getBoundingClientRect();
 
-                // Correct: getBoundingClientRect already accounts for scroll on both elements
-                // so the difference gives position relative to page container correctly
-                const x = spanRect.left - pageRect.left;
-                const y = spanRect.top - pageRect.top;
+                // Use pageRef for the container rect (most accurate)
+                const x = spanRect.left - rect.left;
+                const y = spanRect.top - rect.top;
 
                 const compStyle = window.getComputedStyle(span);
                 const size = parseFloat(compStyle.fontSize) || 12;
@@ -109,14 +110,12 @@ const PdfEditor = () => {
                 }));
                 setActiveTextId(newEdit.id);
             } else {
-                const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 setDragStart({ x, y });
                 setDragCurrent({ x, y });
             }
         } else if (mode === 'draw' || mode === 'highlight') {
-            const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             setCurrentPath({ type: mode, points: [{ x, y }] });
@@ -124,8 +123,9 @@ const PdfEditor = () => {
     };
 
     const handlePointerMove = (e) => {
+        if (!pageRef.current) return;
+        const rect = pageRef.current.getBoundingClientRect();
         if (dragStart && mode === 'edit-text') {
-            const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             setDragCurrent({ x, y });
@@ -133,7 +133,6 @@ const PdfEditor = () => {
         }
 
         if (!currentPath) return;
-        const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         setCurrentPath(prev => ({ ...prev, points: [...prev.points, { x, y }] }));
@@ -479,6 +478,7 @@ const PdfEditor = () => {
                         {!deletedPages.has(currentPage - 1) ? (
                             <Document file={file}>
                                 <div
+                                    ref={pageRef}
                                     onPointerDown={(e) => handlePointerDown(e, currentPage)}
                                     onPointerMove={handlePointerMove}
                                     onPointerUp={() => handlePointerUp(currentPage)}
