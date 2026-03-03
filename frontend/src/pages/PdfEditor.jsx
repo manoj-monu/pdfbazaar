@@ -30,9 +30,9 @@ const PdfEditor = () => {
     const [deletedPages, setDeletedPages] = useState(new Set());
     const [rotatedPages, setRotatedPages] = useState({});
     const [password, setPassword] = useState('');
-    // Edit Text Dialog state
-    const [editDialog, setEditDialog] = useState(null); // { originalText, newText, spanRect, pageIndex, span }
-    const [editSaving, setEditSaving] = useState(false);
+    // Sejda-style inline edits - array of {id, pageIndex, x, y, width, height, originalText, newText, fontSize, renderedWidth, renderedHeight}
+    const [inlineEdits, setInlineEdits] = useState([]);
+    const [applyingSaving, setApplyingSaving] = useState(false);
 
     const containerRef = useRef();
     const pageRef = useRef();
@@ -83,7 +83,6 @@ const PdfEditor = () => {
             setMode('view');
             setActiveTextId(newText.id);
         } else if (mode === 'edit-text') {
-            // Find span - target itself or nearest span ancestor
             const span = (e.target.tagName.toLowerCase() === 'span')
                 ? e.target
                 : e.target.closest('span');
@@ -92,24 +91,35 @@ const PdfEditor = () => {
                 e.preventDefault();
                 const spanRect = span.getBoundingClientRect();
                 const pageRect = pageRef.current.getBoundingClientRect();
-                const pageEl = pageRef.current.querySelector('canvas') || pageRef.current;
 
-                // Open dialog with text info - backend will handle exact replacement
-                setEditDialog({
+                // Use CLICK position (where user sees text) - no movement!
+                const clickX = e.clientX - pageRect.left;
+                const clickY = e.clientY - pageRect.top;
+
+                const editId = Date.now().toString();
+                const fontSize = parseFloat(window.getComputedStyle(span).fontSize) || 12;
+
+                const newEdit = {
+                    id: editId,
+                    pageIndex: pageIndex - 1,
+                    x: clickX - spanRect.width / 2,  // center on click
+                    y: clickY - fontSize,
+                    width: Math.max(spanRect.width, 120),
+                    height: spanRect.height,
                     originalText: span.textContent.trim(),
                     newText: span.textContent.trim(),
-                    pageIndex: pageIndex - 1,
-                    // Coords relative to rendered page (for backend scaling)
-                    x: spanRect.left - pageRect.left,
-                    y: spanRect.top - pageRect.top,
-                    width: spanRect.width,
-                    height: spanRect.height,
-                    fontSize: parseFloat(window.getComputedStyle(span).fontSize) || 12,
+                    fontSize,
                     renderedWidth: pageRect.width,
                     renderedHeight: pageRect.height,
-                    span, // ref to hide while dialog is open
-                });
-                span.style.outline = '2px solid #E5322D';
+                };
+
+                // Correct x to not go negative
+                newEdit.x = Math.max(0, newEdit.x);
+                newEdit.y = Math.max(0, newEdit.y);
+
+                setInlineEdits(prev => [...prev, newEdit]);
+                setActiveTextId(editId);
+                span.style.color = 'transparent'; // hide original
                 return;
             } else {
                 const x = e.clientX - rect.left;
@@ -334,24 +344,24 @@ const PdfEditor = () => {
         }
     };
 
-    // ─── Backend Text Replace ───────────────────────────────
-    const applyTextEdit = async () => {
-        if (!editDialog || !file) return;
-        setEditSaving(true);
+    // ─── Sejda-style: Apply All Inline Edits via Backend ───────────────
+    const applyInlineEdits = async () => {
+        if (inlineEdits.length === 0 || !file) return;
+        setApplyingSaving(true);
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('replacements', JSON.stringify([{
-                pageIndex: editDialog.pageIndex,
-                x: editDialog.x,
-                y: editDialog.y,
-                width: editDialog.width,
-                height: editDialog.height,
-                newText: editDialog.newText,
-                fontSize: editDialog.fontSize,
-                renderedWidth: editDialog.renderedWidth,
-                renderedHeight: editDialog.renderedHeight,
-            }]));
+            formData.append('replacements', JSON.stringify(inlineEdits.map(ed => ({
+                pageIndex: ed.pageIndex,
+                x: ed.x,
+                y: ed.y,
+                width: ed.width,
+                height: ed.height,
+                newText: ed.newText,
+                fontSize: ed.fontSize,
+                renderedWidth: ed.renderedWidth,
+                renderedHeight: ed.renderedHeight,
+            }))));
 
             const res = await fetch(`${BACKEND_URL}/api/pdf-editor/replace-text`, {
                 method: 'POST',
@@ -366,13 +376,12 @@ const PdfEditor = () => {
             const blob = await res.blob();
             const modifiedFile = new File([blob], file.name, { type: 'application/pdf' });
             setFile(modifiedFile);
-            if (editDialog.span) editDialog.span.style.outline = '';
-            setEditDialog(null);
-            alert('Text successfully replaced!');
+            setInlineEdits([]); // clear all edits
+            setMode('view');
         } catch (err) {
-            alert('Error: ' + err.message);
+            alert('Error applying changes: ' + err.message);
         }
-        setEditSaving(false);
+        setApplyingSaving(false);
     };
 
     const triggerDownload = () => {
@@ -596,6 +605,44 @@ const PdfEditor = () => {
 
                                     {/* Edit overlays handled via direct DOM in span.parentNode for exact positioning */}
 
+                                    {/* ─── Sejda-style Inline Edit Overlays ─── */}
+                                    {inlineEdits.filter(ed => ed.pageIndex === currentPage - 1).map(ed => (
+                                        <div key={ed.id} style={{
+                                            position: 'absolute',
+                                            left: ed.x,
+                                            top: ed.y,
+                                            zIndex: 50,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                        }}>
+                                            <input
+                                                type="text"
+                                                value={ed.newText}
+                                                onChange={e => setInlineEdits(prev => prev.map(
+                                                    item => item.id === ed.id ? { ...item, newText: e.target.value } : item
+                                                ))}
+                                                autoFocus={activeTextId === ed.id}
+                                                style={{
+                                                    fontSize: `${ed.fontSize}px`,
+                                                    fontFamily: 'Helvetica, sans-serif',
+                                                    border: '2px solid #E5322D',
+                                                    borderRadius: '3px',
+                                                    background: 'rgba(255,255,255,0.97)',
+                                                    outline: 'none',
+                                                    padding: '1px 4px',
+                                                    minWidth: `${ed.width}px`,
+                                                    color: '#000',
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => setInlineEdits(prev => prev.filter(item => item.id !== ed.id))}
+                                                style={{ background: '#ccc', border: 'none', borderRadius: '50%', width: '18px', height: '18px', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >✕</button>
+                                        </div>
+                                    ))}
+
                                     {/* Realtime Canvas Overlay for Drawings */}
                                     <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
                                         {/* Render finalized drawings */}
@@ -642,54 +689,25 @@ const PdfEditor = () => {
                 </div>
             </div>
 
-            {/* ─── Edit Text Dialog Modal ─── */}
-            {editDialog && (
+            {/* ─── Sejda-style Floating "Apply changes" Button ─── */}
+            {inlineEdits.length > 0 && (
                 <div style={{
-                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
-                    zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }} onClick={() => {
-                    if (editDialog.span) { editDialog.span.style.outline = ''; }
-                    setEditDialog(null);
+                    position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)',
+                    zIndex: 9999, display: 'flex', alignItems: 'center', gap: '12px',
                 }}>
-                    <div style={{
-                        background: '#fff', borderRadius: '12px', padding: '28px 32px',
-                        minWidth: '380px', maxWidth: '520px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-                    }} onClick={e => e.stopPropagation()}>
-                        <h3 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1a1a2e' }}>✏️ Text Edit Karo</h3>
-                        <p style={{ margin: '0 0 16px', color: '#666', fontSize: '13px' }}>
-                            Original: <strong>"{editDialog.originalText}"</strong>
-                        </p>
-
-                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '6px', color: '#333', fontSize: '14px' }}>
-                            Naya Text:
-                        </label>
-                        <input
-                            type="text"
-                            value={editDialog.newText}
-                            onChange={e => setEditDialog(prev => ({ ...prev, newText: e.target.value }))}
-                            autoFocus
-                            onKeyDown={e => { if (e.key === 'Enter') applyTextEdit(); if (e.key === 'Escape') { if (editDialog.span) editDialog.span.style.outline = ''; setEditDialog(null); } }}
-                            style={{
-                                width: '100%', boxSizing: 'border-box', padding: '10px 14px',
-                                fontSize: '15px', border: '2px solid #E5322D', borderRadius: '8px',
-                                outline: 'none', marginBottom: '20px'
-                            }}
-                        />
-
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                            <button onClick={() => { if (editDialog.span) editDialog.span.style.outline = ''; setEditDialog(null); }}
-                                style={{ padding: '9px 20px', borderRadius: '8px', border: '1px solid #ddd', background: '#f5f5f5', cursor: 'pointer', fontWeight: '600' }}>
-                                Cancel
-                            </button>
-                            <button onClick={applyTextEdit} disabled={editSaving}
-                                style={{ padding: '9px 24px', borderRadius: '8px', border: 'none', background: '#E5322D', color: '#fff', cursor: 'pointer', fontWeight: '600', opacity: editSaving ? 0.7 : 1 }}>
-                                {editSaving ? '⏳ Saving...' : '✅ Apply & Download'}
-                            </button>
-                        </div>
-                        <p style={{ margin: '12px 0 0', fontSize: '12px', color: '#999' }}>
-                            💡 Text replace hoga aur modified PDF download hoga
-                        </p>
-                    </div>
+                    <button onClick={applyInlineEdits} disabled={applyingSaving}
+                        style={{
+                            padding: '14px 32px', borderRadius: '8px', border: 'none',
+                            background: '#E5322D', color: '#fff', fontSize: '16px',
+                            fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 20px rgba(229,50,45,0.4)',
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            opacity: applyingSaving ? 0.7 : 1,
+                        }}>
+                        {applyingSaving ? '⏳ Applying...' : `Apply changes ›`}
+                    </button>
+                    <span style={{ background: '#fff', borderRadius: '20px', padding: '6px 14px', fontSize: '13px', fontWeight: '600', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+                        {inlineEdits.length} edit{inlineEdits.length > 1 ? 's' : ''}
+                    </span>
                 </div>
             )}
         </div>
