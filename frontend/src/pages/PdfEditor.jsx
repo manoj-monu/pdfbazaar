@@ -19,20 +19,23 @@ const PdfEditor = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [resultBlob, setResultBlob] = useState(null);
-    const [texts, setTexts] = useState({}); // { pageNum: [ { id, text, x, y, size } ] }
-    const [edits, setEdits] = useState({}); // { pageNum: [{ id, text, x, y, width, height, size, spanElement }] }
-    const [mode, setMode] = useState('view'); // view, text, edit-text, draw, highlight
+    const [texts, setTexts] = useState({});
+    const [edits, setEdits] = useState({});
+    const [mode, setMode] = useState('view');
     const [activeTextId, setActiveTextId] = useState(null);
-    const [drawings, setDrawings] = useState({}); // { pageNum: [ { type: 'draw' | 'highlight', points: [{x,y}] } ] }
+    const [drawings, setDrawings] = useState({});
     const [currentPath, setCurrentPath] = useState(null);
     const [dragStart, setDragStart] = useState(null);
     const [dragCurrent, setDragCurrent] = useState(null);
     const [deletedPages, setDeletedPages] = useState(new Set());
-    const [rotatedPages, setRotatedPages] = useState({}); // { pageNum: angle }
+    const [rotatedPages, setRotatedPages] = useState({});
     const [password, setPassword] = useState('');
+    // Edit Text Dialog state
+    const [editDialog, setEditDialog] = useState(null); // { originalText, newText, spanRect, pageIndex, span }
+    const [editSaving, setEditSaving] = useState(false);
 
     const containerRef = useRef();
-    const pageRef = useRef(); // ref to the pdf-page-container for accurate coordinate calc
+    const pageRef = useRef();
 
     const onDrop = useCallback((acceptedFiles) => {
         if (acceptedFiles.length > 0) {
@@ -86,81 +89,27 @@ const PdfEditor = () => {
                 : e.target.closest('span');
 
             if (span && span.closest('.textLayer, .react-pdf__Page__textContent')) {
-                e.preventDefault(); // prevent default browser selection behavior
-                const compStyle = window.getComputedStyle(span);
+                e.preventDefault();
                 const spanRect = span.getBoundingClientRect();
                 const pageRect = pageRef.current.getBoundingClientRect();
-                const size = parseFloat(compStyle.fontSize) || 12;
-                const editId = Date.now().toString();
+                const pageEl = pageRef.current.querySelector('canvas') || pageRef.current;
 
-                // ✅ FIX: Copy span's INLINE left/top styles directly
-                // PDF.js v4 uses left/top properties for position, not transform translation
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = span.textContent.trim();
-
-                const spanLeft = span.style.left || '0px';
-                const spanTop = span.style.top || '0px';
-                const spanTransform = span.style.transform || ''; // scaleX only, not position
-                const spanTransformOrigin = span.style.transformOrigin || '0% 0%';
-
-                Object.assign(input.style, {
-                    position: 'absolute',
-                    left: spanLeft,
-                    top: spanTop,
-                    transform: spanTransform,
-                    transformOrigin: spanTransformOrigin,
-                    width: Math.max(span.offsetWidth || spanRect.width, 80) + 'px',
-                    height: Math.max(span.offsetHeight || spanRect.height, size * 1.4) + 'px',
-                    fontSize: compStyle.fontSize,
-                    fontFamily: compStyle.fontFamily,
-                    border: '1.5px dashed #E5322D',
-                    background: 'rgba(255,255,255,0.98)',
-                    outline: 'none',
-                    zIndex: '200',
-                    padding: '0',
-                    margin: '0',
-                    boxSizing: 'border-box',
-                    color: '#000',
-                    whiteSpace: 'pre',
-                    minWidth: '60px',
-                });
-
-                span.style.visibility = 'hidden';
-                span.parentNode.appendChild(input);
-
-                // Use setTimeout to ensure DOM is ready before focusing
-                setTimeout(() => { input.focus(); input.select(); }, 10);
-
-                const editData = {
-                    id: editId,
-                    text: span.textContent.trim(),
+                // Open dialog with text info - backend will handle exact replacement
+                setEditDialog({
+                    originalText: span.textContent.trim(),
+                    newText: span.textContent.trim(),
+                    pageIndex: pageIndex - 1,
+                    // Coords relative to rendered page (for backend scaling)
                     x: spanRect.left - pageRect.left,
                     y: spanRect.top - pageRect.top,
                     width: spanRect.width,
                     height: spanRect.height,
-                    size
-                };
-
-                setEdits(prev => ({ ...prev, [pageIndex]: [...(prev[pageIndex] || []), editData] }));
-                setActiveTextId(editId);
-
-                input.addEventListener('input', (evt) => {
-                    setEdits(prev => ({
-                        ...prev,
-                        [pageIndex]: (prev[pageIndex] || []).map(ed =>
-                            ed.id === editId ? { ...ed, text: evt.target.value } : ed
-                        )
-                    }));
+                    fontSize: parseFloat(window.getComputedStyle(span).fontSize) || 12,
+                    renderedWidth: pageRect.width,
+                    renderedHeight: pageRect.height,
+                    span, // ref to hide while dialog is open
                 });
-
-                input.addEventListener('blur', () => {
-                    span.textContent = input.value;
-                    span.style.visibility = 'visible';
-                    input.remove();
-                    setActiveTextId(null);
-                });
-
+                span.style.outline = '2px solid #E5322D';
                 return;
             } else {
                 const x = e.clientX - rect.left;
@@ -383,6 +332,47 @@ const PdfEditor = () => {
                 [pageIndex]: prev[pageIndex].map(t => t.id === textId ? { ...t, text: newText } : t)
             }));
         }
+    };
+
+    // ─── Backend Text Replace ───────────────────────────────
+    const applyTextEdit = async () => {
+        if (!editDialog || !file) return;
+        setEditSaving(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('replacements', JSON.stringify([{
+                pageIndex: editDialog.pageIndex,
+                x: editDialog.x,
+                y: editDialog.y,
+                width: editDialog.width,
+                height: editDialog.height,
+                newText: editDialog.newText,
+                fontSize: editDialog.fontSize,
+                renderedWidth: editDialog.renderedWidth,
+                renderedHeight: editDialog.renderedHeight,
+            }]));
+
+            const res = await fetch(`${BACKEND_URL}/api/pdf-editor/replace-text`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Backend failed');
+            }
+
+            const blob = await res.blob();
+            const modifiedFile = new File([blob], file.name, { type: 'application/pdf' });
+            setFile(modifiedFile);
+            if (editDialog.span) editDialog.span.style.outline = '';
+            setEditDialog(null);
+            alert('Text successfully replaced!');
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+        setEditSaving(false);
     };
 
     const triggerDownload = () => {
@@ -651,6 +641,57 @@ const PdfEditor = () => {
                     </div>
                 </div>
             </div>
+
+            {/* ─── Edit Text Dialog Modal ─── */}
+            {editDialog && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
+                    zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }} onClick={() => {
+                    if (editDialog.span) { editDialog.span.style.outline = ''; }
+                    setEditDialog(null);
+                }}>
+                    <div style={{
+                        background: '#fff', borderRadius: '12px', padding: '28px 32px',
+                        minWidth: '380px', maxWidth: '520px', boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+                    }} onClick={e => e.stopPropagation()}>
+                        <h3 style={{ margin: '0 0 8px', fontSize: '18px', color: '#1a1a2e' }}>✏️ Text Edit Karo</h3>
+                        <p style={{ margin: '0 0 16px', color: '#666', fontSize: '13px' }}>
+                            Original: <strong>"{editDialog.originalText}"</strong>
+                        </p>
+
+                        <label style={{ display: 'block', fontWeight: '600', marginBottom: '6px', color: '#333', fontSize: '14px' }}>
+                            Naya Text:
+                        </label>
+                        <input
+                            type="text"
+                            value={editDialog.newText}
+                            onChange={e => setEditDialog(prev => ({ ...prev, newText: e.target.value }))}
+                            autoFocus
+                            onKeyDown={e => { if (e.key === 'Enter') applyTextEdit(); if (e.key === 'Escape') { if (editDialog.span) editDialog.span.style.outline = ''; setEditDialog(null); } }}
+                            style={{
+                                width: '100%', boxSizing: 'border-box', padding: '10px 14px',
+                                fontSize: '15px', border: '2px solid #E5322D', borderRadius: '8px',
+                                outline: 'none', marginBottom: '20px'
+                            }}
+                        />
+
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                            <button onClick={() => { if (editDialog.span) editDialog.span.style.outline = ''; setEditDialog(null); }}
+                                style={{ padding: '9px 20px', borderRadius: '8px', border: '1px solid #ddd', background: '#f5f5f5', cursor: 'pointer', fontWeight: '600' }}>
+                                Cancel
+                            </button>
+                            <button onClick={applyTextEdit} disabled={editSaving}
+                                style={{ padding: '9px 24px', borderRadius: '8px', border: 'none', background: '#E5322D', color: '#fff', cursor: 'pointer', fontWeight: '600', opacity: editSaving ? 0.7 : 1 }}>
+                                {editSaving ? '⏳ Saving...' : '✅ Apply & Download'}
+                            </button>
+                        </div>
+                        <p style={{ margin: '12px 0 0', fontSize: '12px', color: '#999' }}>
+                            💡 Text replace hoga aur modified PDF download hoga
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

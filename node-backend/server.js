@@ -875,6 +875,78 @@ app.get('/api/download/:token', (req, res) => {
 });
 
 
+// ─────────────────────────────────────────────────────
+// PDF Editor: Text Replace API (Backend Method)
+// ─────────────────────────────────────────────────────
+app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No PDF file uploaded.' });
+
+        let replacements = [];
+        try { replacements = JSON.parse(req.body.replacements || '[]'); } catch (e) { }
+
+        const pdfBuffer = fs.readFileSync(req.file.path);
+        const pdfDoc = await PDFDocument.load(pdfBuffer, { ignoreEncryption: true });
+        const pages = pdfDoc.getPages();
+        const helveticaFont = await pdfDoc.embedFont('Helvetica');
+
+        for (const rep of replacements) {
+            const { pageIndex, x, y, width, height, newText, fontSize, renderedWidth, renderedHeight } = rep;
+            if (pageIndex === undefined || newText === undefined) continue;
+            const page = pages[pageIndex];
+            if (!page) continue;
+
+            const { width: pdfW, height: pdfH } = page.getSize();
+
+            // Scale from rendered pixels to PDF points
+            const scaleX = renderedWidth ? (pdfW / renderedWidth) : 1;
+            const scaleY = renderedHeight ? (pdfH / renderedHeight) : 1;
+
+            const pdfX = x * scaleX;
+            const pdfY = pdfH - (y * scaleY) - (height * scaleY); // flip Y axis
+            const pdfW2 = width * scaleX;
+            const pdfH2 = height * scaleY;
+            const pdfSize = (fontSize || 12) * scaleY;
+
+            // 1. White rectangle to cover original
+            page.drawRectangle({
+                x: pdfX - 1,
+                y: pdfY - 2,
+                width: pdfW2 + 4,
+                height: pdfH2 + 4,
+                color: rgb(1, 1, 1),
+            });
+
+            // 2. Draw new text at exact same position
+            if (newText.trim()) {
+                page.drawText(newText, {
+                    x: pdfX,
+                    y: pdfY + 2,
+                    size: pdfSize,
+                    font: helveticaFont,
+                    color: rgb(0, 0, 0),
+                });
+            }
+        }
+
+        const modifiedBytes = await pdfDoc.save();
+        const outPath = path.join(uploadDir, `edited-${Date.now()}.pdf`);
+        fs.writeFileSync(outPath, modifiedBytes);
+        if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="pdfbazaar-edited.pdf"');
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+        res.download(outPath, 'pdfbazaar-edited.pdf', (err) => {
+            if (err) console.error('Download error:', err);
+            setTimeout(() => { if (fs.existsSync(outPath)) fs.unlinkSync(outPath); }, 5000);
+        });
+    } catch (err) {
+        console.error('[replace-text]', err.message);
+        res.status(500).json({ error: 'Text replacement failed.', details: err.message });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log('PDF Conversion API Ready!');
