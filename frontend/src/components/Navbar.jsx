@@ -10,8 +10,8 @@ const Navbar = () => {
             <div className="container nav-container">
                 <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '2px', textDecoration: 'none' }}>
                     <img src="/pdf-icon.png" alt="PDF icon" width="72" height="72" style={{ height: '72px', width: '72px', objectFit: 'contain' }} />
-                    <span style={{ fontFamily: "'Roboto', sans-serif", fontWeight: '900', fontSize: '36px', color: '#cc1a1a', letterSpacing: '-0.5px', lineHeight: 1 }}>
-                        Bazaar.com
+                    <span style={{ fontFamily: "'Times New Roman', serif", fontWeight: 'bold', fontSize: '36px', color: '#0000ff', letterSpacing: '0', lineHeight: 1 }}>
+                        Pdfbazaar.com
                     </span>
                 </Link>
 
