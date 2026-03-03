@@ -20,7 +20,8 @@ const PdfEditor = () => {
     const [loading, setLoading] = useState(false);
     const [resultBlob, setResultBlob] = useState(null);
     const [texts, setTexts] = useState({}); // { pageNum: [ { id, text, x, y, size } ] }
-    const [mode, setMode] = useState('view'); // view, text, draw, highlight
+    const [edits, setEdits] = useState({}); // { pageNum: [{ id, text, x, y, width, height, size, spanElement }] }
+    const [mode, setMode] = useState('view'); // view, text, edit-text, draw, highlight
     const [activeTextId, setActiveTextId] = useState(null);
     const [drawings, setDrawings] = useState({}); // { pageNum: [ { type: 'draw' | 'highlight', points: [{x,y}] } ] }
     const [currentPath, setCurrentPath] = useState(null);
@@ -40,6 +41,7 @@ const PdfEditor = () => {
             setDeletedPages(new Set());
             setRotatedPages({});
             setTexts({});
+            setEdits({});
             setResultBlob(null);
         }
     }, []);
@@ -71,6 +73,37 @@ const PdfEditor = () => {
             }));
             setMode('view');
             setActiveTextId(newText.id);
+        } else if (mode === 'edit-text') {
+            if (e.target.tagName.toLowerCase() === 'span') {
+                const span = e.target;
+                const pageRect = e.currentTarget.getBoundingClientRect();
+                const spanRect = span.getBoundingClientRect();
+
+                const x = spanRect.left - pageRect.left;
+                const y = spanRect.top - pageRect.top;
+
+                const compStyle = window.getComputedStyle(span);
+                const size = parseFloat(compStyle.fontSize) || 12;
+
+                const newEdit = {
+                    id: Date.now().toString(),
+                    text: span.textContent,
+                    x,
+                    y,
+                    width: spanRect.width,
+                    height: spanRect.height,
+                    size
+                };
+
+                // Hide original text by making it transparent
+                span.style.color = 'transparent';
+
+                setEdits(prev => ({
+                    ...prev,
+                    [pageIndex]: [...(prev[pageIndex] || []), newEdit]
+                }));
+                setActiveTextId(newEdit.id);
+            }
         } else if (mode === 'draw' || mode === 'highlight') {
             const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -140,10 +173,30 @@ const PdfEditor = () => {
             // draw texts & drawings
             for (let i = 0; i < pages.length; i++) {
                 const pageTexts = texts[i + 1] || [];
+                const pageEdits = edits[i + 1] || [];
                 const pageDrawings = drawings[i + 1] || [];
                 const page = pages[i];
                 if (page && !deletedPages.has(i)) {
                     const { width, height } = page.getSize();
+
+                    pageEdits.forEach(e => {
+                        // draw whiteout rectangle
+                        page.drawRectangle({
+                            x: e.x,
+                            y: height - e.y - e.height,
+                            width: e.width,
+                            height: e.height,
+                            color: rgb(1, 1, 1),
+                        });
+                        // draw new text
+                        page.drawText(e.text, {
+                            x: e.x,
+                            y: height - e.y - e.size,
+                            size: e.size,
+                            color: rgb(0, 0, 0)
+                        });
+                    });
+
                     pageTexts.forEach(t => {
                         page.drawText(t.text, {
                             x: t.x,
@@ -217,11 +270,18 @@ const PdfEditor = () => {
         setLoading(false);
     };
 
-    const handleTextChange = (pageIndex, textId, newText) => {
-        setTexts(prev => ({
-            ...prev,
-            [pageIndex]: prev[pageIndex].map(t => t.id === textId ? { ...t, text: newText } : t)
-        }));
+    const handleTextChange = (pageIndex, textId, newText, isEdit = false) => {
+        if (isEdit) {
+            setEdits(prev => ({
+                ...prev,
+                [pageIndex]: prev[pageIndex].map(e => e.id === textId ? { ...e, text: newText } : e)
+            }));
+        } else {
+            setTexts(prev => ({
+                ...prev,
+                [pageIndex]: prev[pageIndex].map(t => t.id === textId ? { ...t, text: newText } : t)
+            }));
+        }
     };
 
     const triggerDownload = () => {
@@ -301,6 +361,9 @@ const PdfEditor = () => {
                     <button onClick={() => setMode('text')} style={{ padding: '8px', background: mode === 'text' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Type size={16} /> Add Text
                     </button>
+                    <button onClick={() => setMode('edit-text')} style={{ padding: '8px', background: mode === 'edit-text' ? '#e5322d' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Type size={16} /> Edit Text
+                    </button>
                     <button onClick={() => setMode('draw')} style={{ padding: '8px', background: mode === 'draw' ? '#555' : 'transparent', border: 'none', color: '#fff', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Edit3 size={16} /> Draw
                     </button>
@@ -379,7 +442,20 @@ const PdfEditor = () => {
                                         touchAction: (mode === 'draw' || mode === 'highlight') ? 'none' : 'auto',
                                         userSelect: (mode === 'draw' || mode === 'highlight' || mode === 'text') ? 'none' : 'auto'
                                     }}
+                                    className={`pdf-page-container ${mode}`}
                                 >
+                                    <style>
+                                        {`
+                                            .pdf-page-container.edit-text .react-pdf__Page__textContent span {
+                                                cursor: text;
+                                                pointer-events: auto;
+                                            }
+                                            .pdf-page-container.edit-text .react-pdf__Page__textContent span:hover {
+                                                outline: 1px dashed red;
+                                                background-color: rgba(229, 50, 45, 0.1);
+                                            }
+                                        `}
+                                    </style>
                                     <Page pageNumber={currentPage}
                                         renderTextLayer={true}
                                         renderAnnotationLayer={true} />
@@ -400,7 +476,7 @@ const PdfEditor = () => {
                                             <input
                                                 type="text"
                                                 value={t.text}
-                                                onChange={(e) => handleTextChange(currentPage, t.id, e.target.value)}
+                                                onChange={(e) => handleTextChange(currentPage, t.id, e.target.value, false)}
                                                 style={{
                                                     background: 'transparent',
                                                     border: 'none',
@@ -416,6 +492,50 @@ const PdfEditor = () => {
                                             {activeTextId === t.id && (
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); setTexts(prev => ({ ...prev, [currentPage]: prev[currentPage].filter(i => i.id !== t.id) })); }}
+                                                    style={{ position: 'absolute', right: '-20px', top: '-10px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {/* Overlay for edits on this page (modifying existing text) */}
+                                    {(edits[currentPage] || []).map(e => (
+                                        <div key={e.id} style={{
+                                            position: 'absolute',
+                                            left: e.x,
+                                            top: e.y,
+                                            width: e.width,
+                                            height: e.height,
+                                            border: activeTextId === e.id ? '1px dashed #E5322D' : 'none',
+                                            backgroundColor: '#fff', // whiteout background
+                                            zIndex: 25,
+                                            transform: `rotate(-${rotatedPages[currentPage] || 0}deg)`
+                                        }}
+                                            onClick={(evt) => { evt.stopPropagation(); setActiveTextId(e.id); }}
+                                        >
+                                            <input
+                                                type="text"
+                                                value={e.text}
+                                                onChange={(evt) => handleTextChange(currentPage, e.id, evt.target.value, true)}
+                                                style={{
+                                                    background: 'transparent',
+                                                    border: 'none',
+                                                    outline: 'none',
+                                                    fontSize: `${e.size}px`,
+                                                    fontFamily: 'Helvetica, sans-serif',
+                                                    color: 'black',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    margin: 0,
+                                                    padding: 0
+                                                }}
+                                                autoFocus={activeTextId === e.id}
+                                            />
+                                            {activeTextId === e.id && (
+                                                <button
+                                                    onClick={(evt) => { evt.stopPropagation(); setEdits(prev => ({ ...prev, [currentPage]: prev[currentPage].filter(i => i.id !== e.id) })); }}
                                                     style={{ position: 'absolute', right: '-20px', top: '-10px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}
                                                 >
                                                     <X size={12} />
