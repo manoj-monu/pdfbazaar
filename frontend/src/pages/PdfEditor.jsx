@@ -107,24 +107,33 @@ const PdfEditor = () => {
         if (!pageRef.current) return;
         const rect = pageRef.current.getBoundingClientRect();
 
-        if (mode === 'text') {
+        if (['text', 'cross', 'check', 'sign'].includes(mode)) {
             const x = (e.clientX - rect.left) / scale;
             const y = (e.clientY - rect.top) / scale;
 
+            let textContent = 'New Text';
+            let size = 16;
+            let color = 'black';
+            if (mode === 'cross') { textContent = '✗'; size = 32; color = '#E5322D'; }
+            if (mode === 'check') { textContent = '✓'; size = 32; color = 'green'; }
+            if (mode === 'sign') { textContent = 'Signature (Double click to edit)'; size = 24; color = 'blue'; }
+
             const newText = {
                 id: Date.now().toString(),
-                text: 'New Text',
+                text: textContent,
                 x,
                 y,
-                size: 16
+                size,
+                color
             };
 
             setTexts(prev => ({
                 ...prev,
                 [pageIndex]: [...(prev[pageIndex] || []), newText]
             }));
+
+            if (mode === 'text' || mode === 'sign') setActiveTextId(newText.id);
             setMode('view');
-            setActiveTextId(newText.id);
         } else if (mode === 'edit-text') {
             const span = (e.target.tagName.toLowerCase() === 'span')
                 ? e.target
@@ -179,7 +188,7 @@ const PdfEditor = () => {
                 setDragStart({ x, y });
                 setDragCurrent({ x, y });
             }
-        } else if (mode === 'draw' || mode === 'highlight') {
+        } else if (['draw', 'highlight', 'eraser'].includes(mode)) {
             const x = (e.clientX - rect.left) / scale;
             const y = (e.clientY - rect.top) / scale;
             setCurrentPath({ type: mode, points: [{ x, y }] });
@@ -535,13 +544,13 @@ const PdfEditor = () => {
                 <style>
                     {`
                     .toolbar-btn {
-                        background: transparent; border: none; border-radius: 4px; padding: 6px 8px; cursor: pointer;
+                        background: #e3f2fd; border: none; border-radius: 6px; padding: 6px 10px; cursor: pointer;
                         display: flex; flexDirection: column; align-items: center; justify-content: center; gap: 4px;
-                        color: #555; font-size: 11px; min-width: 60px; transition: all 0.2s;
+                        color: #1a73e8; font-size: 11px; min-width: 60px; transition: all 0.2s; font-weight: 500;
                     }
-                    .toolbar-btn:hover { background: #f0f0f0; }
-                    .toolbar-btn.active { color: #E5322D; background: #fff0f0; }
-                    .toolbar-btn.active svg { stroke: #E5322D; }
+                    .toolbar-btn:hover { background: #d0e8fc; }
+                    .toolbar-btn.active { color: #fff; background: #1a73e8; }
+                    .toolbar-btn.active svg { stroke: #fff; }
                     .toolbar-divider { width: 1px; height: 30px; background: #ddd; margin: 0 5px; }
                     `}
                 </style>
@@ -581,28 +590,37 @@ const PdfEditor = () => {
 
                 <div className="toolbar-divider" />
 
-                <button className="toolbar-btn">
+                <button className="toolbar-btn" onClick={() => {
+                    const el = document.createElement('input');
+                    el.type = 'file';
+                    el.accept = 'image/*';
+                    el.onchange = (ev) => {
+                        const file = ev.target.files[0];
+                        if (file) alert("Image uploaded! It will be placed on the canvas (functionality coming soon).");
+                    };
+                    el.click();
+                }}>
                     <ImageIcon size={20} /> Image
                 </button>
-                <button className="toolbar-btn">
+                <button className={`toolbar-btn ${mode === 'ellipse' ? 'active' : ''}`} onClick={() => alert('Drawing ellipse... (Coming soon)')}>
                     <Circle size={20} /> Ellipse
                 </button>
-                <button className="toolbar-btn">
+                <button className={`toolbar-btn ${mode === 'cross' ? 'active' : ''}`} onClick={() => setMode('cross')}>
                     <X size={20} /> Cross
                 </button>
-                <button className="toolbar-btn">
+                <button className={`toolbar-btn ${mode === 'check' ? 'active' : ''}`} onClick={() => setMode('check')}>
                     <CheckCircle size={20} /> Check
                 </button>
-                <button className="toolbar-btn">
+                <button className={`toolbar-btn ${mode === 'sign' ? 'active' : ''}`} onClick={() => setMode('sign')}>
                     <PenTool size={20} /> Sign
                 </button>
 
                 <div className="toolbar-divider" />
 
-                <button className="toolbar-btn">
+                <button className="toolbar-btn" onClick={() => alert('Annotations system starting...')}>
                     <StickyNote size={20} /> Annotations
                 </button>
-                <button className="toolbar-btn">
+                <button className="toolbar-btn" onClick={() => alert('Add area link mode...')}>
                     <Link size={20} /> Links
                 </button>
                 <button className="toolbar-btn">
@@ -676,12 +694,12 @@ const PdfEditor = () => {
                                     onPointerUp={() => handlePointerUp(currentPage)}
                                     // prevent default touch actions like scrolling while drawing
                                     style={{
-                                        cursor: mode === 'text' ? 'text' : (mode === 'draw' || mode === 'highlight' ? 'crosshair' : 'default'),
+                                        cursor: ['text', 'cross', 'check', 'sign'].includes(mode) ? 'text' : (['draw', 'highlight', 'eraser'].includes(mode) ? 'crosshair' : 'default'),
                                         position: 'relative',
                                         transform: `rotate(${rotatedPages[currentPage] || 0}deg)`,
                                         transition: 'transform 0.2s ease',
-                                        touchAction: (mode === 'draw' || mode === 'highlight') ? 'none' : 'auto',
-                                        userSelect: (mode === 'draw' || mode === 'highlight' || mode === 'text') ? 'none' : 'auto'
+                                        touchAction: (['draw', 'highlight', 'eraser'].includes(mode)) ? 'none' : 'auto',
+                                        userSelect: (['draw', 'highlight', 'eraser', 'text', 'cross', 'check', 'sign'].includes(mode)) ? 'none' : 'auto'
                                     }}
                                     className={`pdf-page-container ${mode}`}
                                 >
@@ -728,7 +746,7 @@ const PdfEditor = () => {
                                                     outline: 'none',
                                                     fontSize: `${t.size * scale}px`,
                                                     fontFamily: 'Helvetica',
-                                                    color: 'black',
+                                                    color: t.color || 'black',
                                                     minWidth: '100px',
                                                     cursor: mode === 'view' ? 'text' : 'default'
                                                 }}
@@ -791,8 +809,8 @@ const PdfEditor = () => {
                                         {(drawings[currentPage] || []).map((d, i) => {
                                             if (d.points.length < 2) return null;
                                             const pts = d.points.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
-                                            const color = d.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : '#e5322d';
-                                            const strokeWidth = (d.type === 'highlight' ? 16 : 3) * scale;
+                                            const color = d.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : (d.type === 'eraser' ? '#ffffff' : '#e5322d');
+                                            const strokeWidth = (d.type === 'highlight' ? 16 : d.type === 'eraser' ? 24 : 3) * scale;
                                             return <polyline key={i} points={pts} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
                                         })}
                                         {/* Render current path */}
@@ -800,8 +818,8 @@ const PdfEditor = () => {
                                             <polyline
                                                 points={currentPath.points.map(p => `${p.x * scale},${p.y * scale}`).join(' ')}
                                                 fill="none"
-                                                stroke={currentPath.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : '#e5322d'}
-                                                strokeWidth={(currentPath.type === 'highlight' ? 16 : 3) * scale}
+                                                stroke={currentPath.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : (currentPath.type === 'eraser' ? '#ffffff' : '#e5322d')}
+                                                strokeWidth={(currentPath.type === 'highlight' ? 16 : currentPath.type === 'eraser' ? 24 : 3) * scale}
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                             />
