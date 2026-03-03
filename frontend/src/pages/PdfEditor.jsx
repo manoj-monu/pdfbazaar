@@ -58,8 +58,11 @@ const PdfEditor = () => {
     const handlePointerDown = (e, pageIndex) => {
         if (mode === 'text') {
             const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const scrollEl = containerRef.current;
+            const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+            const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
+            const x = e.clientX - rect.left + scrollLeft;
+            const y = e.clientY - rect.top + scrollTop;
 
             const newText = {
                 id: Date.now().toString(),
@@ -80,9 +83,12 @@ const PdfEditor = () => {
                 const span = e.target;
                 const pageRect = e.currentTarget.getBoundingClientRect();
                 const spanRect = span.getBoundingClientRect();
+                const scrollEl = containerRef.current;
+                const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+                const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
 
-                const x = spanRect.left - pageRect.left;
-                const y = spanRect.top - pageRect.top;
+                const x = spanRect.left - pageRect.left + scrollLeft;
+                const y = spanRect.top - pageRect.top + scrollTop;
 
                 const compStyle = window.getComputedStyle(span);
                 const size = parseFloat(compStyle.fontSize) || 12;
@@ -107,8 +113,11 @@ const PdfEditor = () => {
                 setActiveTextId(newEdit.id);
             } else {
                 const rect = e.currentTarget.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const scrollEl = containerRef.current;
+                const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+                const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
+                const x = e.clientX - rect.left + scrollLeft;
+                const y = e.clientY - rect.top + scrollTop;
                 setDragStart({ x, y });
                 setDragCurrent({ x, y });
             }
@@ -123,8 +132,11 @@ const PdfEditor = () => {
     const handlePointerMove = (e) => {
         if (dragStart && mode === 'edit-text') {
             const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const scrollEl = containerRef.current;
+            const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+            const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
+            const x = e.clientX - rect.left + scrollLeft;
+            const y = e.clientY - rect.top + scrollTop;
             setDragCurrent({ x, y });
             return;
         }
