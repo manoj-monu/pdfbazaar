@@ -1,10 +1,14 @@
 FROM node:18-slim
 
-# Install Ghostscript, Puppeteer deps, and LibreOffice for Word-to-PDF
+# Install Ghostscript, Puppeteer deps, LibreOffice for Word-to-PDF, and MuPDF/Tesseract for PDF Editor
 RUN apt-get update && apt-get install -y \
     ghostscript \
     libreoffice \
     libreoffice-writer \
+    mupdf-tools \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    tesseract-ocr-hin \
     fonts-liberation \
     fonts-noto \
     fonts-noto-cjk \
@@ -52,4 +56,5 @@ COPY node-backend/ ./
 
 EXPOSE 5000
 
-CMD ["node", "server.js"]
+# RAM optimization for Render low memory environments to prevent OOM
+CMD ["node", "--max-old-space-size=400", "server.js"]

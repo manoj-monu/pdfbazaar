@@ -9,9 +9,8 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="container nav-container">
                 <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '2px', textDecoration: 'none' }}>
-                    <img src="/pdf-icon.png" alt="PDF icon" width="72" height="72" style={{ height: '72px', width: '72px', objectFit: 'contain' }} />
-                    <span style={{ fontFamily: "'Times New Roman', serif", fontWeight: 'bold', fontSize: '36px', color: '#0000ff', letterSpacing: '0', lineHeight: 1 }}>
-                        Pdfbazaar.com
+                    <span style={{ fontFamily: "'Times New Roman', Times, serif", fontWeight: '900', fontSize: '38px', color: '#1321d4', letterSpacing: '-0.5px', lineHeight: 1 }}>
+                        Pdfbazaar<span style={{ color: '#1321d4' }}>.com</span>
                     </span>
                 </Link>
 

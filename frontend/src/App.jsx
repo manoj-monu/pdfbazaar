@@ -7,6 +7,8 @@ import AdsPlacement from './components/AdsPlacement';
 
 const Home = lazy(() => import('./pages/Home'));
 const ToolPage = lazy(() => import('./pages/ToolPage'));
+const EditPdfTool = lazy(() => import('./pages/EditPdfTool'));
+const PdfEditor = lazy(() => import('./pages/PdfEditor'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const Pricing = lazy(() => import('./pages/Pricing'));
@@ -28,6 +30,8 @@ function App() {
       <Suspense fallback={<div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="animate-spin" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #E5322D', borderRadius: '50%', width: '40px', height: '40px' }}></div></div>}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/pdf-editor" element={<PdfEditor />} />
+          <Route path="/tool/edit-pdf" element={<EditPdfTool />} />
           <Route path="/tool/:toolId" element={<ToolPage />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:blogId" element={<BlogPost />} />
