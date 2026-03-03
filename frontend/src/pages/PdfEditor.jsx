@@ -58,11 +58,8 @@ const PdfEditor = () => {
     const handlePointerDown = (e, pageIndex) => {
         if (mode === 'text') {
             const rect = e.currentTarget.getBoundingClientRect();
-            const scrollEl = containerRef.current;
-            const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
-            const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
-            const x = e.clientX - rect.left + scrollLeft;
-            const y = e.clientY - rect.top + scrollTop;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
             const newText = {
                 id: Date.now().toString(),
@@ -81,14 +78,14 @@ const PdfEditor = () => {
         } else if (mode === 'edit-text') {
             if (e.target.tagName.toLowerCase() === 'span') {
                 const span = e.target;
-                const pageRect = e.currentTarget.getBoundingClientRect();
+                const pageContainer = e.currentTarget;
+                const pageRect = pageContainer.getBoundingClientRect();
                 const spanRect = span.getBoundingClientRect();
-                const scrollEl = containerRef.current;
-                const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
-                const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
 
-                const x = spanRect.left - pageRect.left + scrollLeft;
-                const y = spanRect.top - pageRect.top + scrollTop;
+                // Correct: getBoundingClientRect already accounts for scroll on both elements
+                // so the difference gives position relative to page container correctly
+                const x = spanRect.left - pageRect.left;
+                const y = spanRect.top - pageRect.top;
 
                 const compStyle = window.getComputedStyle(span);
                 const size = parseFloat(compStyle.fontSize) || 12;
@@ -113,11 +110,8 @@ const PdfEditor = () => {
                 setActiveTextId(newEdit.id);
             } else {
                 const rect = e.currentTarget.getBoundingClientRect();
-                const scrollEl = containerRef.current;
-                const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
-                const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
-                const x = e.clientX - rect.left + scrollLeft;
-                const y = e.clientY - rect.top + scrollTop;
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 setDragStart({ x, y });
                 setDragCurrent({ x, y });
             }
@@ -132,11 +126,8 @@ const PdfEditor = () => {
     const handlePointerMove = (e) => {
         if (dragStart && mode === 'edit-text') {
             const rect = e.currentTarget.getBoundingClientRect();
-            const scrollEl = containerRef.current;
-            const scrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
-            const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
-            const x = e.clientX - rect.left + scrollLeft;
-            const y = e.clientY - rect.top + scrollTop;
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
             setDragCurrent({ x, y });
             return;
         }
@@ -526,7 +517,6 @@ const PdfEditor = () => {
                                             top: t.y,
                                             border: activeTextId === t.id ? '1px dashed #E5322D' : '1px solid transparent',
                                             padding: '2px',
-                                            transform: `translate(-5px, -5px) rotate(-${rotatedPages[currentPage] || 0}deg)`,
                                             zIndex: 20
                                         }}
                                             onClick={(e) => { e.stopPropagation(); setActiveTextId(t.id); }}
