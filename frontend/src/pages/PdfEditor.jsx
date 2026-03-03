@@ -25,6 +25,8 @@ const PdfEditor = () => {
     const [activeTextId, setActiveTextId] = useState(null);
     const [drawings, setDrawings] = useState({}); // { pageNum: [ { type: 'draw' | 'highlight', points: [{x,y}] } ] }
     const [currentPath, setCurrentPath] = useState(null);
+    const [dragStart, setDragStart] = useState(null);
+    const [dragCurrent, setDragCurrent] = useState(null);
     const [deletedPages, setDeletedPages] = useState(new Set());
     const [rotatedPages, setRotatedPages] = useState({}); // { pageNum: angle }
     const [password, setPassword] = useState('');
@@ -103,6 +105,12 @@ const PdfEditor = () => {
                     [pageIndex]: [...(prev[pageIndex] || []), newEdit]
                 }));
                 setActiveTextId(newEdit.id);
+            } else {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                setDragStart({ x, y });
+                setDragCurrent({ x, y });
             }
         } else if (mode === 'draw' || mode === 'highlight') {
             const rect = e.currentTarget.getBoundingClientRect();
@@ -113,6 +121,14 @@ const PdfEditor = () => {
     };
 
     const handlePointerMove = (e) => {
+        if (dragStart && mode === 'edit-text') {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            setDragCurrent({ x, y });
+            return;
+        }
+
         if (!currentPath) return;
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -121,6 +137,36 @@ const PdfEditor = () => {
     };
 
     const handlePointerUp = (pageIndex) => {
+        if (dragStart && mode === 'edit-text') {
+            if (dragCurrent) {
+                const width = Math.abs(dragCurrent.x - dragStart.x);
+                const height = Math.abs(dragCurrent.y - dragStart.y);
+                const x = Math.min(dragStart.x, dragCurrent.x);
+                const y = Math.min(dragStart.y, dragCurrent.y);
+
+                if (width > 5 && height > 5) {
+                    const newEdit = {
+                        id: Date.now().toString(),
+                        text: '',
+                        x,
+                        y,
+                        width,
+                        height,
+                        size: Math.max(10, height * 0.7) // approximate font size
+                    };
+
+                    setEdits(prev => ({
+                        ...prev,
+                        [pageIndex]: [...(prev[pageIndex] || []), newEdit]
+                    }));
+                    setActiveTextId(newEdit.id);
+                }
+            }
+            setDragStart(null);
+            setDragCurrent(null);
+            return;
+        }
+
         if (!currentPath) return;
         setDrawings(prev => ({
             ...prev,
@@ -563,6 +609,19 @@ const PdfEditor = () => {
                                                 strokeWidth={currentPath.type === 'highlight' ? 16 : 3}
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
+                                            />
+                                        )}
+                                        {/* Render current drag rectangle for edit-text */}
+                                        {dragStart && dragCurrent && mode === 'edit-text' && (
+                                            <rect
+                                                x={Math.min(dragStart.x, dragCurrent.x)}
+                                                y={Math.min(dragStart.y, dragCurrent.y)}
+                                                width={Math.abs(dragCurrent.x - dragStart.x)}
+                                                height={Math.abs(dragCurrent.y - dragStart.y)}
+                                                fill="rgba(255,255,255,0.8)"
+                                                stroke="#E5322D"
+                                                strokeWidth="1"
+                                                strokeDasharray="4 4"
                                             />
                                         )}
                                     </svg>
