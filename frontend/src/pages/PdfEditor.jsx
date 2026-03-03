@@ -93,21 +93,25 @@ const PdfEditor = () => {
                 const size = parseFloat(compStyle.fontSize) || 12;
                 const editId = Date.now().toString();
 
-                // ✅ PROFESSIONAL METHOD: Create input inside span.parentNode
-                // with SAME CSS transform → pixel-perfect positioning!
+                // ✅ FIX: Copy span's INLINE left/top styles directly
+                // PDF.js v4 uses left/top properties for position, not transform translation
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.value = span.textContent.trim();
 
-                const spanTransform = compStyle.transform;
+                const spanLeft = span.style.left || '0px';
+                const spanTop = span.style.top || '0px';
+                const spanTransform = span.style.transform || ''; // scaleX only, not position
+                const spanTransformOrigin = span.style.transformOrigin || '0% 0%';
+
                 Object.assign(input.style, {
                     position: 'absolute',
-                    left: '0px',
-                    top: '0px',
-                    transform: spanTransform !== 'none' ? spanTransform : '',
-                    transformOrigin: '0% 0%',
-                    width: Math.max(spanRect.width, 80) + 'px',
-                    height: Math.max(spanRect.height, size * 1.4) + 'px',
+                    left: spanLeft,
+                    top: spanTop,
+                    transform: spanTransform,
+                    transformOrigin: spanTransformOrigin,
+                    width: Math.max(span.offsetWidth || spanRect.width, 80) + 'px',
+                    height: Math.max(span.offsetHeight || spanRect.height, size * 1.4) + 'px',
                     fontSize: compStyle.fontSize,
                     fontFamily: compStyle.fontFamily,
                     border: '1.5px dashed #E5322D',
