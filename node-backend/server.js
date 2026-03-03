@@ -987,9 +987,18 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
                 }
                 const activeCustomFont = embeddedFonts[fontInfo.name];
 
+                let drawY = finalY;
+                if (fontInfo.name === 'NotoSansDevanagari') {
+                    // NotoSansDevanagari natively renders higher compared to standard Helvetica baseline
+                    drawY = finalY - (finalSize * 0.22);
+                } else if (fontInfo.name !== 'NotoSans') {
+                    // Slight compensation for other Noto fonts
+                    drawY = finalY - (finalSize * 0.1);
+                }
+
                 page.drawText(newText, {
                     x: finalX,
-                    y: finalY + 2,
+                    y: drawY,
                     size: finalSize,
                     font: activeCustomFont,
                     color: rgb(0, 0, 0),
