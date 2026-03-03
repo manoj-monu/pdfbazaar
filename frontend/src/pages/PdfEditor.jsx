@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFDocument, rgb, degrees } from 'pdf-lib';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { UploadCloud, FileText, ArrowRight, Loader2, Type, Image as ImageIcon, Download, Trash2, Edit3, X, CheckCircle, RotateCw, Settings, Shield } from 'lucide-react';
+import { UploadCloud, FileText, ArrowRight, Loader2, Type, Image as ImageIcon, Download, Trash2, Edit3, X, CheckCircle, RotateCw, Settings, Shield, ZoomIn, ZoomOut } from 'lucide-react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -17,6 +17,7 @@ const PdfEditor = () => {
     const [file, setFile] = useState(null);
     const [numPages, setNumPages] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [scale, setScale] = useState(1.0);
     const [loading, setLoading] = useState(false);
     const [resultBlob, setResultBlob] = useState(null);
     const [texts, setTexts] = useState({});
@@ -107,8 +108,8 @@ const PdfEditor = () => {
         const rect = pageRef.current.getBoundingClientRect();
 
         if (mode === 'text') {
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) / scale;
+            const y = (e.clientY - rect.top) / scale;
 
             const newText = {
                 id: Date.now().toString(),
@@ -147,7 +148,7 @@ const PdfEditor = () => {
                 }
 
                 const editId = Date.now().toString();
-                const fontSize = matchedItem ? matchedItem.fontSize : (parseFloat(window.getComputedStyle(span).fontSize) || 12);
+                const fontSize = matchedItem ? matchedItem.fontSize : ((parseFloat(window.getComputedStyle(span).fontSize) || 12) / scale);
 
                 const newEdit = {
                     id: editId,
@@ -158,13 +159,13 @@ const PdfEditor = () => {
                     // ✅ EXACT PDF coordinates - no conversion needed!
                     pdfX: matchedItem ? matchedItem.pdfX : 0,
                     pdfY: matchedItem ? matchedItem.pdfY : 0,
-                    pdfWidth: matchedItem ? matchedItem.pdfWidth : spanRect.width,
+                    pdfWidth: matchedItem ? matchedItem.pdfWidth : (spanRect.width / scale),
                     pdfHeight: matchedItem ? matchedItem.pdfHeight : fontSize,
-                    // Rendered coords for inline overlay display
-                    displayX: spanRect.left - pageRect.left,
-                    displayY: spanRect.top - pageRect.top,
-                    displayWidth: spanRect.width,
-                    displayHeight: spanRect.height,
+                    // Rendered coords for inline overlay display at scale 1
+                    displayX: (spanRect.left - pageRect.left) / scale,
+                    displayY: (spanRect.top - pageRect.top) / scale,
+                    displayWidth: spanRect.width / scale,
+                    displayHeight: spanRect.height / scale,
                     hasMatch: !!matchedItem,
                 };
 
@@ -173,14 +174,14 @@ const PdfEditor = () => {
                 span.style.color = 'transparent';
                 return;
             } else {
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = (e.clientX - rect.left) / scale;
+                const y = (e.clientY - rect.top) / scale;
                 setDragStart({ x, y });
                 setDragCurrent({ x, y });
             }
         } else if (mode === 'draw' || mode === 'highlight') {
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) / scale;
+            const y = (e.clientY - rect.top) / scale;
             setCurrentPath({ type: mode, points: [{ x, y }] });
         }
     };
@@ -189,15 +190,15 @@ const PdfEditor = () => {
         if (!pageRef.current) return;
         const rect = pageRef.current.getBoundingClientRect();
         if (dragStart && mode === 'edit-text') {
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = (e.clientX - rect.left) / scale;
+            const y = (e.clientY - rect.top) / scale;
             setDragCurrent({ x, y });
             return;
         }
 
         if (!currentPath) return;
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const x = (e.clientX - rect.left) / scale;
+        const y = (e.clientY - rect.top) / scale;
         setCurrentPath(prev => ({ ...prev, points: [...prev.points, { x, y }] }));
     };
 
@@ -581,7 +582,19 @@ const PdfEditor = () => {
                 </div>
 
                 {/* Center Canvas */}
-                <div ref={containerRef} style={{ flex: 1, overflow: 'auto', display: 'flex', justifyContent: 'center', padding: '40px', background: '#dcdcdc' }}>
+                <div ref={containerRef} style={{ flex: 1, overflow: 'auto', display: 'flex', justifyContent: 'center', padding: '40px', background: '#dcdcdc', position: 'relative' }}>
+
+                    {/* Zoom Controls */}
+                    <div style={{ position: 'fixed', right: '30px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '8px', zIndex: 1000 }}>
+                        <button onClick={() => setScale(s => Math.min(s + 0.25, 3))} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#fff', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Zoom In">
+                            <ZoomIn size={20} color="#333" />
+                        </button>
+                        <span style={{ background: '#fff', padding: '4px 0', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', width: '40px' }}>{Math.round(scale * 100)}%</span>
+                        <button onClick={() => setScale(s => Math.max(s - 0.25, 0.5))} style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#fff', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Zoom Out">
+                            <ZoomOut size={20} color="#333" />
+                        </button>
+                    </div>
+
                     <div style={{ position: 'relative', background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                         {!deletedPages.has(currentPage - 1) ? (
                             <Document file={file}>
@@ -618,6 +631,7 @@ const PdfEditor = () => {
                                     </style>
                                     <Page pageNumber={currentPage}
                                         onLoadSuccess={() => extractTextItems(currentPage)}
+                                        scale={scale}
                                         renderTextLayer={true}
                                         renderAnnotationLayer={true} />
 
@@ -625,8 +639,8 @@ const PdfEditor = () => {
                                     {(texts[currentPage] || []).map(t => (
                                         <div key={t.id} style={{
                                             position: 'absolute',
-                                            left: t.x,
-                                            top: t.y,
+                                            left: t.x * scale,
+                                            top: t.y * scale,
                                             border: activeTextId === t.id ? '1px dashed #E5322D' : '1px solid transparent',
                                             padding: '2px',
                                             zIndex: 20
@@ -641,7 +655,7 @@ const PdfEditor = () => {
                                                     background: 'transparent',
                                                     border: 'none',
                                                     outline: 'none',
-                                                    fontSize: `${t.size}px`,
+                                                    fontSize: `${t.size * scale}px`,
                                                     fontFamily: 'Helvetica',
                                                     color: 'black',
                                                     minWidth: '100px',
@@ -666,8 +680,8 @@ const PdfEditor = () => {
                                     {inlineEdits.filter(ed => ed.pageIndex === currentPage - 1).map(ed => (
                                         <div key={ed.id} style={{
                                             position: 'absolute',
-                                            left: ed.displayX,
-                                            top: ed.displayY,
+                                            left: ed.displayX * scale,
+                                            top: ed.displayY * scale,
                                             zIndex: 50,
                                             display: 'flex',
                                             alignItems: 'center',
@@ -681,14 +695,14 @@ const PdfEditor = () => {
                                                 ))}
                                                 autoFocus={activeTextId === ed.id}
                                                 style={{
-                                                    fontSize: `${ed.fontSize}px`,
+                                                    fontSize: `${ed.fontSize * scale}px`,
                                                     fontFamily: 'Helvetica, sans-serif',
                                                     border: '2px solid #E5322D',
                                                     borderRadius: '3px',
                                                     background: 'rgba(255,255,255,0.97)',
                                                     outline: 'none',
                                                     padding: '1px 4px',
-                                                    minWidth: `${ed.displayWidth}px`,
+                                                    minWidth: `${ed.displayWidth * scale}px`,
                                                     color: '#000',
                                                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                                                 }}
@@ -705,18 +719,18 @@ const PdfEditor = () => {
                                         {/* Render finalized drawings */}
                                         {(drawings[currentPage] || []).map((d, i) => {
                                             if (d.points.length < 2) return null;
-                                            const pts = d.points.map(p => `${p.x},${p.y}`).join(' ');
+                                            const pts = d.points.map(p => `${p.x * scale},${p.y * scale}`).join(' ');
                                             const color = d.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : '#e5322d';
-                                            const width = d.type === 'highlight' ? 16 : 3;
-                                            return <polyline key={i} points={pts} fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" />
+                                            const strokeWidth = (d.type === 'highlight' ? 16 : 3) * scale;
+                                            return <polyline key={i} points={pts} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
                                         })}
                                         {/* Render current path */}
                                         {currentPath && currentPath.points.length > 1 && (
                                             <polyline
-                                                points={currentPath.points.map(p => `${p.x},${p.y}`).join(' ')}
+                                                points={currentPath.points.map(p => `${p.x * scale},${p.y * scale}`).join(' ')}
                                                 fill="none"
                                                 stroke={currentPath.type === 'highlight' ? 'rgba(255, 255, 0, 0.4)' : '#e5322d'}
-                                                strokeWidth={currentPath.type === 'highlight' ? 16 : 3}
+                                                strokeWidth={(currentPath.type === 'highlight' ? 16 : 3) * scale}
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                             />
@@ -724,10 +738,10 @@ const PdfEditor = () => {
                                         {/* Render current drag rectangle for edit-text */}
                                         {dragStart && dragCurrent && mode === 'edit-text' && (
                                             <rect
-                                                x={Math.min(dragStart.x, dragCurrent.x)}
-                                                y={Math.min(dragStart.y, dragCurrent.y)}
-                                                width={Math.abs(dragCurrent.x - dragStart.x)}
-                                                height={Math.abs(dragCurrent.y - dragStart.y)}
+                                                x={Math.min(dragStart.x, dragCurrent.x) * scale}
+                                                y={Math.min(dragStart.y, dragCurrent.y) * scale}
+                                                width={Math.abs(dragCurrent.x - dragStart.x) * scale}
+                                                height={Math.abs(dragCurrent.y - dragStart.y) * scale}
                                                 fill="rgba(255,255,255,0.8)"
                                                 stroke="#E5322D"
                                                 strokeWidth="1"
