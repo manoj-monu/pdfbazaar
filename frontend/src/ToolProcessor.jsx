@@ -123,11 +123,12 @@ export default function ToolProcessor({ tools }) {
                             onChange={handleFileChange}
                         />
 
-                        <div className="uploader-box" onDragOver={onDragOver} onDrop={onDrop}>
-                            <button className="uploader-btn" onClick={() => fileInputRef.current.click()}>
+                        <div className="upload-area" onDragOver={onDragOver} onDrop={onDrop} onClick={() => fileInputRef.current.click()}>
+                            <Upload size={48} color="#333" style={{ marginBottom: 16 }} />
+                            <button className="btn-upload" onClick={(e) => { e.stopPropagation(); fileInputRef.current.click(); }}>
                                 Select {acceptedTypes === 'application/pdf' ? 'PDF ' : ''}file{isMultiple ? 's' : ''}
                             </button>
-                            <p className="drop-text">or drop files here</p>
+                            <p className="upload-sub">or drop files here</p>
                         </div>
                     </div>
                 </>
