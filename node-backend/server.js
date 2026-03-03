@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { PDFDocument, rgb, degrees } = require('pdf-lib');
+const fontkit = require('@pdf-lib/fontkit');
 const { exec } = require('child_process');
 require('dotenv').config();
 
@@ -887,8 +888,21 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
 
         const pdfBuffer = fs.readFileSync(req.file.path);
         const pdfDoc = await PDFDocument.load(pdfBuffer, { ignoreEncryption: true });
+
+        // 🔹 Support Hindi / Custom Fonts
+        pdfDoc.registerFontkit(fontkit);
+        const fontPath = path.join(__dirname, 'fonts', 'NotoSansDevanagari-Regular.ttf');
+
+        let customFont;
+        if (fs.existsSync(fontPath)) {
+            const fontBytes = fs.readFileSync(fontPath);
+            customFont = await pdfDoc.embedFont(fontBytes);
+        } else {
+            console.warn('[Warning] Missing NotoSansDevanagari font, falling back to Helvetica');
+            customFont = await pdfDoc.embedFont('Helvetica');
+        }
+
         const pages = pdfDoc.getPages();
-        const helveticaFont = await pdfDoc.embedFont('Helvetica');
 
         for (const rep of replacements) {
             const { pageIndex, x, y, width, height, newText, fontSize, renderedWidth, renderedHeight, hasMatch, pdfX, pdfY, pdfWidth, pdfHeight } = rep;
@@ -934,7 +948,7 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
                     x: finalX,
                     y: finalY + 2,
                     size: finalSize,
-                    font: helveticaFont,
+                    font: customFont,
                     color: rgb(0, 0, 0),
                 });
             }
