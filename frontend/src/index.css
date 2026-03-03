@@ -602,6 +602,37 @@ button {
   .nav-links {
     display: none;
   }
+
+  .nav-brand span {
+    font-size: 20px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .footer-col[style*="gridColumn"] {
+    grid-column: span 1 !important;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .tool-filters {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
 }
 
 .workspace {
