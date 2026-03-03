@@ -5,31 +5,60 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Preconnect to Third Parties to Save DNS Resolving Time -->
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <title>PDFbazaar.com - All-in-One Free PDF Tools</title>
   <meta name="description"
     content="Every tool you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs." />
   <meta name="keywords"
     content="pdf tools, merge pdf, compress pdf, split pdf, edit pdf, pdf to word, word to pdf, ilovepdf alternative, pdfbazaar" />
   <meta name="author" content="PDFbazaar.com" />
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2020479148810052"
-    crossorigin="anonymous"></script>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TP5P1DNSGY"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    // Google Analytics Configuration
-    gtag('config', 'G-TP5P1DNSGY');
-  </script>
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Lazy Load Analytics & Adsense Script -->
+  <script>
+    (function () {
+      let isLoaded = false;
+      function loadScripts() {
+        if (isLoaded) return;
+        isLoaded = true;
+
+        // Load Google Analytics
+        const gaScript = document.createElement('script');
+        gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-TP5P1DNSGY";
+        gaScript.async = true;
+        document.body.appendChild(gaScript);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-TP5P1DNSGY');
+
+        // Load Google Adsense
+        const adsScript = document.createElement('script');
+        adsScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2020479148810052";
+        adsScript.async = true;
+        adsScript.crossOrigin = "anonymous";
+        document.body.appendChild(adsScript);
+      }
+
+      // Load on user interaction
+      const triggerEvents = ['scroll', 'mousemove', 'click', 'keydown', 'touchstart'];
+      triggerEvents.forEach(evt => window.addEventListener(evt, loadScripts, { once: true, passive: true }));
+
+      // Fallback load after 3.5s if no interaction
+      setTimeout(loadScripts, 3500);
+    })();
+  </script>
 </body>
 
 </html>
