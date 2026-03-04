@@ -845,7 +845,9 @@ const ToolPage = () => {
 
               {toolId === 'unlock-pdf' && (
                 <div className="options-group">
-                  <p>Our server will attempt to unlock standard restrictions. If there is a strong password, unlocking might fail without knowing it.</p>
+                  <h4 style={{ color: '#333', marginBottom: '8px' }}>Enter Password (if known)</h4>
+                  <input type="text" className="input-field" placeholder="Password to unlock" value={password} onChange={e => setPassword(e.target.value)} />
+                  <p style={{ fontSize: '12px', marginTop: '4px', lineHeight: '1.4' }}>Our server will attempt to unlock standard restrictions automatically. If the PDF has a strong password (like an Aadhaar card), please enter it above.</p>
                 </div>
               )}
 
