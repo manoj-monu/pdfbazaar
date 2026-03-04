@@ -535,14 +535,26 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
         } else if (['protect-pdf', 'unlock-pdf'].includes(toolId)) {
             const { password } = options || {};
             const inputFile = files[0].path;
-            const gsCmd = getGsCommand();
-            let command = '';
-            if (toolId === 'protect-pdf') {
-                command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOwnerPassword="${password}" -sUserPassword="${password}" -sOutputFile="${processedFilePath}" "${inputFile}"`;
-            } else {
-                command = `${gsCmd} -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sPassword="${password}" -sOutputFile="${processedFilePath}" "${inputFile}"`;
-            }
-            await new Promise((resolve) => exec(command, resolve));
+            const pyScript = path.join(__dirname, 'python_scripts', 'pdf_security.py');
+            const action = toolId === 'protect-pdf' ? 'protect' : 'unlock';
+            const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
+
+            // Execute python pypdf script to remove DRM correctly instead of ghostscript
+            const command = `${pythonCmd} "${pyScript}" ${action} "${inputFile}" "${processedFilePath}" --password "${(password || '').replace(/"/g, '\\"')}"`;
+
+            console.log(`[${toolId}] Running: ${command}`);
+            await new Promise((resolve, reject) => {
+                exec(command, { timeout: 60000 }, (error, stdout, stderr) => {
+                    if (stdout && stdout.includes('ERROR:')) {
+                        console.error(`[${toolId}] Error:`, stdout);
+                        fs.copyFileSync(inputFile, processedFilePath); // Fallback copy unedited if we failed and hope user downloads original
+                        return reject(new Error(stdout.split('ERROR:')[1].trim()));
+                    } else if (error) {
+                        return reject(new Error(`Failed to ${action} PDF: Wrong password or unsupported format.`));
+                    }
+                    resolve();
+                });
+            });
 
         } else if (['word-to-pdf', 'excel-to-pdf', 'ppt-to-pdf'].includes(toolId)) {
             const inputFile = files[0].path;
