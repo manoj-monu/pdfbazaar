@@ -34,10 +34,10 @@ const Home = () => {
             <div className="hero-wrapper">
                 <section className="hero">
                     <div className="container">
-                        <h1>Every tool you need to work with PDFs in one place</h1>
+                        <h1>All the PDF tools you'll ever need, powered by PDFbazaar.com</h1>
                         <p>
-                            Every tool you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge,
-                            split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
+                            Manage your documents effortlessly with our 100% free, secure, and intuitive platform. Merge,
+                            split, compress, edit, and convert PDFs online in seconds—no installation required. Experience the power of PDFbazaar.com today!
                         </p>
                     </div>
                 </section>
