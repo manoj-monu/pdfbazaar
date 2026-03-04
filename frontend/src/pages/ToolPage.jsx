@@ -6,6 +6,7 @@ import { UploadCloud, File as FileIcon, FileText, X, CheckCircle, ArrowRight, Lo
 import AdsPlacement from '../components/AdsPlacement';
 import { PDFDocument } from 'pdf-lib';
 import useSEO from '../hooks/useSEO';
+import ToolSEOArticle from '../components/ToolSEOArticle';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -1008,6 +1009,9 @@ const ToolPage = () => {
         </div>
       )}
 
+      {tool && <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto 60px' }}>
+        <ToolSEOArticle toolId={tool.id} toolName={tool.name} toolDesc={tool.desc} />
+      </div>}
       <div style={{ marginTop: 'auto', padding: '60px 0 20px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <AdsPlacement slot="9711322411" format="auto" style={{ margin: '0 auto', width: '100%' }} />
       </div>
