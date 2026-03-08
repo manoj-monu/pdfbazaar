@@ -50,8 +50,8 @@ export const PrivacyPolicy = () => {
             <h1 style={{ fontSize: '36px', marginBottom: '24px' }}>Privacy Policy</h1>
             <div className="blog-content" style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
                 <p>Your privacy is our highest priority at PDFbazaar.com. Please read our policy carefully.</p>
-                <h3>1. Document Security</h3>
-                <p>All documents uploaded to our servers are strictly processed using automated scripts. They are automatically deleted from our cloud servers within 1 hour of processing. We do not read, copy, or share your documents with any third-party entities.</p>
+                <h3>1. Document Security & Auto-Deletion</h3>
+                <p>All documents uploaded to our servers are strictly processed using automated scripts. <strong>They are automatically and permanently deleted from our cloud servers within 1 hour of processing.</strong> We do not read, copy, host, index, or share your documents with any third-party entities.</p>
                 <h3>2. Data Collection</h3>
                 <p>We may collect standard analytics data such as IP address, browser type, and timestamps to improve our website's performance and fix technical bugs. No personally identifiable information is stored without your full consent.</p>
                 <h3>3. Cookies</h3>
@@ -73,11 +73,13 @@ export const TermsConditions = () => {
             <div className="blog-content" style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
                 <p>By using the PDFbazaar.com website, you agree to these Terms and Conditions.</p>
                 <h3>1. Acceptable Use</h3>
-                <p>You agree to use PDFbazaar.com tools only for lawful purposes. You must not use our service to process documents related to illegal activities, extreme violence, or unauthorized copyrighted materials.</p>
+                <p>You agree to use PDFbazaar.com tools only for lawful purposes. You must not use our service to process documents related to illegal activities, extreme violence, or unauthorized copyrighted materials. Users are solely responsible for the content they upload.</p>
                 <h3>2. Service Availability</h3>
                 <p>We try to keep PDFbazaar.com up 24/7. However, our services are provided "as is" and we take no responsibility for temporary server downtime or failed file conversions.</p>
                 <h3>3. Liability</h3>
                 <p>PDFbazaar.com is not responsible for any damage, data loss, or business interruption that may result from using our free tools. Please always keep an original backup of your files.</p>
+                <h3>4. DMCA & Copyright Policy</h3>
+                <p>PDFbazaar respects the intellectual property rights of others. We operate solely as a processing tool and do not permanently host, share, or index any user-uploaded files. All files are automatically deleted from our servers within 1 hour of processing. If you believe your copyrighted work has been improperly processed through our tools, please report it along with proof to <strong>support@pdfbazaar.in</strong>, and we will ensure compliance.</p>
             </div>
         </div>
     );
