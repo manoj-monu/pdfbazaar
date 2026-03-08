@@ -13,7 +13,7 @@ export const AboutUs = () => {
             <div className="blog-content" style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
                 <p>Welcome to <strong>PDFbazaar.com</strong>, your ultimate destination for everything related to PDF documents. Our mission is to provide fast, reliable, and 100% free PDF management tools tailored to Indian users and beyond.</p>
                 <p>Whether you need to compress an Aadhar card for a government form, merge study notes, or safely unlock pan card PDFs, our robust backend handles it all while respecting your privacy.</p>
-                <p>We believe that simple tasks shouldn't require expensive software subscriptions. That is why PDFbazaar.com is completely free, easy to use, and does not put watermarks on your personal documents.</p>
+                <p><strong>PDFbazaar is a processing utility, not a file storage provider.</strong> We believe that simple tasks shouldn't require expensive software subscriptions or compromise your data. That is why PDFbazaar.com is completely free, easy to use, does not put watermarks on your personal documents, and automatically deletes all files within 1 hour to ensure complete safety and privacy.</p>
             </div>
             <AdsPlacement type="rectangle" style={{ marginTop: '40px' }} />
         </div>
@@ -31,7 +31,8 @@ export const ContactUs = () => {
             <h1 style={{ fontSize: '36px', marginBottom: '24px' }}>Contact Us</h1>
             <div className="blog-content" style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
                 <p>Have questions, feedback, or need help with a tool? We'd love to hear from you.</p>
-                <p>Email: <strong>support@pdfbazaar.in</strong></p>
+                <p>General inquiries & Support: <strong>support@pdfbazaar.in</strong></p>
+                <p>Legal & DMCA/Copyright Claims: <strong>support@pdfbazaar.in</strong></p>
                 <p>Our team aims to respond to all inquiries within 24-48 hours. Please include your original document if you experienced an error, ensuring you remove sensitive information first.</p>
             </div>
             <AdsPlacement type="rectangle" style={{ marginTop: '40px' }} />
@@ -96,12 +97,14 @@ export const Disclaimer = () => {
             <h1 style={{ fontSize: '36px', marginBottom: '24px' }}>Disclaimer</h1>
             <div className="blog-content" style={{ fontSize: '18px', lineHeight: '1.8', color: 'var(--text-primary)' }}>
                 <p>The information and tools provided by PDFbazaar.com are for general informational and utility purposes only.</p>
-                <h3>1. No Guarantee of Accuracy</h3>
-                <p>While we strive to provide the best PDF conversion algorithms, we make no representations or warranties of any kind regarding the completeness, accuracy, reliability, or suitability of our tools for professional or critical documentation.</p>
-                <h3>2. Third-Party Links</h3>
-                <p>Through this website, you are able to link to other websites which are not under the control of PDFbazaar.com. We have no control over the nature, content, and availability of those sites. The inclusion of any links does not necessarily imply a recommendation or endorse the views expressed within them.</p>
-                <h3>3. Independence</h3>
-                <p>PDFbazaar.com is an independent platform and is NOT affiliated with, endorsed by, or sponsored by iLovePDF, Adobe, or any other trademark owners. All brand names used exist solely for comparative or descriptive purposes.</p>
+                <h3>1. User Content Responsibility</h3>
+                <p>PDFbazaar acts solely as a transient processing service. We do not monitor, endorse, or assume any liability for the content uploaded by users. Users bear full responsibility for ensuring they hold the necessary rights or permissions to process documents using our tools. We claim protection under DMCA Safe Harbor and similar global regulations, as all data is automatically purged shortly after processing.</p>
+                <h3>2. No Guarantee of Accuracy</h3>
+                <p>While we strive to provide the best PDF conversion algorithms, we make no representations or warranties of any kind regarding the completeness, accuracy, reliability, or suitability of our tools for professional or critical documentation. Use our services at your own risk.</p>
+                <h3>3. Third-Party Links</h3>
+                <p>Through this website, you are able to link to other websites directly or via advertisements. We have no control over the nature, content, and availability of those external sites. The inclusion of any links does not imply a recommendation or endorse the views expressed within them.</p>
+                <h3>4. Independence</h3>
+                <p>PDFbazaar.com is a fully independent platform developed from the ground up, and is NOT affiliated with, endorsed by, or sponsored by iLovePDF, Adobe, or any other trademark owners. All brand names or trademarks mentioned exist solely for comparative or descriptive purposes and belong to their respective owners.</p>
             </div>
         </div>
     );
