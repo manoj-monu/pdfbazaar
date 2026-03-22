@@ -15,7 +15,7 @@ export const AboutUs = () => {
                 <p>Whether you need to compress an Aadhar card for a government form, merge study notes, or safely unlock pan card PDFs, our robust backend handles it all while respecting your privacy.</p>
                 <p><strong>PDFbazaar is a processing utility, not a file storage provider.</strong> We believe that simple tasks shouldn't require expensive software subscriptions or compromise your data. That is why PDFbazaar.com is completely free, easy to use, does not put watermarks on your personal documents, and automatically deletes all files within 1 hour to ensure complete safety and privacy.</p>
             </div>
-            <AdsPlacement type="rectangle" style={{ marginTop: '40px' }} />
+            <AdsPlacement slot="2965247838" format="horizontal" style={{ marginTop: '40px' }} />
         </div>
     );
 };
@@ -35,7 +35,7 @@ export const ContactUs = () => {
                 <p>Legal & DMCA/Copyright Claims: <strong>support@pdfbazaar.in</strong></p>
                 <p>Our team aims to respond to all inquiries within 24-48 hours. Please include your original document if you experienced an error, ensuring you remove sensitive information first.</p>
             </div>
-            <AdsPlacement type="rectangle" style={{ marginTop: '40px' }} />
+            <AdsPlacement slot="2965247838" format="horizontal" style={{ marginTop: '40px' }} />
         </div>
     );
 };
@@ -58,6 +58,7 @@ export const PrivacyPolicy = () => {
                 <h3>3. Cookies</h3>
                 <p>We use cookies to improve user experience and deliver relevant advertisements via Google AdSense. Users can modify their cookie tracking preferences directly through their browser settings.</p>
             </div>
+            <AdsPlacement slot="2965247838" format="horizontal" style={{ marginTop: '40px' }} />
         </div>
     );
 };
@@ -106,6 +107,7 @@ export const Disclaimer = () => {
                 <h3>4. Independence</h3>
                 <p>PDFbazaar.com is a fully independent platform developed from the ground up, and is NOT affiliated with, endorsed by, or sponsored by iLovePDF, Adobe, or any other trademark owners. All brand names or trademarks mentioned exist solely for comparative or descriptive purposes and belong to their respective owners.</p>
             </div>
+            <AdsPlacement slot="2965247838" format="horizontal" style={{ marginTop: '40px' }} />
         </div>
     );
 };

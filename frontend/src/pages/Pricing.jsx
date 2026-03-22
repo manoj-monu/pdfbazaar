@@ -9,7 +9,7 @@ const Pricing = () => {
                 Upgrade to unlock unlimited document processing, OCR, ad-free experience, and exclusive premium features.
             </p>
 
-            <AdsPlacement type="leaderboard" style={{ marginBottom: '60px' }} />
+            <AdsPlacement slot="2965247838" format="horizontal" style={{ marginBottom: '60px' }} />
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px', maxWidth: '1000px', margin: '0 auto' }}>
 

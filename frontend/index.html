@@ -3,12 +3,14 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/png" href="/pdf-icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Preconnect to Third Parties to Save DNS Resolving Time -->
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
-  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <title>PDFbazaar.com - All-in-One Free PDF Tools</title>
   <meta name="description"
     content="Manage your documents effortlessly with our 100% free, secure, and intuitive platform. Merge, split, compress, edit, and convert PDFs online in seconds—no installation required." />
@@ -21,7 +23,7 @@
   <div id="root"></div>
   <script type="module" src="/src/main.jsx" defer></script>
 
-  <!-- Lazy Load Analytics & Adsense Script -->
+  <!-- Optimized Analytics & Adsense Script -->
   <script>
     (function () {
       let isLoaded = false;
@@ -52,8 +54,8 @@
       const triggerEvents = ['scroll', 'mousemove', 'click', 'keydown', 'touchstart'];
       triggerEvents.forEach(evt => window.addEventListener(evt, loadScripts, { once: true, passive: true }));
 
-      // Fallback load after 3.5s if no interaction
-      setTimeout(loadScripts, 3500);
+      // Fallback load after 1s if no interaction to capture more impressions
+      setTimeout(loadScripts, 1000);
     })();
   </script>
 </body>

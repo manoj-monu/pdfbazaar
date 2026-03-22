@@ -6,8 +6,10 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { UploadCloud, FileText, ArrowRight, Loader2, Type, Image as ImageIcon, Download, Trash2, Edit3, X, CheckCircle, RotateCw, Settings, Shield, ZoomIn, ZoomOut, MousePointer2, Undo, Redo, Eraser, Highlighter, Pencil, Circle, PenTool, StickyNote, Link, MoreHorizontal, Layout, Copy, Scissors, Square, Grid } from 'lucide-react';
 import ToolSEOArticle from '../components/ToolSEOArticle';
+import AdsPlacement from '../components/AdsPlacement';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+
     'pdfjs-dist/build/pdf.worker.min.mjs',
     import.meta.url,
 ).toString();
@@ -510,6 +512,12 @@ const PdfEditor = () => {
                     <p>or drop PDF here</p>
                     <button className="btn btn-primary" style={{ marginTop: '20px' }}>Select File</button>
                 </div>
+
+                {/* Ad Unit: Middle */}
+                <div style={{ margin: '40px auto', display: 'flex', justifyContent: 'center' }}>
+                    <AdsPlacement slot="2004166750" format="horizontal" />
+                </div>
+
                 <div style={{ marginTop: '60px', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
                     <ToolSEOArticle toolId="edit-pdf" toolName="Edit PDF" toolDesc="Add text, images, shapes or freehand annotations to a PDF document with our professional Adobe-style PDF editor." />
                 </div>
@@ -879,8 +887,13 @@ const PdfEditor = () => {
                     </div>
                 )}
             </div>
-            <div style={{ width: '100%', maxWidth: '900px', margin: '60px auto', padding: '0 20px' }}>
+            <div style={{ width: '100%', maxWidth: '900px', margin: '60px auto', padding: '0 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <ToolSEOArticle toolId="edit-pdf" toolName="Edit PDF" toolDesc="Add text, images, shapes or freehand annotations to a PDF document with our professional Adobe-style PDF editor." />
+                
+                {/* Ad Unit: Bottom */}
+                <div style={{ width: '100%', marginTop: '40px' }}>
+                    <AdsPlacement slot="2965247838" format="auto" />
+                </div>
             </div>
         </>
     );

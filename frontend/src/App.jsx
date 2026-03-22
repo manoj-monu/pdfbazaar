@@ -24,8 +24,6 @@ function App() {
     <Router>
       <ScrollToTop />
       <Navbar />
-      {/* Header Ad - Only shown on non-tool pages to avoid nav proximity policy issues */}
-      <AdsPlacement slot="2004166750" format="auto" style={{ margin: '0 0 8px 0' }} />
       <Suspense fallback={<div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="animate-spin" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #E5322D', borderRadius: '50%', width: '40px', height: '40px' }}></div></div>}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -42,8 +40,6 @@ function App() {
           <Route path="/disclaimer" element={<Disclaimer />} />
         </Routes>
       </Suspense>
-      {/* Footer Ad - Policy compliant: clear separation from content and footer */}
-      <AdsPlacement slot="2965247838" format="auto" style={{ margin: '32px 0 0 0' }} />
       <Footer />
     </Router>
   );

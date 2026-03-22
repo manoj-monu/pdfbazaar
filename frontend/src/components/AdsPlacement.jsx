@@ -1,39 +1,44 @@
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 /**
  * AdsPlacement — renders a real Google AdSense ad unit.
- *
+ * Optimized for React / SPA to ensure impressions are counted on navigation.
+ * 
  * Props:
- *  - slot       : AdSense ad-slot ID (required once you create ad units in AdSense dashboard)
- *  - format     : 'auto' | 'rectangle' | 'horizontal' | 'vertical'  (default: 'auto')
- *  - responsive : true/false  (default: true)
+ *  - slot       : AdSense ad-slot ID (required)
+ *  - format     : 'auto' | 'rectangle' | 'horizontal' | 'vertical' (default: 'auto')
+ *  - responsive : true/false (default: true)
  *  - style      : extra inline styles for the wrapper div
- *
- * Usage examples:
- *   <AdsPlacement slot="1234567890" format="horizontal" />
- *   <AdsPlacement slot="0987654321" format="rectangle" />
  */
 const AdsPlacement = ({
-    slot = 'auto',          // Replace with real slot IDs from your AdSense dashboard
+    slot,
     format = 'auto',
     responsive = true,
     style = {},
     className = '',
 }) => {
     const adRef = useRef(null);
+    const location = useLocation();
 
     useEffect(() => {
-        try {
-            if (window.adsbygoogle && adRef.current) {
-                // Only push if not already initialized
-                if (!adRef.current.getAttribute('data-adsbygoogle-status')) {
-                    (window.adsbygoogle = window.adsbygoogle || []).push({});
+        // Short timeout ensures the DOM has fully rendered the 'ins' tag
+        // and window.adsbygoogle is ready (especially with our lazy loader)
+        const timer = setTimeout(() => {
+            try {
+                if (window.adsbygoogle && adRef.current) {
+                    // Only push if not already initialized
+                    if (!adRef.current.getAttribute('data-adsbygoogle-status')) {
+                        (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    }
                 }
+            } catch (e) {
+                console.error('AdSense Error:', e);
             }
-        } catch (e) {
-            // AdSense might be blocked by ad-blocker, silently ignore
-        }
-    }, []);
+        }, 150);
+
+        return () => clearTimeout(timer);
+    }, [location.pathname, slot]); // Re-initialize when navigating or slot changes
 
     return (
         <div
@@ -41,11 +46,14 @@ const AdsPlacement = ({
             style={{
                 textAlign: 'center',
                 overflow: 'hidden',
+                minWidth: '250px',
                 minHeight: format === 'rectangle' ? '250px' : '90px',
+                margin: '16px auto',
                 ...style
             }}
         >
             <ins
+                key={`${location.pathname}-${slot}`} // Force a new element on navigation
                 ref={adRef}
                 className="adsbygoogle"
                 style={{ display: 'block' }}
@@ -59,3 +67,4 @@ const AdsPlacement = ({
 };
 
 export default AdsPlacement;
+

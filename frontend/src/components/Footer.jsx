@@ -7,10 +7,10 @@ const Footer = () => {
             <div className="container">
                 <div className="footer-grid">
                     <div className="footer-col" style={{ gridColumn: 'span 2' }}>
-                        <Link to="/" className="nav-brand" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '2px', textDecoration: 'none' }}>
-                            <img src="/pdf-icon.png" alt="PDF icon" width="60" height="60" style={{ height: '60px', width: '60px', objectFit: 'contain' }} />
-                            <span style={{ fontFamily: "'Roboto', sans-serif", fontWeight: '900', fontSize: '30px', color: '#4f46e5', letterSpacing: '-0.5px', lineHeight: 1 }}>
-                                Bazaar.com
+                        <Link to="/" className="nav-brand" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                            <img src="/pdf-icon.png" alt="PDFbazaar Logo" style={{ height: '50px', width: '50px', borderRadius: '50%', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }} />
+                            <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: '800', fontSize: '28px', color: '#1321d4', letterSpacing: '-1.2px', lineHeight: 1 }}>
+                                PDFbazaar<span style={{ color: '#1321d4' }}>.com</span>
                             </span>
                         </Link>
                         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.6' }}>

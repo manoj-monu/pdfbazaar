@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TOOLS_CATEGORIES } from '../ToolsData';
 import useSEO from '../hooks/useSEO';
+import AdsPlacement from '../components/AdsPlacement';
 
 const Home = () => {
     useSEO({
@@ -57,6 +58,11 @@ const Home = () => {
                 </div>
             </div>
 
+            {/* Ad Unit: Top Responsive */}
+            <div className="container" style={{ marginTop: '20px' }}>
+                <AdsPlacement slot="2004166750" format="horizontal" />
+            </div>
+
             <section className="tools-section" id="tools">
                 <div className="container">
                     <div className="tools-grid">
@@ -81,6 +87,11 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Ad Unit: Bottom Responsive */}
+            <div className="container" style={{ margin: '40px auto' }}>
+                <AdsPlacement slot="2965247838" format="auto" />
+            </div>
         </main>
     );
 };
