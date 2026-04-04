@@ -1,6 +1,106 @@
 export const BLOG_POSTS = [
     // --- 30 DAYS GROWTH CHALLENGE - APRIL 2026 ---
     {
+        id: "pdf-size-50kb-kaise-kare",
+        title: "PDF Size 50KB Kaise Kare Mobile Me? (100% Working Tool)",
+        slug: "pdf-size-50kb-kaise-kare-mobile-me",
+        excerpt: "Kuch sarkari forms me 50KB se kam size mangte hain. Hamara 'Target Size' feature use karke exact 50KB PDF download karein.",
+        date: "2026-04-11",
+        author: "PDFbazaar Official",
+        category: "Tutorial",
+        content: `
+            <h2>Exact 50KB PDF Size Kaise Banayein?</h2>
+            <p>Dosto, humein aksar problems aati hain jab hum 50KB se kam PDF document upload karna chahte hain. Most online tools sirf medium ya high compression dete hain, lekin content blur ho jata hai.</p>
+            
+            <p>PDFbazaar ka <a href="/compress-pdf-without-losing-quality">Advanced Compressor</a> use karke aap exact 50 entry kar sakte hain. Hum quality ko AI se restore karte hain taaki document readable rahe.</p>
+            
+            <h3>Method:</h3>
+            <ul>
+                <li>PDF upload karein.</li>
+                <li>Target Size manual box me '50' type karein.</li>
+                <li>Download karke check karein.</li>
+            </ul>
+        `
+    },
+    {
+        id: "free-pdf-tools-for-indian-students-2026",
+        title: "Top 5 Free PDF Tools for Students in India 2026 (No Ads, No Watermark)",
+        slug: "best-free-pdf-tools-for-indian-students-2026",
+        excerpt: "College assignments aur exam forms ke liye best tools jo har student ko pata hone chahiye. Save money on cyber cafes!",
+        date: "2026-04-12",
+        author: "Education Expert",
+        category: "Student Guide",
+        content: `
+            <h2>Students Ke Liye Best PDF Platform</h2>
+            <p>Digital classes ke zamane me assignments manage karna mushkil kaam hai. Ye tools aapka kaam 2 minute me khatam kar denge:</p>
+            
+            <ol>
+                <li><strong>PDFbazaar.com:</strong> Quick compression aur merging ke liye best.</li>
+                <li><strong>Google Drive:</strong> Textbooks save karne aur scan karne ke liye.</li>
+                <li><strong>Microsoft Lens:</strong> Clear notes scan karne ke liye.</li>
+            </ol>
+            
+            <p>Cyber cafe par ₹10-20 dene se bachne ke liye hamara <a href="/">All-in-One Dashboard</a> bookmark karein.</p>
+        `
+    },
+    {
+        id: "merge-pdf-for-college-projects",
+        title: "How to Merge Multiple PDF Files for College Projects (Easy & Fast)",
+        slug: "merge-multiple-pdf-files-for-college-projects",
+        excerpt: "Apne sare assignments aur certificates ko ek single professional PDF me kaise jodein? Tutorial for freshers.",
+        date: "2026-04-13",
+        author: "Academic Counselor",
+        category: "Tutorial",
+        content: `
+            <h2>Multiple Files Ko Combine Karein Professional Look Ke Liye</h2>
+            <p>Agar aapko multiple docs (Resume + Marksheets + ID Proof) ek sath send karne hain, toh merging best option hai.</p>
+            
+            <h3>Merge Process on PDFbazaar:</h3>
+            <ol>
+                <li>Click on <a href="/merge-pdf-online-free">Merge PDF</a>.</li>
+                <li>Sari files select karein.</li>
+                <li>Drag karke order sahi karein.</li>
+                <li>Save karke file name professionally 'Final_Project.pdf' rakhein.</li>
+            </ol>
+        `
+    },
+    {
+        id: "id-card-pdf-password-remover-online",
+        title: "Aadhar & PAN Card PDF Password Online Remove Karein (100% Safe)",
+        slug: "aadhar-pan-card-pdf-password-online-remover",
+        excerpt: " बार-बार password dalna band karein! Apne ID cards se permanent password hatane ka safe method.",
+        date: "2026-04-14",
+        author: "Security Analyst",
+        category: "Safe PDF",
+        content: `
+            <h2>ID Cards Se Password Permanent Kaise Hatayein?</h2>
+            <p>Dosto, hamare government IDs (e-Aadhar, Digital PAN) password-protected hote hain. Print out ya share karte waqt ye kaafi annoying hote hain.</p>
+            
+            <p>Hamara <a href="/unlock-pdf-password-remover">Unlock PDF tool</a> use karke aap ise 1 second me hatakar plain PDF save kar sakte hain.</p>
+            
+            <p><strong>Note:</strong> Hum password store nahi karte, processing directly aapke browser me hoti hai (100% Privacy).</p>
+        `
+    },
+    {
+        id: "photo-to-pdf-for-whatsapp-status",
+        title: "Photo to PDF Converter for WhatsApp Status (Full Resolution Trick)",
+        slug: "convert-photo-to-pdf-for-whatsapp-status-trick",
+        excerpt: "WhatsApp par photos blur ho jati hain? Is trick se high-quality full resolution images share karein.",
+        date: "2026-04-15",
+        author: "Tech Blogger",
+        category: "Social Hacks",
+        content: `
+            <h2>WhatsApp High Quality Image Trick</h2>
+            <p>WhatsApp aksar images ko compress kar deta hai. Professional documents ya important graphics share karne ke liye ye trick use karein:</p>
+            
+            <ul>
+                <li>Convert your Image to PDF at <a href="/image-to-pdf-converter">PDFbazaar</a>.</li>
+                <li>Send as a 'Document' on WhatsApp.</li>
+                <li>Recipient ko full clarity milegi bina kisi pixels phate.</li>
+            </ul>
+        `
+    },
+    {
         id: "pdf-to-jpg-high-quality-mobile",
         title: "PDF to JPG Converter: High Quality Images Kaise Banayein (Mobile)",
         slug: "pdf-to-jpg-high-quality-images-mobile-guide",
