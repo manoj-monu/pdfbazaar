@@ -66,6 +66,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  text-rendering: optimizeSpeed;
 }
 
 h1,
@@ -731,4 +732,25 @@ button {
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
+}
+
+/* Visibility Helpers for PageSpeed (avoid layout shifts) */
+.desktop-only {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  .desktop-only {
+    display: inline-flex !important;
+  }
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: inline-flex !important;
+  }
 }

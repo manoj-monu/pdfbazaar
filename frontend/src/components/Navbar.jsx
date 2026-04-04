@@ -26,8 +26,7 @@ const Navbar = () => {
                 <div className="nav-actions">
                     <Link
                         to="/login"
-                        className="btn-login"
-                        style={{ display: window.innerWidth > 768 ? 'inline-flex' : 'none' }}
+                        className="btn-login desktop-only"
                     >
                         Login
                     </Link>
@@ -36,9 +35,9 @@ const Navbar = () => {
                     </Link>
 
                     <button
-                        className="btn-icon menu-btn"
+                        className="btn-icon menu-btn mobile-only"
                         onClick={() => setMenuOpen(!menuOpen)}
-                        style={{ display: window.innerWidth <= 768 ? 'inline-flex' : 'none', background: 'transparent' }}
+                        style={{ background: 'transparent' }}
                     >
                         {menuOpen ? <X size={28} color="#333" /> : <Menu size={28} color="#333" />}
                     </button>
