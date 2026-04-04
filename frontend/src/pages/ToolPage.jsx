@@ -8,7 +8,7 @@ import { PDFDocument } from 'pdf-lib';
 import useSEO from '../hooks/useSEO';
 import ToolSEOArticle from '../components/ToolSEOArticle';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000');
 
 const ToolPage = ({ id }) => {
   const { toolId: paramId } = useParams();

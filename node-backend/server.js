@@ -1027,6 +1027,18 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
     }
 });
 
+// Serve static files from the frontend build
+const distPath = path.join(__dirname, 'dist');
+if (fs.existsSync(distPath)) {
+    console.log('[API] Serving static files from', distPath);
+    app.use(express.static(distPath));
+    app.get('*', (req, res, next) => {
+        // Only serve index.html for non-API routes
+        if (req.path.startsWith('/api')) return next();
+        res.sendFile(path.join(distPath, 'index.html'));
+    });
+}
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
     console.log('PDF Conversion API Ready!');

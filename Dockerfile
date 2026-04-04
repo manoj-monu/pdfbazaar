@@ -1,6 +1,16 @@
+# Stage 1: Build the React frontend
+FROM node:18-slim AS builder
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+# Build the frontend (this includes sitemap and prerendering tasks)
+RUN npm run build
+
+# Stage 2: Serve with Node.js backend + All PDF tools
 FROM node:18-slim
 
-# Install Ghostscript, Puppeteer deps, LibreOffice for Word-to-PDF, and MuPDF/Tesseract for PDF Editor
+# Install system dependencies for PDF processing and Puppeteer
 RUN apt-get update && apt-get install -y \
     ghostscript \
     libreoffice \
@@ -40,21 +50,33 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxss1 \
     libxtst6 \
+    python3 \
+    python3-pip \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+# Install pypdf for backend security features
+RUN pip3 install pypdf --break-system-packages || pip3 install pypdf
+
 WORKDIR /usr/src/app
 
-# Copy backend package files
+# Copy backend dependencies and install
 COPY node-backend/package*.json ./
-
-# Install dependencies
 RUN npm install --omit=dev
 
 # Copy backend source code
 COPY node-backend/ ./
 
-EXPOSE 5000
+# Copy built frontend from Stage 1 to the backend's dist directory
+COPY --from=builder /app/dist ./dist
 
-# RAM optimization for Render low memory environments to prevent OOM
+# Create necessary directories for runtime
+RUN mkdir -p uploads fonts && chmod 777 uploads fonts
+
+# Use 100% of Hugging Face Space port (7860 is default)
+ENV PORT=7860
+EXPOSE 7860
+
+# Serve the application
+# Increased memory allowance for PDF processing heavy tasks
 CMD ["node", "--max-old-space-size=400", "server.js"]
