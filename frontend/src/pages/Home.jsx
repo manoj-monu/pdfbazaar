@@ -68,7 +68,7 @@ const Home = () => {
                         {toolsToShow.map((tool) => {
                             const Icon = tool.icon;
                             return (
-                                <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : `/tool/${tool.id}`} className="tool-card" key={tool.id}>
+                                <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : (tool.seoPath || `/tool/${tool.id}`)} className="tool-card" key={tool.id}>
                                     <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
                                         <Icon size={28} strokeWidth={1.5} />
                                         <div className="icon-arrow-badge" style={{ color: tool.color }}>

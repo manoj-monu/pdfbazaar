@@ -1,17 +1,29 @@
 import { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import AdsPlacement from './components/AdsPlacement';
+import { TOOLS_CATEGORIES } from './ToolsData';
 
-const Home = lazy(() => import('./pages/Home'));
-const ToolPage = lazy(() => import('./pages/ToolPage'));
-const PdfEditor = lazy(() => import('./pages/PdfEditor'));
-const Blog = lazy(() => import('./pages/Blog'));
-const BlogPost = lazy(() => import('./pages/BlogPost'));
-const Pricing = lazy(() => import('./pages/Pricing'));
-const LegalPages = lazy(() => import('./pages/LegalPages'));
+// Redirect Component for old /tool/:id links
+const OldToolRedirect = () => {
+  const { toolId } = useParams();
+  const allTools = TOOLS_CATEGORIES.reduce((acc, cat) => [...acc, ...cat.tools], []);
+  const tool = allTools.find(t => t.id === toolId);
+  if (tool && tool.seoPath) {
+    return <Navigate to={tool.seoPath} replace />;
+  }
+  return <ToolPage />;
+};
+
+const Home = lazy(() => import(/* webpackChunkName: "home" */ './pages/Home'));
+const ToolPage = lazy(() => import(/* webpackChunkName: "tool" */ './pages/ToolPage'));
+const PdfEditor = lazy(() => import(/* webpackChunkName: "editor" */ './pages/PdfEditor'));
+const Blog = lazy(() => import(/* webpackChunkName: "blog" */ './pages/Blog'));
+const BlogPost = lazy(() => import(/* webpackChunkName: "blog-post" */ './pages/BlogPost'));
+const Pricing = lazy(() => import(/* webpackChunkName: "pricing" */ './pages/Pricing'));
+const LegalPages = lazy(() => import(/* webpackChunkName: "legal" */ './pages/LegalPages'));
 
 const { AboutUs, ContactUs, PrivacyPolicy, TermsConditions, Disclaimer } = LegalPages;
 
@@ -29,7 +41,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pdf-editor" element={<PdfEditor />} />
           <Route path="/tool/edit-pdf" element={<PdfEditor />} />
-          <Route path="/tool/:toolId" element={<ToolPage />} />
+          <Route path="/tool/:toolId" element={<OldToolRedirect />} />
           
           {/* SEO Optimized Landing Pages */}
           <Route path="/merge-pdf-online-free" element={<ToolPage id="merge-pdf" />} />
