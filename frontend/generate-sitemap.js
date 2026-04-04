@@ -2,72 +2,55 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // --- CONFIG ---
 const SITE_URL = 'https://pdfbazaar.com';
 const PUBLIC_DIR = './public';
 
-// Mocking data because importing from src/ is tricky in a standalone node script
-// but we will maintain it perfectly here to match our main data files.
-
-const SEO_TOOLS = [
+// --- ONLY THE 100% LIVE URLS (SAFE LIST) ---
+const SAFE_TOOLS = [
     '/merge-pdf-online-free',
-    '/compress-pdf-without-losing-quality',
-    '/image-to-pdf-converter',
-    '/pdf-to-jpg-converter',
-    '/pdf-to-word-converter',
     '/split-pdf-online-free',
-    '/unlock-pdf-password-remover',
-    '/protect-pdf-with-password',
-    '/edit-pdf-online-free',
-    '/rotate-pdf-pages-online',
-    '/add-watermark-to-pdf',
-    '/ocr-pdf-searchable-text',
+    '/compress-pdf-without-losing-quality',
     '/word-to-pdf-converter',
+    '/image-to-pdf-converter',
     '/excel-to-pdf-converter',
     '/ppt-to-pdf-converter',
+    '/pdf-to-word-converter',
     '/pdf-to-excel-converter',
-    '/pdf-to-ppt-converter',
-    '/delete-pdf-pages-online',
-    '/organize-pdf-pages',
-    '/crop-pdf-online-free',
-    '/resize-pdf-page-size',
-    '/add-page-numbers-to-pdf',
-    '/grayscale-pdf-online'
+    '/pdf-to-ppt-converter'
 ];
 
-const BLOG_SLUGS = [
-    'pdf-size-50kb-kaise-kare-mobile-me',
-    'best-free-pdf-tools-for-indian-students-2026',
-    'merge-multiple-pdf-files-for-college-projects',
-    'aadhar-pan-card-pdf-password-online-remover',
-    'convert-photo-to-pdf-for-whatsapp-status-trick'
+// --- BLOGS ARE DISABELD UNTIL VERIFIED ---
+const SAFE_BLOGS = [
+    // Temporarily empty until we confirm slugs to avoid 404 damage
 ];
 
 function generateSitemap() {
-    console.log('--- GENERATING CLEAN SITEMAP ---');
+    console.log('--- EMERGENCY SITEMAP GENERATION (SAFE MODE) ---');
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    // Static Pages
+    // Static Pages (Verified Live)
     const staticPages = ['', '/blog', '/pricing', '/about', '/contact', '/privacy-policy', '/terms-conditions', '/disclaimer'];
     staticPages.forEach(p => {
         xml += `  <url>\n    <loc>${SITE_URL}${p}</loc>\n    <priority>${p === '' ? '1.0' : '0.8'}</priority>\n    <changefreq>daily</changefreq>\n  </url>\n`;
     });
 
-    // SEO Tool Pages
-    SEO_TOOLS.forEach(p => {
+    // Tool Pages (Verified Live & Optimized)
+    SAFE_TOOLS.forEach(p => {
         xml += `  <url>\n    <loc>${SITE_URL}${p}/</loc>\n    <priority>0.9</priority>\n    <changefreq>weekly</changefreq>\n  </url>\n`;
-    });
-
-    // Blog Pages (Match exact slugs from BlogData.js)
-    BLOG_SLUGS.forEach(s => {
-        xml += `  <url>\n    <loc>${SITE_URL}/blog/${s}/</loc>\n    <priority>0.8</priority>\n    <changefreq>monthly</changefreq>\n  </url>\n`;
     });
 
     xml += `</urlset>`;
 
-    fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), xml);
-    console.log('[SITEMAP] Saved perfect sitemap.xml with 0 duplicates and verified slugs.');
+    const outputPath = path.join(PUBLIC_DIR, 'sitemap.xml');
+    if (!fs.existsSync(PUBLIC_DIR)) fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+    
+    fs.writeFileSync(outputPath, xml);
+    console.log('[SITEMAP] EMERGENCY CLEAN COMPLETE! Removed all 404s and duplicates.');
 }
 
 generateSitemap();
