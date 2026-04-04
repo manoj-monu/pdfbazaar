@@ -57,8 +57,8 @@ const cleanupOldFiles = () => {
 };
 setInterval(cleanupOldFiles, 3600000); // Check every hour
 
-app.get('/', (req, res) => {
-    res.send('PDFbazaar.com Backend API is running.');
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ success: true, message: "API is running successfully 🚀", env: process.env.NODE_ENV });
 });
 
 const getGsCommand = () => {
