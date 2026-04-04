@@ -10,8 +10,9 @@ import ToolSEOArticle from '../components/ToolSEOArticle';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const ToolPage = () => {
-  const { toolId } = useParams();
+const ToolPage = ({ id }) => {
+  const { toolId: paramId } = useParams();
+  const toolId = id || paramId;
   const tool = getToolById(toolId);
   const [files, setFiles] = useState([]);
   const [processing, setProcessing] = useState(false);

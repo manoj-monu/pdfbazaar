@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TOOLS_CATEGORIES } from '../ToolsData';
+import { BLOG_POSTS } from '../BlogData';
 import useSEO from '../hooks/useSEO';
 import AdsPlacement from '../components/AdsPlacement';
 
@@ -25,7 +26,6 @@ const Home = () => {
         if (matchingCategory) {
             toolsToShow = matchingCategory.tools;
         } else {
-            // Mapping Workflows, PDF Intelligence as empty or subsets for demonstration
             toolsToShow = allTools.slice(0, 4);
         }
     }
@@ -35,10 +35,10 @@ const Home = () => {
             <div className="hero-wrapper">
                 <section className="hero">
                     <div className="container">
-                        <h1>All the PDF tools you'll ever need, powered by PDFbazaar.com</h1>
+                        <h1>Compress PDF Under 100KB, Merge & Edit (Free & No Login)</h1>
                         <p>
-                            Manage your documents effortlessly with our 100% free, secure, and intuitive platform. Merge,
-                            split, compress, edit, and convert PDFs online in seconds—no installation required. Experience the power of PDFbazaar.com today!
+                            Professional PDF tools for Indian users. Reduce file size instantly, combine documents, 
+                            and convert images to PDF in seconds. No registration, no credit card—just fast results.
                         </p>
                     </div>
                 </section>
@@ -58,7 +58,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Ad Unit: Top Responsive */}
             <div className="container" style={{ marginTop: '20px' }}>
                 <AdsPlacement slot="2004166750" format="horizontal" />
             </div>
@@ -68,7 +67,6 @@ const Home = () => {
                     <div className="tools-grid">
                         {toolsToShow.map((tool) => {
                             const Icon = tool.icon;
-                            // Add a little arrow to the bottom right of the icon box to make it more like iLovePDF
                             return (
                                 <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : `/tool/${tool.id}`} className="tool-card" key={tool.id}>
                                     <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
@@ -88,7 +86,38 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Ad Unit: Bottom Responsive */}
+            <section style={{ padding: '80px 0', background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+                <div className="container">
+                    <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+                        <h2 style={{ fontSize: '32px', marginBottom: '16px', fontWeight: '800' }}>PDF Tips, Tricks & Tutorials</h2>
+                        <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto' }}>
+                            Learn how to optimize your document workflow with our expert guides.
+                        </p>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+                        {BLOG_POSTS.slice(0, 3).map(post => (
+                            <Link to={`/blog/${post.slug}`} key={post.id} style={{
+                                border: '1px solid #f1f5f9',
+                                borderRadius: '20px',
+                                padding: '30px',
+                                background: '#f8fafc',
+                                transition: 'all 0.3s'
+                            }} className="home-blog-card">
+                                <span style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '12px', textTransform: 'uppercase', marginBottom: '12px', display: 'block' }}>{post.category}</span>
+                                <h3 style={{ fontSize: '20px', marginBottom: '12px', fontWeight: '800', lineHeight: '1.4' }}>{post.title}</h3>
+                                <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '20px', lineHeight: '1.6' }}>{post.excerpt.slice(0, 100)}...</p>
+                                <div style={{ color: 'var(--primary)', fontWeight: '700', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    Read Guide <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                        <Link to="/blog" className="btn-primary">View All Articles</Link>
+                    </div>
+                </div>
+            </section>
+
             <div className="container" style={{ margin: '40px auto' }}>
                 <AdsPlacement slot="2965247838" format="auto" />
             </div>

@@ -7,8 +7,8 @@ export const TOOLS_CATEGORIES = [
     {
         title: "Organize PDF",
         tools: [
-            { id: "compress-pdf", name: "Compress PDF", desc: "Reduce file size while optimizing for maximal PDF quality.", icon: FileDown, color: "#4CAF50", bgColor: "#ebf7ec" },
-            { id: "merge-pdf", name: "Merge PDF", desc: "Combine PDFs in the order you want with the easiest PDF merger available.", icon: FilePlus2, color: "#E5322D", bgColor: "#ffe8e8" },
+            { id: "compress-pdf", name: "Compress PDF Under 100KB", desc: "Reduce PDF size instantly without losing quality. 100% free, no login required.", icon: FileDown, color: "#4CAF50", bgColor: "#ebf7ec" },
+            { id: "merge-pdf", name: "Merge PDF (No Login)", desc: "Combine multiple PDF files into one for free. Fastest PDF merger online.", icon: FilePlus2, color: "#E5322D", bgColor: "#ffe8e8" },
             { id: "split-pdf", name: "Split PDF", desc: "Separate one page or a whole set for easy conversion into independent PDF files.", icon: Divide, color: "#FF6900", bgColor: "#fff0e5" },
             { id: "rotate-pdf", name: "Rotate PDF", desc: "Rotate your PDFs the way you need them. You can even rotate multiple PDFs at once!", icon: RotateCw, color: "#1976D2", bgColor: "#e8f1fa" },
             { id: "organize-pdf", name: "Organize PDF", desc: "Sort pages of your PDF file however you like. Delete PDF pages or add PDF pages to your document at your convenience.", icon: Settings, color: "#FF9800", bgColor: "#fff5e5" },
@@ -27,14 +27,14 @@ export const TOOLS_CATEGORIES = [
             { id: "word-to-pdf", name: "Word to PDF", desc: "Make DOC and DOCX files easy to read by converting them to PDF.", icon: FileText, color: "#1976D2", bgColor: "#e8f1fa" },
             { id: "excel-to-pdf", name: "Excel to PDF", desc: "Make EXCEL spreadsheets easy to read by converting them to PDF.", icon: FileText, color: "#4CAF50", bgColor: "#ebf7ec" },
             { id: "ppt-to-pdf", name: "PPT to PDF", desc: "Make PPT and PPTX slideshows easy to view by converting them to PDF.", icon: FileText, color: "#FF5252", bgColor: "#ffebeb" },
-            { id: "jpg-to-pdf", name: "JPG to PDF", desc: "Convert JPG images to PDF in seconds. Easily adjust orientation and margins.", icon: FileImage, color: "#FFB300", bgColor: "#fff8e5" },
+            { id: "jpg-to-pdf", name: "JPG to PDF (Mobile Ready)", desc: "Convert images/photos to PDF in seconds. 100% free, no app download needed.", icon: FileImage, color: "#FFB300", bgColor: "#fff8e5" },
             { id: "html-to-pdf", name: "HTML to PDF", desc: "Convert webpages in HTML to PDF. Copy and paste the URL of the page you want and convert it to PDF with a click.", icon: FileText, color: "#8E24AA", bgColor: "#f4e9f7" }
         ]
     },
     {
         title: "Convert from PDF",
         tools: [
-            { id: "pdf-to-word", name: "PDF to Word", desc: "Easily convert your PDF files into easy to edit DOC and DOCX documents.", icon: FileText, color: "#1976D2", bgColor: "#e8f1fa" },
+            { id: "pdf-to-word", name: "PDF to Word (Editable)", desc: "Free converter to turn PDF into editable Word documents instantly.", icon: FileText, color: "#1976D2", bgColor: "#e8f1fa" },
             { id: "pdf-to-excel", name: "PDF to Excel", desc: "Pull data straight from PDFs into EXCEL spreadsheets in a few short seconds.", icon: FileText, color: "#4CAF50", bgColor: "#ebf7ec" },
             { id: "pdf-to-ppt", name: "PDF to PPT", desc: "Turn your PDF files into easy to edit PPT and PPTX slideshows.", icon: FileText, color: "#FF5252", bgColor: "#ffebeb" },
             { id: "pdf-to-jpg", name: "PDF to JPG", desc: "Convert each PDF page into a JPG or extract all images contained in a PDF.", icon: FileImage, color: "#FFB300", bgColor: "#fff8e5" }
