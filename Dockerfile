@@ -1,14 +1,27 @@
 # Stage 1: Build the React frontend
-FROM node:18-slim AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
+
+# Ensure we have clean permissions
+RUN mkdir -p node_modules && chmod 777 node_modules
+
+# Copy dependency files first
 COPY frontend/package*.json ./
-RUN npm install
+
+# Install ALL dependencies including devDependencies (for vite)
+RUN npm install --include=dev
+
+# Copy the rest of the frontend source
 COPY frontend/ ./
-# Build the frontend (this includes sitemap and prerendering tasks)
+
+# Fix any potential binary permission issues
+RUN chmod -R +x node_modules/.bin
+
+# Build the frontend using npx for safer execution
 RUN npm run build
 
 # Stage 2: Serve with Node.js backend + All PDF tools
-FROM node:18-slim
+FROM node:20-slim
 
 # Install system dependencies for PDF processing and Puppeteer
 RUN apt-get update && apt-get install -y \
