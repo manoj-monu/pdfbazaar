@@ -118,6 +118,45 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* High-Impact SEO Keywords Block for India / General Queries */}
+            <section style={{ padding: '80px 0', background: '#f8fafc' }}>
+                <div className="container">
+                    <div style={{ maxWidth: '900px', margin: '0 auto', background: '#fff', padding: '50px', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+                        <h2 style={{ fontSize: '28px', marginBottom: '24px', fontWeight: '900', color: '#0f172a' }}>
+                            India's Best Free PDF Tools Online (2024)
+                        </h2>
+                        <p style={{ fontSize: '16px', color: '#475569', lineHeight: '1.8', marginBottom: '24px' }}>
+                            Whether you need to know <strong>"pdf size kam kaise kare"</strong> for a government SSC form, or you are searching for <strong>"pdf compress karna hai free mein"</strong>, PDFBazaar is your ultimate solution. We designed this platform specifically for users who need <strong>free pdf tools without watermark</strong>. You can effortlessly combine files (<strong>pdf kaise combine kare</strong>) or convert photos to documents (<strong>mobile mein pdf kaise banaye</strong>) without any daily limits or login screens. 
+                        </p>
+                        <p style={{ fontSize: '16px', color: '#475569', lineHeight: '1.8', marginBottom: '32px' }}>
+                            If you've ever wondered <strong>"free mein pdf kaise banaye"</strong> or searched for <strong>"pdf tools hindi mein"</strong> to understand document editing, our site offers the most intuitive, mobile-friendly interface for everything. Say goodbye to heavy apps and try the <strong>best free pdf tools online</strong> directly from your Chrome or mobile browser.
+                        </p>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                            <div style={{ background: '#f1f5f9', padding: '20px', borderRadius: '12px' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b' }}>No Registration Required</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b' }}>Our <strong>pdf tools online free no limit</strong> policy ensures you never have to enter your email. Enjoy truly <strong>all in one pdf tools free</strong>.</p>
+                            </div>
+                            <div style={{ background: '#f1f5f9', padding: '20px', borderRadius: '12px' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b' }}>Absolute Privacy</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b' }}>We auto-delete files immediately. If you need <strong>secure pdf tools online</strong> or to <strong>pdf se text copy kaise kare</strong> securely, you are in the right place.</p>
+                            </div>
+                        </div>
+                        
+                        <div style={{ marginTop: '40px', paddingTop: '30px', borderTop: '1px solid #e2e8f0' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', color: '#334155' }}>Popular Queries Addressed:</h3>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {['pdf merge kaise kare', 'free pdf tools india', 'pdf online kaise edit kare free', 'smallpdf alternative free', 'pdf rotate kaise kare free', 'pdf compress tool india free', 'pdf me password kaise lagaye free'].map(kw => (
+                                    <span key={kw} style={{ padding: '4px 10px', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '20px', fontSize: '12px', color: '#64748b' }}>
+                                        {kw}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <div className="container" style={{ margin: '40px auto' }}>
                 <AdsPlacement slot="2965247838" format="auto" />
             </div>
