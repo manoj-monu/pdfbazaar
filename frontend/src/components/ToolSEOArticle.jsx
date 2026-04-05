@@ -6,21 +6,56 @@ import { ChevronRight, Zap, Shield, Globe } from 'lucide-react';
 
 const getToolSpecificKeywords = (toolId, toolName) => {
     const variations = {
-        'compress-pdf': ['reduce PDF size', 'compress PDF to 100kb', 'shrink PDF online', 'make PDF smaller without losing quality', 'compress PDF free'],
-        'merge-pdf': ['combine PDF files', 'join PDF pages', 'bind PDFs together', 'merge multiple PDF documents', 'PDF merger free'],
-        'split-pdf': ['extract pages from PDF', 'separate PDF pages', 'cut PDF online', 'divide PDF into multiple files', 'split PDF free'],
-        'word-to-pdf': ['convert DOCX to PDF', 'Word document to PDF format', 'change Word to PDF', 'save Word as PDF', 'DOC to PDF converter'],
-        'pdf-to-word': ['convert PDF to Word editable', 'extract text from PDF to Word', 'PDF to DOCX free', 'turn PDF into Word document', 'editable PDF converter'],
-        'jpg-to-pdf': ['convert image to PDF', 'pictures to PDF', 'JPG to PDF converter', 'merge photos into PDF', 'save picture as PDF'],
-        'protect-pdf': ['password protect PDF', 'encrypt PDF file', 'secure PDF with password', 'lock PDF online'],
-        'unlock-pdf': ['remove PDF password', 'decrypt PDF file', 'unlock secured PDF', 'bypass PDF restriction'],
-        'add-watermark': ['stamp PDF', 'add logo to PDF', 'insert watermark in PDF', 'text watermark on PDF'],
-        'pdf-to-jpg': ['extract images from PDF', 'convert PDF to pictures', 'turn PDF into JPG format'],
-        'rotate-pdf': ['change PDF orientation', 'flip PDF pages', 'turn PDF upside down'],
-        'edit-pdf': ['write on PDF', 'add text to PDF', 'online PDF editor free', 'annotate PDF document'],
-        'ocr-pdf': ['convert scanned PDF to text', 'make PDF searchable', 'optical character recognition PDF']
+        'compress-pdf': [
+            'compress pdf below 100kb free', 'compress pdf below 200kb online', 'compress pdf below 500kb free', 'compress pdf below 1mb free', 'compress pdf below 2mb online', 'compress pdf file size online free', 'compress pdf without losing quality', 'compress pdf without watermark', 'compress pdf for email free', 'compress pdf for whatsapp', 'compress pdf online no sign up', 'compress pdf online no limit', 'compress large pdf file free', 'reduce pdf size online free', 'reduce pdf file size without losing quality', 'reduce pdf size below 1mb', 'reduce pdf size for email', 'reduce pdf mb online', 'make pdf file smaller online free', 'shrink pdf file size free', 'pdf size kam kaise kare', 'pdf compress kaise kare free mein', 'pdf ka size kaise kam kare', 'pdf compress karna hai', 'pdf size reduce karna hai free', 'compress pdf 10mb to 1mb free', 'compress pdf 5mb to 500kb', 'best free pdf compressor online', 'pdf compressor without upload', 'compress pdf in browser', 'pdf compress kaise kare', 'whatsapp ke liye pdf compress kaise kare', 'email ke liye pdf size kam kaise kare', 'pdf compress karna hai without watermark', 'pdf 1mb se kam karna hai', 'pdf compress tool india free'
+        ],
+        'merge-pdf': [
+            'merge pdf files online free', 'merge pdf without watermark', 'merge pdf online no sign up', 'merge pdf files into one free', 'combine pdf files online free', 'combine two pdf files free', 'combine multiple pdf into one', 'join pdf files online free', 'join two pdf online free', 'merge pdf india free', 'pdf merge karna hai free mein', '2 pdf ko ek mein kaise jode', 'pdf files ko merge kaise kare', 'pdf jodna hai free mein', 'pdf combine kaise kare', 'merge pdf no limit free', 'merge pdf without login', 'merge pdf files free download', 'best free pdf merger online', 'pdf merger online unlimited', 'merge scanned pdf files free', 'merge pdf and images online free', 'combine pdf pages online', 'merge pdf files in order free', 'online pdf combiner no watermark', 'pdf combine karna hai', 'free pdf joiner online', 'merge pdf files fast free', 'pdf merger without size limit', 'pdf merge kaise kare', 'pdf kaise combine kare', 'add pages to pdf online free', 'pdf merge tool india free'
+        ],
+        'split-pdf': [
+            'split pdf online free', 'split pdf into pages free', 'split pdf without watermark', 'split pdf online no sign up', 'extract pages from pdf free', 'extract one page from pdf free', 'remove pages from pdf free', 'delete pages from pdf online free', 'pdf page nikalna hai free mein', 'pdf split kaise kare free', 'pdf ke page alag kaise kare', 'pdf se ek page kaise nikale', 'separate pdf pages online free', 'cut pdf pages online free', 'pdf cutter online free', 'split large pdf into smaller files', 'split pdf by page range free', 'pdf splitter online no watermark', 'split pdf into multiple files free', 'online pdf splitter without login', 'extract specific pages from pdf', 'pdf page extractor free online', 'free pdf splitter no limit', 'pdf alag karna hai free', 'split pdf pages individually', 'pdf ko alag alag kaise kare', 'pdf half karna hai', 'split pdf without software', 'pdf splitter free download', 'online tool to split pdf', 'pdf split kaise kare'
+        ],
+        'pdf-to-word': [
+            'pdf to word converter free online', 'pdf to word without watermark', 'pdf to word free no sign up', 'convert pdf to word editable free', 'pdf ko word mein kaise badle free', 'pdf to word convert karna hai', 'pdf word mein convert kaise kare', 'convert scanned pdf to word free', 'online pdf to word no sign up', 'pdf ko word mein kaise convert kare'
+        ],
+        'jpg-to-pdf': [
+            'jpg to pdf converter free online', 'image to pdf converter free', 'convert multiple images to pdf free', 'photos to pdf online free', 'image ko pdf mein kaise badle', 'jpg ko pdf mein kaise kare', 'photo to pdf karna hai free', 'free mein pdf kaise banaye', 'pdf tools online free india'
+        ],
+        'pdf-to-jpg': [
+            'pdf to jpg converter free online', 'pdf to png converter free', 'convert pdf to jpeg free online', 'pdf ko image mein kaise badle', 'pdf se photo kaise nikale'
+        ],
+        'word-to-pdf': [
+            'word to pdf converter free online', 'smallpdf alternative free', 'ilovepdf alternative free', 'all in one pdf tools free'
+        ],
+        'excel-to-pdf': [
+            'excel to pdf converter free', 'pdf tools without daily limit', 'pdf tools no watermark free'
+        ],
+        'ppt-to-pdf': [
+            'ppt to pdf converter free online', 'pdf to powerpoint free online'
+        ],
+        'protect-pdf': [
+            'pdf me password kaise lagaye free', 'lock pdf with password free', 'pdf me password lagana hai free', 'secure pdf tools online'
+        ],
+        'unlock-pdf': [
+            'pdf password hatana hai free', 'pdf password remove online free', 'remove pdf password without software', 'unlock pdf online free', 'pdf unlock karna hai free'
+        ],
+        'add-watermark': [
+            'pdf me watermark kaise hataye', 'pdf watermark remove online free'
+        ],
+        'ocr-pdf': [
+            'pdf to text converter free', 'pdf se text copy kaise kare'
+        ],
+        'delete-pdf-pages': [
+            'remove pages from pdf file', 'delete pdf pages online'
+        ]
     };
-    return variations[toolId] || [`${toolName.toLowerCase()} online`, `free ${toolName.toLowerCase()}`, `best ${toolName.toLowerCase()} tool` ];
+    
+    // Default general keywords for any other tool not explicitly matched
+    const generalKeywords = [
+        'pdf tools hindi mein', 'best pdf tools india', 'free pdf tools india', 'pdf tools online free india', 'pdf tools online free no limit', 'best free pdf tools online 2024', 'pdf tools without login', 'free pdf tools unlimited use', 'pdf toolkit free online', 'pdf tools like smallpdf free', 'pdf tools offline browser', 'pdf tools mobile friendly', 'pdf tools for students free'
+    ];
+    
+    return variations[toolId] || generalKeywords;
 };
 
 const getDynamicContent = (toolId, toolName) => {
@@ -178,6 +213,32 @@ const ToolSEOArticle = ({ toolId, toolName }) => {
                     ))}
                 </div>
             </section>
+
+            {/* Popular Related Searches (SEO Keyword Injection) */}
+            {kws && kws.length > 0 && (
+                <section style={{ marginBottom: '60px', padding: '30px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                    <h3 style={{ fontSize: '20px', color: '#1e293b', marginBottom: '20px', fontWeight: '800' }}>
+                        Related Searches & Queries
+                    </h3>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {kws.map((kw, idx) => (
+                            <span key={idx} style={{ 
+                                padding: '6px 14px', 
+                                background: '#ffffff', 
+                                color: '#475569', 
+                                fontSize: '13px', 
+                                fontWeight: '600',
+                                borderRadius: '20px', 
+                                border: '1px solid #cbd5e1',
+                                transition: 'all 0.2s',
+                                cursor: 'default'
+                            }}>
+                                {kw}
+                            </span>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* Related Blogs - Internal Linking System */}
             {relatedBlogs.length > 0 && (
