@@ -908,15 +908,9 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
         const FONT_MAP = [
             { regex: /[\u0980-\u09FF]/, name: 'NotoSansBengali', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf' },
             { regex: /[\u0A80-\u0AFF]/, name: 'NotoSansGujarati', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansGujarati/NotoSansGujarati-Regular.ttf' },
-            { regex: /[\u0B00-\u0B7F]/, name: 'NotoSansOriya', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansOriya/NotoSansOriya-Regular.ttf' },
-            { regex: /[\u0B80-\u0BFF]/, name: 'NotoSansTamil', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansTamil/NotoSansTamil-Regular.ttf' },
-            { regex: /[\u0C00-\u0C7F]/, name: 'NotoSansTelugu', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansTelugu/NotoSansTelugu-Regular.ttf' },
-            { regex: /[\u0C80-\u0CFF]/, name: 'NotoSansKannada', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansKannada/NotoSansKannada-Regular.ttf' },
-            { regex: /[\u0D00-\u0D7F]/, name: 'NotoSansMalayalam', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansMalayalam/NotoSansMalayalam-Regular.ttf' },
-            { regex: /[\u0A00-\u0A7F]/, name: 'NotoSansGurmukhi', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansGurmukhi/NotoSansGurmukhi-Regular.ttf' },
-            { regex: /[\u0600-\u06FF\u0750-\u077F]/, name: 'NotoSansArabic', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf' },
             { regex: /[\u0900-\u097F]/, name: 'NotoSansDevanagari', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Regular.ttf' },
-            { regex: /[\u4E00-\u9FFF]/, name: 'NotoSansSC', url: 'https://raw.githubusercontent.com/googlefonts/noto-cjk/main/Sans/OTF/SimplifiedChinese/NotoSansSC-Regular.otf' },
+            { regex: /[\u0600-\u06FF\u0750-\u077F]/, name: 'NotoSansArabic', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf' },
+            { regex: /[A-Z][a-z]+ [A-Z][a-z]+/, name: 'NotoSerif', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSerif/NotoSerif-Regular.ttf' }, // Likely formal names
             { regex: /.*/, name: 'NotoSans', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf' }
         ];
 

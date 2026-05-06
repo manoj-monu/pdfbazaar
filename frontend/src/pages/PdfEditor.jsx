@@ -14,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     import.meta.url,
 ).toString();
 
-const BACKEND_URL = 'https://manojkumarsh-pdfbazaar.hf.space';
+const BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000');
 
 const PdfEditor = () => {
     const [file, setFile] = useState(null);
@@ -271,11 +271,48 @@ const PdfEditor = () => {
         return await res.json(); // { token, filename, size }
     };
 
-    const downloadPdf = async () => {
+    const downloadPdf = async (shouldApplyInline = false) => {
         if (!file) return;
         setLoading(true);
         try {
-            const arrayBuffer = await file.arrayBuffer();
+            let workingFile = file;
+
+            // If we have inline edits (existing text changes), we MUST use the backend first
+            if (shouldApplyInline && inlineEdits.length > 0) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('replacements', JSON.stringify(inlineEdits.map(ed => ({
+                        pageIndex: ed.pageIndex,
+                        x: ed.displayX,
+                        y: ed.displayY,
+                        width: ed.displayWidth,
+                        height: ed.displayHeight,
+                        pdfX: ed.pdfX,
+                        pdfY: ed.pdfY,
+                        pdfWidth: ed.pdfWidth,
+                        pdfHeight: ed.pdfHeight,
+                        hasMatch: ed.hasMatch,
+                        newText: ed.newText,
+                        fontSize: ed.fontSize,
+                    }))));
+
+                    const res = await fetch(`${BACKEND_URL}/api/pdf-editor/replace-text`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        workingFile = new File([blob], file.name, { type: 'application/pdf' });
+                        setInlineEdits([]); // Clear after applying to working file
+                    }
+                } catch (e) {
+                    console.error("Backend apply failed, falling back to local drawing", e);
+                }
+            }
+
+            const arrayBuffer = await workingFile.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer);
             const pages = pdfDoc.getPages();
 
@@ -285,6 +322,7 @@ const PdfEditor = () => {
                     pdfDoc.removePage(index);
                 }
             });
+            // ... (rest of the drawing logic remains same)
 
             // apply rotation
             Object.entries(rotatedPages).forEach(([pageIndex, angle]) => {
@@ -548,7 +586,7 @@ const PdfEditor = () => {
                                 Download
                             </button>
                         </div>
-                        <button onClick={downloadPdf} disabled={loading} style={{ background: '#E5322D', color: '#fff', border: 'none', padding: '8px 24px', borderRadius: '6px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button onClick={() => downloadPdf(true)} disabled={loading} style={{ background: '#E5322D', color: '#fff', border: 'none', padding: '8px 24px', borderRadius: '6px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
                             DONE
                         </button>
