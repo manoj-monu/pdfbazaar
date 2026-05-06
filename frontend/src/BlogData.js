@@ -1,22 +1,90 @@
 export const BLOG_POSTS = [
     {
         id: "resize-pdf-for-up-police-exam-2026",
-        title: "UP Police Bharti 2026: PDF Size 200KB Kaise Kare (Constable & SI Forms)",
+        title: "UP Police Bharti 2026: PDF Size 200KB Kaise Kare (Constable & SI Forms) - Full Guide",
         slug: "up-police-bharti-pdf-resize-guide",
-        excerpt: "UP Police Constable aur SI bharti ke liye documents ka size 200KB se kam hona chahiye. Mobile se resize karne ka aasan tarika.",
+        excerpt: "UP Police Constable aur SI bharti ke liye documents ka size 200KB se kam hona chahiye. Mobile se resize karne ka aasan tarika step-by-step Hindi mein.",
         date: "2026-05-01",
         author: "Sarkari Result Expert",
         category: "Exam Tips",
         content: `
-            <h2>UP Police Online Form Ke Liye PDF Kaise Banaye?</h2>
-            <p>UPPRPB (Uttar Pradesh Police Recruitment and Promotion Board) ke portals par documents upload karte waqt 200KB ki strict limit hoti hai. Agar aapki file 201KB bhi hai, toh upload fail ho jayega.</p>
-            <h3>Requirements:</h3>
+            <h2>UP Police Online Form 2026: Document Specifications Overview</h2>
+            <p>Uttar Pradesh Police Recruitment and Promotion Board (UPPRPB) ne 2026 ke liye Constable aur Sub-Inspector (SI) ke hazaron पदों par bharti nikali hai. Iske online form bharte waqt sabse badi samasya document upload karte waqt aati hai. Board ne har document ke liye ek nishchit size aur format tay kiya hai. Agar aapka document us size se bada hai, toh portal use accept nahi karega.</p>
+            
+            <p>Commonly, UP Police forms mein documents jaise <strong>Domicile Certificate (Nivas Praman Patra)</strong>, <strong>Caste Certificate (Jati Praman Patra)</strong>, aur <strong>Educational Marksheets</strong> ka size <strong>20KB se 200KB</strong> ke beech hona chahiye. Wahi dusri taraf, photo aur signature ka size aur bhi kam hota hai. Is detailed guide mein hum baat karenge ki kaise aap apne phone se hi in documents ko perfect size mein resize kar sakte hain bina cyber cafe gaye.</p>
+
+            <h2>Why is Document Resizing Critical for UP Police Bharti?</h2>
+            <p>Jab hazaron log ek sath portal par apply karte hain, toh website ka server heavy load mein aa jata hai. Server storage ko manage karne ke liye board ne limits lagayi hain. Lekin problem ye hai ki jab hum apne mobile camera se photo khinchte hain, toh uska size 3MB se 5MB tak hota hai. Ise 200KB tak lana ek bada challenge hai.</p>
+            
+            <p>Agar aap simple apps use karenge, toh quality itni kharab ho jati hai ki certificate par likha hua roll number ya date of birth padha nahi jata. Aise mein verification ke waqt aapka form reject hone ka khatra rehta hai. PDFBazaar ka <a href="/s/compress-pdf-to-200kb">UP Police PDF Compressor</a> AI engine use karta hai jo text ki clarity ko maintain rakhte hue size ko drastically reduce kar deta hai.</p>
+
+            <h2>Step-by-Step Guide to Compress PDF under 200KB for UP Police</h2>
+            <p>Follow these precise steps to get your documents ready in less than 60 seconds:</p>
+            <ol>
+                <li><strong>Visit PDFBazaar:</strong> Apne browser mein <a href="/">PDFBazaar.com</a> kholein aur 'Compress PDF' tool select karein.</li>
+                <li><strong>Upload Certificate:</strong> 'Select Files' par click karke gallery se apna scanned certificate ya marksheet choose karein.</li>
+                <li><strong>Target Size Set Karein:</strong> Tool options mein 'Target Size' box mein <strong>190</strong> likhein. (Hamesha limit se 10KB kam rakhna safe rehta hai).</li>
+                <li><strong>Unit Chunein:</strong> Unit mein 'KB' select karein.</li>
+                <li><strong>Compress Karein:</strong> Red 'Compress PDF' button dabayein. Engine processing shuru karega.</li>
+                <li><strong>Download Result:</strong> Process khatam hote hi 'Download' button par click karein.</li>
+            </ol>
+
+            <h3>Important Documents and their Size Limits:</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #ddd;">
+                <thead>
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">Document Type</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Required Size</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">Format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">High School Marksheet</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">20KB - 200KB</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">PDF</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">Intermediate Marksheet</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">20KB - 200KB</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">PDF</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">Caste Certificate</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">20KB - 200KB</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">PDF</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">Aadhar Card</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">50KB - 300KB</td>
+                        <td style="padding: 12px; border: 1px solid #ddd;">PDF</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Common Mistakes to Avoid While Filling UP Police Form</h2>
+            <p>Bahut se candidates ye galtiyan karte hain jiske karan unka admit card nahi aata:</p>
             <ul>
-                <li>Domicile Certificate: Under 200KB</li>
-                <li>Caste Certificate: Under 200KB</li>
-                <li>Marksheets: Under 200KB</li>
+                <li><strong>Blurry Documents:</strong> Documents ko resize karne ke baad ek baar open karke zaroor dekhein. Agar text padhne layak nahi hai, toh use dobara 'Recommended' setting par compress karein.</li>
+                <li><strong>Wrong Orientation:</strong> Marksheet hamesha seedhi (Portrait) honi chahiye. Agar aapka scan tedha hai, toh hamara <a href="/rotate-pdf-pages-online">Rotate PDF</a> tool use karein.</li>
+                <li><strong>Multiple Pages:</strong> Agar aapki marksheet ke do sides hain, toh dono ko ek hi PDF mein merge karein using <a href="/merge-pdf-online-free">Merge PDF tool</a>.</li>
+                <li><strong>Password Protection:</strong> Kabhi bhi password-protected PDF upload na karein. Aadhaar card download karne ke baad uska password hatane ke liye <a href="/unlock-pdf-password-remover">Unlock PDF</a> tool use karein.</li>
             </ul>
-            <p>Ise theek karne ke liye hamara <a href="/s/compress-pdf-to-200kb">UP Police PDF Compressor</a> use karein. Bas file upload karein aur Target Size me 190 likhein.</p>
+
+            <h2>Frequently Asked Questions (FAQ)</h2>
+            <h3>Q1: Kya PDFBazaar use karna bilkul free hai?</h3>
+            <p>Ji haan, PDFBazaar par saare tools 100% free hain. Hum UP Police aspirants se koi charge nahi lete aur na hi koi registration mangte hain.</p>
+
+            <h3>Q2: Kya mobile se document resize ho jayega?</h3>
+            <p>Bilkul! Aap apne phone ke Chrome browser mein direct website open karke documents resize kar sakte hain. Aapko kisi heavy mobile app ki zaroorat nahi padegi.</p>
+
+            <h3>Q3: Mere certificates safe hain?</h3>
+            <p>Security hamari priority hai. Aapke documents encrypted rehte hain aur process hone ke 1 ghante baad automatically delete ho jate hain.</p>
+
+            <h2>Conclusion: Best Tool for UP Police Bharti</h2>
+            <p>Uttar Pradesh Police Bharti ki taiyari kar rahe sabhi bhaiyon aur behnon ke liye humne ye tool optimized kiya hai. Aapka dhyan sirf padhai aur physical fitness par hona chahiye, document ki tension hum par chhod dein. UP Police Constable Exam 2026 ke liye aap sabhi ko bahut-bahut shubhkamnayein!</p>
+            
+            <p>For more tips, check our <a href="/blog/ssc-cgl-pdf-upload-error-fix">SSC Form Guide</a> or our <a href="/blog/essential-pdf-tools-for-sarkari-exam">Essential PDF Tools for Sarkari Exam</a> article.</p>
         `
     },
     {

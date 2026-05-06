@@ -37,7 +37,21 @@ const BlogPost = () => {
         title: post ? `${post.title} | PDFbazaar.com` : 'Article Not Found',
         description: post ? post.excerpt : 'Failed to load article.',
         keywords: post ? `${post.category}, ${post.title.split(' ').slice(0, 3).join(', ')}, pdf india` : '',
-        path: post ? `/blog/${post.slug}` : '/blog'
+        path: post ? `/blog/${post.slug}` : '/blog',
+        schema: post ? {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: post.title,
+            description: post.excerpt,
+            author: { '@type': 'Person', name: post.author },
+            datePublished: post.date,
+            image: `https://pdfbazaar.com/og-image.jpg`,
+            publisher: {
+                '@type': 'Organization',
+                name: 'PDFBazaar',
+                logo: { '@type': 'ImageObject', url: 'https://pdfbazaar.com/logo.png' }
+            }
+        } : null
     });
 
     if (!post) {
