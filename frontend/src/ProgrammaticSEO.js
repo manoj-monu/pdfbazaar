@@ -17,15 +17,33 @@ const EXAMS = [
     { id: 'sbi-clerk', name: 'SBI Clerk', hindi: 'SBI Clerk' },
     { id: 'neet-ug', name: 'NEET UG', hindi: 'NEET' },
     { id: 'jee-main', name: 'JEE Main', hindi: 'JEE' },
-    { id: 'jee-adv', name: 'JEE Advanced', hindi: 'JEE Advanced' },
-    { id: 'gate', name: 'GATE Exam', hindi: 'GATE' },
-    { id: 'cat', name: 'CAT Exam', hindi: 'CAT' },
     { id: 'up-police', name: 'UP Police Bharti', hindi: 'UP Police' },
     { id: 'bihar-police', name: 'Bihar Police', hindi: 'Bihar Police' },
     { id: 'rajasthan-police', name: 'Rajasthan Police', hindi: 'Rajasthan Police' },
-    { id: 'delhi-police', name: 'Delhi Police', hindi: 'Delhi Police' },
-    { id: 'passport-india', name: 'Indian Passport Application', hindi: 'Passport' },
-    { id: 'visa-application', name: 'Visa Application', hindi: 'Visa' }
+    { id: 'delhi-police', name: 'Delhi Police', hindi: 'Delhi Police' }
+];
+
+const GOVT_FORMS = [
+    "Aadhar Card Enrollment", "PAN Card Application", "Voter ID Form 6", "Passport Fresh Application", "Driving License Form",
+    "Income Certificate UP", "Caste Certificate OBC", "Domicile Certificate Bihar", "EWS Certificate Application", "PM Kisan Registration",
+    "PF Withdrawal Form 19", "Income Tax Return ITR 1", "GST Registration Online", "MSME Udyam Registration", "Digital Signature DSC",
+    "UP Scholarship Portal", "Bihar Post Matric Scholarship", "MP Task Scholarship", "National Scholarship Portal NSP", "JEE Main Application",
+    "NEET UG Registration", "CUET UG Form", "GATE Exam Application", "UPSC Civil Services Form", "SSC CGL Application",
+    "SSC CHSL Online Form", "SSC GD Constable Form", "RRB NTPC Recruitment", "RRB Group D Form", "IBPS PO Application",
+    "IBPS Clerk Registration", "SBI PO Online Form", "SBI Clerk Application", "LIC ADO Form", "KVS Recruitment",
+    "CTET Online Form", "UGC NET Application", "CSIR NET Form", "NDA CDS Application", "Indian Navy Agniveer",
+    "Indian Army Agniveer", "Indian Air Force Agniveer", "Coast Guard Form", "Delhi Police Bharti", "UP Police Constable",
+    "Bihar Police Constable", "MP Police Bharti", "Rajasthan Police Form", "Haryana Police Bharti", "West Bengal Police",
+    "Maharashtra Police Bharti", "Karnataka Police", "Tamil Nadu Police", "Kerala PSC Online", "Telangana PSC Form",
+    "APPSC Group 2 Form", "GPSC Recruitment", "MPSC Online Application", "BPSC Civil Services", "UPPSC PCS Form",
+    "HPSC Recruitment", "RPSC RAS Application", "OPSC Recruitment", "WBPSC Application", "JKPSC Online Form",
+    "UKPSC Recruitment", "CGPSC Online Form", "JPSC Application", "TNPSC Group 4", "KPSC Recruitment",
+    "MPPSC State Service", "EPFO Recruitment", "ESIC Application", "NABARD Recruitment", "RBI Grade B Form",
+    "SEBI Grade A Application", "ISRO Recruitment", "DRDO Application", "BARC Recruitment", "SAIL GAIL Recruitment",
+    "HAL BHEL Application", "AAI ATC Form", "DMRC Metro Rail", "Post Office GDS Form", "Anganwadi Recruitment",
+    "Gram Panchayat Sahayak", "Patwari Lekhpal Form", "VDO Village Development Officer", "Forest Guard Bharti", "Jail Warder Form",
+    "Fireman Recruitment", "Driver Bharti Online", "Peon MTS Recruitment", "Stenographer Application", "Computer Operator Form",
+    "ITI Polytechnic Admission", "MP Vyapam Patwari", "HSSC Group C", "RSMSSB Recruitment", "UKSSSC Application"
 ];
 
 const TOOLS = [
@@ -48,8 +66,8 @@ const generateHumanLikeContent = (keyword, toolName, specValue) => {
             
             <p>Our engine, powered by advanced libraries like Ghostscript and PDF-lib, performs a deep audit of the PDF structure. It identifies redundant objects and flattens transparency layers. When you target a size like <strong>${specValue}</strong>, the engine dynamically adjusts the DPI (Dots Per Inch) of embedded images and optimizes the color profile from RGB to Indexed color where appropriate. This ensures that while the file footprint is drastically reduced, the legibility of your signature, photograph, or official seal remains 100% intact. This balance is what sets PDFBazaar apart from generic online compressors that often leave documents blurry and unusable.</p>
 
-            <h2>Strategic Importance for Indian Government Exams</h2>
-            <p>The digital revolution in India has moved almost all recruitment processes online. However, the infrastructure on the receiving end (government servers) often requires optimized inputs to ensure smooth processing for millions of candidates. When you apply for <strong>SSC CGL, NEET, or Banking Exams</strong>, the portal usually expects documents in the <strong>${specValue}</strong> range to ensure that the verification officers can load your files instantly during the document verification (DV) stage.</p>
+            <h2>Strategic Importance for ${keyword} in 2026</h2>
+            <p>The digital revolution in India has moved almost all recruitment processes online. However, the infrastructure on the receiving end (government servers) often requires optimized inputs to ensure smooth processing for millions of candidates. When you apply for <strong>${keyword}</strong>, the portal usually expects documents in the <strong>${specValue}</strong> range to ensure that the verification officers can load your files instantly during the document verification (DV) stage.</p>
             
             <p>Using an unoptimized tool can lead to "Artifacting"—those weird blocks or lines that appear on scanned images. If a verifying officer cannot clearly see your date of birth on a 10th-grade marksheet or your category on a Caste Certificate, it could lead to administrative delays. By using PDFBazaar to <strong>${toolName}</strong>, you are ensuring that your digital footprint is professional, standardized, and compliant with national standards. We've essentially brought the power of expensive desktop publishing software directly to your mobile browser.</p>
 
@@ -95,7 +113,7 @@ const generateHumanLikeContent = (keyword, toolName, specValue) => {
 
 export const PROGRAMMATIC_PAGES = [];
 
-// 1. Generate Compress PDF pages for various sizes (27 sizes)
+// 1. Sizes (KB and MB)
 SIZES_KB.forEach(size => {
     PROGRAMMATIC_PAGES.push({
         slug: `compress-pdf-to-${size}kb`,
@@ -105,77 +123,42 @@ SIZES_KB.forEach(size => {
         h1: `Compress PDF to ${size}KB Online`,
         content: generateHumanLikeContent(`Compress PDF to ${size}KB`, 'Compress PDF', `${size}KB`),
         faq: [
-            { q: `Can I compress 1MB PDF to ${size}KB?`, a: `Yes, our tool can compress large files significantly. However, if the file is extremely large, some quality loss might occur in images to reach the ${size}KB target.` },
-            { q: "Is it free?", a: "Yes, PDFbazaar is 100% free with no hidden charges or watermarks." },
-            { q: `Will the text be readable at ${size}KB?`, a: `We use smart optimization to keep text sharp even when the file size is reduced to ${size}KB.` }
+            { q: `Can I compress 1MB PDF to ${size}KB?`, a: `Yes, our tool can compress large files significantly.` },
+            { q: "Is it free?", a: "Yes, PDFbazaar is 100% free with no hidden charges." }
         ]
     });
 });
 
-// 2. Generate Tool + Exam combinations (23 exams * 5 tools = 115 pages)
+// 2. Exams
 EXAMS.forEach(exam => {
     TOOLS.forEach(tool => {
         PROGRAMMATIC_PAGES.push({
             slug: `${tool.id}-for-${exam.id}-form`,
             toolId: tool.id,
             title: `${tool.name} for ${exam.name} Form Online Free – PDFBazaar`,
-            description: `Specially optimized ${tool.name} tool for ${exam.name} online applications. Meet all file requirements for ${exam.name} portal instantly.`,
+            description: `Specially optimized ${tool.name} tool for ${exam.name} online applications.`,
             h1: `${tool.name} for ${exam.name} Applications`,
             content: generateHumanLikeContent(`${tool.name} for ${exam.name}`, tool.name, exam.name),
             faq: [
-                { q: `Will ${exam.name} accept files from this tool?`, a: `Yes! Our tool generates standard PDF/A compliant files that are accepted by all major recruitment portals including ${exam.name}.` },
-                { q: "Do I need to login?", a: "No login is required. We want to make the process as fast as possible for exam candidates." }
+                { q: `Will ${exam.name} accept files from this tool?`, a: `Yes! Our tool generates standard PDF/A compliant files.` }
             ]
         });
     });
 });
 
-// 3. Generate "Convert to [format] [size]kb" pages (27 variations)
-SIZES_KB.forEach(size => {
-    const slug = `convert-pdf-to-jpg-${size}kb`;
+// 3. 100 GOVT FORMS (Requested by User)
+GOVT_FORMS.forEach(form => {
+    const slug = `${form.toLowerCase().replace(/ /g, '-')}-pdf-tool`;
     PROGRAMMATIC_PAGES.push({
         slug: slug,
-        toolId: 'pdf-to-jpg',
-        title: `Convert PDF to JPG under ${size}KB Online – PDFBazaar`,
-        description: `Easy online converter to turn your PDF into JPG while keeping the size under ${size}KB. Free, fast, and no login.`,
-        h1: `Convert PDF to JPG (${size}KB Target)`,
-        content: generateHumanLikeContent(`Convert PDF to JPG under ${size}KB`, 'Convert PDF to JPG', `${size}KB`),
+        toolId: 'compress-pdf', // Default to compress as it's most common
+        title: `${form} PDF Tool Online Free - Compress, Merge, Resize - PDFBazaar`,
+        description: `Everything you need to manage your ${form} PDF documents. Compress to target size, merge files, and resize for online submission.`,
+        h1: `${form} Document Management Tool`,
+        content: generateHumanLikeContent(form, 'PDF Tool', 'Official Limits'),
         faq: [
-            { q: "Is the quality good?", a: "Yes, we use smart resolution scaling to ensure that even at small sizes, your text remains readable." }
-        ]
-    });
-});
-
-// 4. More variations to reach 200+
-const ADDITIONAL_KEYWORDS = [
-    'merge-pdf-under-1mb', 'merge-pdf-under-2mb', 'merge-pdf-under-5mb', 'merge-pdf-under-10mb', 'merge-pdf-under-20mb', 'merge-pdf-under-50mb',
-    'resize-pdf-for-govt-exam', 'resize-pdf-to-a4-size', 'resize-pdf-online-free', 'resize-pdf-for-passport', 'resize-pdf-for-visa', 'resize-pdf-for-cv',
-    'compress-scanned-pdf-online', 'compress-pdf-for-email-attachment', 'compress-pdf-for-whatsapp', 'compress-pdf-for-google-drive',
-    'split-pdf-by-page-range', 'extract-pages-from-pdf-free', 'split-pdf-by-size', 'split-pdf-per-page',
-    'lock-pdf-with-strong-password', 'remove-password-from-aadhar-card', 'unlock-pan-card-pdf', 'secure-pdf-online-free',
-    'convert-word-to-pdf-without-formatting-loss', 'make-pdf-searchable-ocr', 'extract-text-from-pdf-online', 'ocr-hindi-pdf-online',
-    'rotate-pdf-pages-online', 'organize-pdf-pages-free', 'add-page-numbers-to-pdf-online', 'pdf-to-grayscale-converter'
-];
-
-ADDITIONAL_KEYWORDS.forEach(keyword => {
-    let toolId = 'compress-pdf';
-    if (keyword.includes('merge')) toolId = 'merge-pdf';
-    if (keyword.includes('resize')) toolId = 'resize-pdf';
-    if (keyword.includes('split') || keyword.includes('extract')) toolId = 'split-pdf';
-    if (keyword.includes('lock')) toolId = 'protect-pdf';
-    if (keyword.includes('remove-password') || keyword.includes('unlock')) toolId = 'unlock-pdf';
-    if (keyword.includes('word')) toolId = 'word-to-pdf';
-    if (keyword.includes('ocr') || keyword.includes('text')) toolId = 'ocr-pdf';
-
-    PROGRAMMATIC_PAGES.push({
-        slug: keyword,
-        toolId: toolId,
-        title: `${keyword.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} – PDFBazaar`,
-        description: `Professional tool to ${keyword.replace(/-/g, ' ')}. Fast, free, and secure online PDF utility optimized for Indian users.`,
-        h1: keyword.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-        content: generateHumanLikeContent(keyword.replace(/-/g, ' '), keyword.replace(/-/g, ' '), 'various limits'),
-        faq: [
-            { q: `How long does it take to ${keyword.replace(/-/g, ' ')}?`, a: "Usually, it takes less than 5 seconds depending on your file size." }
+            { q: `How to compress ${form} PDF?`, a: `Upload your ${form} document, set the target size, and download the optimized PDF.` },
+            { q: `Is it safe for ${form}?`, a: `Yes, we use SSL encryption and auto-delete files after 1 hour.` }
         ]
     });
 });
