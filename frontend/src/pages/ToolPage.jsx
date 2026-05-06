@@ -8,7 +8,7 @@ import { PDFDocument } from 'pdf-lib';
 import useSEO from '../hooks/useSEO';
 import ToolSEOArticle from '../components/ToolSEOArticle';
 
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://manojkumarsh-pdfbazaar.hf.space';
+const BACKEND_URL = 'https://manojkumarsh-pdfbazaar.hf.space';
 
 const ToolPage = ({ id, hideSEO }) => {
   const { toolId: paramId } = useParams();
