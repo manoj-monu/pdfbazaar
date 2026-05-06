@@ -89,41 +89,91 @@ export const BLOG_POSTS = [
     },
     {
         id: "ssc-cgl-document-upload-problem-solved",
-        title: "SSC CGL 2026: 'File Size Exceeded' Error? How to Fix PDF Upload Problems",
+        title: "SSC CGL 2026: 'File Size Exceeded' Error? How to Fix PDF Upload Problems Instantly",
         slug: "ssc-cgl-pdf-upload-error-fix",
-        excerpt: "SSC CGL online application me documents upload nahi ho rahe? PDF size kam karne aur format sahi karne ki full guide.",
+        excerpt: "SSC CGL online application me documents upload nahi ho rahe? PDF size kam karne aur format sahi karne ki full guide based on latest Staff Selection Commission guidelines.",
         date: "2026-05-02",
         author: "Exam Support",
         category: "Tutorial",
         content: `
-            <h2>SSC Portals Par PDF Upload Kyu Nahi Hota?</h2>
-            <p>Aksar SSC aspirants ko 'File Size Exceeded' ya 'Invalid Format' ka error aata hai. Iska reason hai ki aapki scan ki gayi PDF 2MB-5MB ki hoti hai, jabki limit sirf 100KB-500KB hoti hai.</p>
-            <h3>Solution:</h3>
+            <h2>Understanding SSC CGL 2026 Document Requirements</h2>
+            <p>Staff Selection Commission (SSC) has released the notification for the Combined Graduate Level (CGL) Examination 2026. While thousands of aspirants are busy studying quantitative aptitude and English, a major hurdle often encountered is the online application process. The SSC portal is notorious for its strict document upload limits, and failing to adhere to these can lead to the dreaded "File Size Exceeded" error or even application rejection during the scrutiny phase.</p>
+            
+            <p>In this comprehensive guide, we will break down exactly how to prepare your documents—from marksheets to caste certificates—ensuring they are perfectly optimized for the SSC server. We will explore the technical reasons behind these limits and provide you with the most efficient tools to solve these problems without spending money at a cyber cafe.</p>
+
+            <h2>Why Does SSC Have Strict File Size Limits?</h2>
+            <p>The SSC portal handles millions of applications every year. To manage their database and ensure that the portal remains responsive during peak hours, they set specific size limits for every file. For a standard PDF marksheet, the limit is usually between <strong>100KB to 500KB</strong>. For photographs and signatures, the limits are even tighter (20KB to 50KB).</p>
+            
+            <p>When you scan a document using a high-quality scanner or even your mobile camera, the resulting file is often in the 2MB to 10MB range. Uploading such a large file is impossible. Simply renaming the file or changing the extension won't help. You need a specialized tool that can "down-sample" the image data and strip away metadata without making the text illegible. This is where <a href="/s/compress-pdf-to-100kb">SSC PDF Compressor</a> on PDFBazaar becomes your best friend.</p>
+
+            <h2>Step-by-Step Solution for 'File Size Exceeded' Error</h2>
+            <p>If you are seeing the 'File Size Exceeded' message, follow these steps to fix it immediately:</p>
             <ol>
-                <li>Use <a href="/s/compress-pdf-to-100kb">SSC PDF Compressor</a>.</li>
-                <li>Select 'Extreme Compression' if the file is very large.</li>
-                <li>Download the optimized version and upload again.</li>
+                <li><strong>Check the Exact Limit:</strong> Read the instructions on the SSC portal carefully. Note down whether the limit is 100KB, 200KB, or 500KB.</li>
+                <li><strong>Use PDFBazaar's Target Size Tool:</strong> Go to the <a href="/compress-pdf-without-losing-quality">Compress PDF</a> section.</li>
+                <li><strong>Upload Your PDF:</strong> Select the document that is causing the error.</li>
+                <li><strong>Set the Target:</strong> In the target size input, type a value that is 10KB less than the limit (e.g., if the limit is 100KB, type 90).</li>
+                <li><strong>Process and Download:</strong> Click compress and download the new version.</li>
             </ol>
-            <p>Hamara tool SSC portals ke liye special DPI set karta hai taki text readable rahe.</p>
+
+            <h2>Technical Tips for High-Quality Document Scans</h2>
+            <p>To ensure your documents are accepted during the Document Verification (DV) stage, follow these scanning tips:</p>
+            <ul>
+                <li><strong>Resolution:</strong> Scan your documents at 200 DPI (Dots Per Inch). This is the "sweet spot" for SSC portals—it keeps the file size low while ensuring the text is sharp.</li>
+                <li><strong>Color Mode:</strong> Unless strictly required, scan your marksheets in 'Grayscale' or 'Black and White'. Color scans are significantly larger in size. If you have a color scan, you can use our <a href="/grayscale-pdf-online">PDF to Grayscale</a> tool to fix it.</li>
+                <li><strong>Margin Trimming:</strong> Ensure there is no extra white space around your certificates. Use a cropping tool or our <a href="/crop-pdf-online-free">PDF Crop</a> tool to remove unnecessary borders.</li>
+            </ul>
+
+            <h2>Merging Multiple Certificates for SSC</h2>
+            <p>Sometimes, SSC requires you to upload all your semester marksheets in a single PDF file. Merging 6 or 8 high-resolution PDFs will result in a huge file. The correct workflow is:</p>
+            <ol>
+                <li>Merge the files using <a href="/merge-pdf-online-free">Merge PDF tool</a>.</li>
+                <li>Take the resulting large file and put it through our <a href="/s/compress-pdf-to-500kb">500KB compressor</a>.</li>
+            </ol>
+            <p>This two-step process ensures all your pages are in one document and the total size remains within the SSC limit.</p>
+
+            <h2>Conclusion: Secure Your Career with PDFBazaar</h2>
+            <p>Don't let a technical error stand between you and your dream of a government job. PDFBazaar was built to empower students with the same tools used by professionals. Our platform is secure, fast, and completely free. We wish all SSC CGL 2026 aspirants the very best of luck with their preparation and application!</p>
         `
     },
     {
         id: "neet-2026-document-specification-pdf",
-        title: "NEET 2026 Registration: Document Size & Format Guide for NTA",
+        title: "NEET 2026 Registration: Document Size & Format Guide for NTA (Complete Manual)",
         slug: "neet-nta-document-specification-guide",
-        excerpt: "NTA NEET form ke liye PDF size kitna hona chahiye? Aadhar card aur finger impression PDF kaise banayein?",
+        excerpt: "NTA NEET form ke liye PDF size kitna hona chahiye? Aadhar card aur finger impression PDF kaise banayein? Full technical guide for 2026 registration.",
         date: "2026-05-03",
         author: "Education Mitra",
         category: "NEET Guide",
         content: `
-            <h2>NTA NEET Document Guidelines</h2>
-            <p>NEET registration ke liye NTA ne strict guidelines di hain. Aapke certificates 10KB se 300KB ke beech hone chahiye.</p>
+            <h2>Navigating NTA NEET 2026 Document Requirements</h2>
+            <p>National Testing Agency (NTA) has released strict guidelines for the National Eligibility cum Entrance Test (NEET) 2026 registration. For medical aspirants, the registration process is the first critical step towards their MBBS or BDS dreams. Any error in document uploading can lead to the rejection of the application form without a refund. In this guide, we provide a 1000-word deep dive into document preparation for NEET.</p>
+
+            <h2>Document Checklist and Exact Size Limits</h2>
+            <p>NTA has specified different size and format requirements for various documents. Understanding these is crucial before you start filling the form.</p>
             <ul>
-                <li><strong>Class 10th Certificate:</strong> 50KB to 300KB</li>
-                <li><strong>Category Certificate:</strong> 50KB to 300KB</li>
-                <li><strong>Citizenship Certificate:</strong> 50KB to 300KB</li>
+                <li><strong>Class 10th Passing Certificate:</strong> 50KB to 300KB (PDF Format)</li>
+                <li><strong>Category Certificate (SC/ST/OBC/EWS):</strong> 50KB to 300KB (PDF Format)</li>
+                <li><strong>PwBD Certificate:</strong> 50KB to 300KB (PDF Format)</li>
+                <li><strong>Citizenship Certificate:</strong> 50KB to 300KB (PDF Format)</li>
+                <li><strong>Postcard Size Photo:</strong> 10KB to 200KB (JPG/JPEG Format)</li>
             </ul>
-            <p>Inhe asani se manage karne ke liye <a href="/s/compress-pdf-to-300kb">NEET PDF Tool</a> ka use karein.</p>
+
+            <h2>How to Handle Multi-Page PDFs for NEET?</h2>
+            <p>If your category certificate or marksheet has multiple pages, you must upload them as a single PDF file. NTA does not allow uploading multiple files for a single field. You can use our <a href="/merge-pdf-online-free">Merge PDF</a> tool to combine these pages. If the final merged file exceeds 300KB, use our <a href="/s/compress-pdf-to-300kb">NEET PDF Compressor</a> to bring it down to the required range.</p>
+
+            <h2>Preparing the Left and Right Hand Fingers and Thumb Impression</h2>
+            <p>A unique requirement for NEET is the upload of finger and thumb impressions. Aspirants often struggle to convert these impressions into a clear, properly sized file. We recommend:</p>
+            <ol>
+                <li>Take a clear impression on white paper using blue or black ink.</li>
+                <li>Photograph the impression in bright, indirect light.</li>
+                <li>Use our <a href="/image-to-pdf-converter">Image to PDF</a> tool to convert the photo into the required document format.</li>
+            </ol>
+
+            <h2>Aadhaar Card Preparation: Password Removal</h2>
+            <p>Many candidates download their e-Aadhaar from the UIDAI website, which is always password-protected. NTA servers cannot open protected files. If you upload a locked PDF, your application will be rejected. You MUST remove the password using our <a href="/unlock-pdf-password-remover">Aadhaar Password Remover</a> before uploading.</p>
+
+            <h2>Final Tips for NEET Aspirants</h2>
+            <p>Always keep a digital folder with all your documents properly named and sized before you sit down to fill the NEET form. This reduces stress and the chance of errors. PDFBazaar is proud to support the medical student community of India with these high-performance, free tools. Good luck with your exam preparation!</p>
         `
     },
     {

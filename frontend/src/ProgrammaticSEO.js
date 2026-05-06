@@ -38,47 +38,64 @@ const TOOLS = [
 
 const generateHumanLikeContent = (keyword, toolName, specValue) => {
     return `
-        <p>In today's digital era, managing document sizes has become a critical task for students, professionals, and job seekers alike. Whether you're applying for a government job, submitting a college assignment, or sharing a professional report, encountering a "File Size Too Large" error can be incredibly frustrating. That's exactly where our specialized <strong>${keyword}</strong> tool comes into play. We've built PDFBazaar to be the fastest, most reliable, and completely free solution for all your PDF needs.</p>
-        
-        <p>Our tool is specifically optimized for Indian users who frequently interact with portals like <strong>Sarkari Result</strong>, <strong>SSC</strong>, <strong>UPSC</strong>, and various banking recruitment websites. We understand that these portals often have very strict requirements—sometimes demanding a file be exactly under <strong>${specValue}</strong>. Failing to meet these requirements can lead to application rejection, which is why precision is our top priority.</p>
+        <div class="prose-content">
+            <p>In the rapidly evolving landscape of digital documentation, the ability to manage file sizes efficiently has shifted from being a luxury to an absolute necessity. Whether you are a student preparing for competitive exams, a job seeker applying through national portals, or a professional managing corporate records, the challenge of "File Size Too Large" is a common hurdle. Our specialized <strong>${keyword}</strong> tool at PDFBazaar is engineered precisely to eliminate this friction. We have developed this platform with a single-minded focus: providing high-performance, browser-based tools that are completely free and secure for everyone.</p>
+            
+            <p>For users in India, the stakes are often higher. Portals like <strong>Sarkari Result</strong>, <strong>SSC (Staff Selection Commission)</strong>, <strong>UPSC</strong>, and various state-level recruitment boards (like UP Police, Bihar Police, etc.) have extremely rigid technical specifications. Often, an applicant is required to upload a document that must be strictly under <strong>${specValue}</strong>. A discrepancy of even a few kilobytes can result in a failed upload or, worse, a rejected application. At PDFBazaar, we recognize the importance of these career-defining moments, which is why our <strong>${toolName}</strong> algorithm is optimized for surgical precision.</p>
 
-        <h2>Why You Need to ${toolName} for Online Forms?</h2>
-        <p>Government recruitment boards and educational institutions use automated systems to process thousands of applications daily. To manage their server storage and ensure fast processing, they set strict limits on document uploads. For example, a scanned marksheet or a colored Aadhar card scan can easily exceed 2MB or 5MB, but the portal might only allow up to <strong>${specValue}</strong>.</p>
-        
-        <p>Manually trying to reduce the size or change the format using standard software often leads to blurry text or pixelated images. Our <strong>${toolName}</strong> engine uses advanced compression algorithms (like Ghostscript and optimized PDF-lib) to ensure that while the file size shrinks, the text remains 100% sharp and readable. This is crucial because if the verifying officer cannot read your roll number or date of birth, your form might be disqualified.</p>
+            <h2>The Technical Science Behind ${toolName}</h2>
+            <p>Many users wonder how a file can be reduced in size without losing the clarity of the text. The process of <strong>${toolName}</strong> involves several sophisticated layers of data optimization. Traditional PDFs often contain "bloat"—redundant metadata, embedded fonts that aren't strictly necessary for viewing, and high-resolution image data that exceeds what is visible to the human eye on a standard screen.</p>
+            
+            <p>Our engine, powered by advanced libraries like Ghostscript and PDF-lib, performs a deep audit of the PDF structure. It identifies redundant objects and flattens transparency layers. When you target a size like <strong>${specValue}</strong>, the engine dynamically adjusts the DPI (Dots Per Inch) of embedded images and optimizes the color profile from RGB to Indexed color where appropriate. This ensures that while the file footprint is drastically reduced, the legibility of your signature, photograph, or official seal remains 100% intact. This balance is what sets PDFBazaar apart from generic online compressors that often leave documents blurry and unusable.</p>
 
-        <h2>Key Benefits of Using PDFBazaar for ${keyword}</h2>
-        <ul>
-            <li><strong>Zero Cost, Maximum Value:</strong> Unlike many premium tools that charge a subscription or add annoying watermarks, PDFBazaar is 100% free. No hidden costs, no credit cards, and no "Pro" version locks.</li>
-            <li><strong>Privacy & Security:</strong> We process your files directly in your browser whenever possible. For server-side tasks, we use military-grade SSL encryption and automatically delete all files from our secure servers within one hour of processing.</li>
-            <li><strong>Mobile-First Design:</strong> Most aspirants in India fill out forms using their smartphones. Our website is designed to be ultra-fast and responsive on 4G and 5G mobile networks. You don't need a laptop or a scanner; just use your phone's camera and our tool.</li>
-            <li><strong>No Account Required:</strong> We don't want your email address or personal details. Just land on the page, do your work, and download your file. No registration, no spam.</li>
-        </ul>
+            <h2>Strategic Importance for Indian Government Exams</h2>
+            <p>The digital revolution in India has moved almost all recruitment processes online. However, the infrastructure on the receiving end (government servers) often requires optimized inputs to ensure smooth processing for millions of candidates. When you apply for <strong>SSC CGL, NEET, or Banking Exams</strong>, the portal usually expects documents in the <strong>${specValue}</strong> range to ensure that the verification officers can load your files instantly during the document verification (DV) stage.</p>
+            
+            <p>Using an unoptimized tool can lead to "Artifacting"—those weird blocks or lines that appear on scanned images. If a verifying officer cannot clearly see your date of birth on a 10th-grade marksheet or your category on a Caste Certificate, it could lead to administrative delays. By using PDFBazaar to <strong>${toolName}</strong>, you are ensuring that your digital footprint is professional, standardized, and compliant with national standards. We've essentially brought the power of expensive desktop publishing software directly to your mobile browser.</p>
 
-        <h2>Step-by-Step Guide: How to ${toolName} Online</h2>
-        <p>Follow these simple steps to get your documents ready for any online portal:</p>
-        <ol>
-            <li><strong>Upload Your File:</strong> Click the 'Select Files' button or simply drag and drop your PDF or Image into the designated area.</li>
-            <li><strong>Configure Settings:</strong> If you're using our compressor, you can choose between 'Recommended', 'Extreme', or set a <strong>Target Size</strong> (e.g., ${specValue}).</li>
-            <li><strong>Hit Process:</strong> Click the red action button (e.g., 'Compress PDF' or 'Merge PDF'). Our engine will start working immediately.</li>
-            <li><strong>Download & Upload:</strong> Once processing is complete, a download button will appear. Save the file to your device and it's ready to be uploaded to your target portal.</li>
-        </ol>
+            <h2>Comprehensive Benefits: Why Choose PDFBazaar?</h2>
+            <p>We built this platform to be the most user-centric PDF utility on the web. Here are the core pillars of our service:</p>
+            <ul>
+                <li><strong>No Financial Barriers:</strong> Many global PDF tools offer a "Free Trial" only to lock the most important features (like target size compression) behind a monthly subscription. PDFBazaar is 100% free. We believe that a student's career shouldn't be hampered by the lack of a credit card or a premium subscription.</li>
+                <li><strong>Privacy as a Human Right:</strong> We understand that the documents you upload—Aadhar cards, PAN cards, Income Certificates—contain highly sensitive personal information. That is why our tools are designed to process files locally in your browser whenever possible. For tasks that require our high-performance servers, we use end-to-end SSL encryption. Your files are automatically purged from our system within 60 minutes, ensuring no data trail is left behind.</li>
+                <li><strong>Speed Optimized for 4G/5G:</strong> We know that many of our users in rural India rely on mobile data. Our website is built with a minimalist, high-speed architecture. There are no heavy libraries to download, and the processing is done with minimal data consumption. Whether you're in a metro city or a remote village, <strong>${keyword}</strong> will work seamlessly for you.</li>
+                <li><strong>Cross-Platform Compatibility:</strong> Whether you're using an iPhone, an Android device, a Windows PC, or a MacBook, PDFBazaar works perfectly. There's no software to install and no extensions to add. Just open your favorite browser and start processing.</li>
+            </ul>
 
-        <h2>Specific Optimization for Indian Recruitment Portals</h2>
-        <p>We've analyzed the technical specifications of major Indian portals including <strong>SSC CGL, CHSL, GD, UPSC CSE, NDA, CDS, IBPS, SBI, and Railway RRB</strong>. Our tool ensures that the output PDF follows the standard PDF/A format, which is accepted universally. Whether you are dealing with a <strong>Domicile Certificate</strong>, <strong>Caste Certificate</strong>, <strong>Income Certificate</strong>, or <strong>ID Proofs like PAN and Aadhar</strong>, our ${toolName} tool handles them all with ease.</p>
+            <h2>Master Guide: How to ${toolName} Like a Pro</h2>
+            <p>To get the absolute best results from our <strong>${toolName}</strong> tool, follow these expert tips:</p>
+            <ol>
+                <li><strong>Source Quality:</strong> Always try to start with a clean scan. If you're using a mobile camera, ensure the document is on a flat surface with good lighting (natural sunlight is best). Avoid shadows as they increase file size.</li>
+                <li><strong>Select the Right Tool:</strong> If you have multiple images, use our <strong>JPG to PDF</strong> tool first to combine them, then use the <strong>Compress PDF</strong> tool to hit your target of <strong>${specValue}</strong>.</li>
+                <li><strong>The Target Size Feature:</strong> This is our secret weapon. Instead of choosing 'Low/Medium/High', simply type <strong>${specValue}</strong> in the Target Size box. Our AI will do the math to get you as close to that limit as possible without exceeding it.</li>
+                <li><strong>Preview Before Submission:</strong> After downloading your optimized file, always open it once to check the clarity. Our tool is very reliable, but it's always good practice to double-check before final submission on a government portal.</li>
+            </ol>
 
-        <p>Furthermore, we support various paper sizes like A4 and Legal, which are the standard in Indian offices and courts. If you're a legal professional or a student, you'll find our tools extremely handy for organizing your case files or project reports.</p>
+            <h2>The Cultural Context: Empowering Rural India</h2>
+            <p>PDFBazaar is more than just a utility; it's a tool for digital empowerment. In many parts of India, students have to travel several kilometers to reach a 'Cyber Cafe' just to get their documents resized for a form. By providing these tools for free on mobile devices, we are saving millions of hours and significant amounts of money for the student community. We are proud to be a part of your success story, whether you're applying for the <strong>UP Police Bharti</strong>, <strong>Railway Recruitment</strong>, or <strong>UPSC Civil Services</strong>.</p>
+            
+            <p>Our commitment to you is continuous improvement. We regularly update our algorithms based on the latest guidelines from recruitment boards. If a new portal changes its requirements, we update our <strong>${keyword}</strong> engine to match them. This ensures that you are always using the most current technology for your document management.</p>
 
-        <h2>Common Challenges and Solutions</h2>
-        <p>A common problem users face is merging front and back sides of an ID card into a single page. You can use our <strong>JPG to PDF</strong> tool to select both photos and combine them into one polished document. Another challenge is password-protected Aadhaar files. You can use our <strong>Unlock PDF</strong> tool to remove the permanent password before uploading it to a portal that doesn't accept encrypted files.</p>
-        
-        <p>In conclusion, PDFBazaar is your all-in-one toolkit for document management. We are committed to helping the Indian student community by providing high-quality tools that were previously only available in paid software. Save your money, save your time, and ensure your career success with PDFBazaar.</p>
+            <h2>Frequently Asked Questions & Expert Advice</h2>
+            <div class="faq-detailed">
+                <p><strong>Q: Will my file quality decrease if I compress to ${specValue}?</strong><br/>
+                A: We use "Smart Sampling." Instead of just reducing resolution, we remove invisible data like metadata and duplicate font entries. For most documents, you won't notice a difference in quality, but you will notice a huge difference in file size.</p>
+                
+                <p><strong>Q: Can I process multiple files at once?</strong><br/>
+                A: Yes! Our <strong>Merge PDF</strong> and <strong>JPG to PDF</strong> tools support batch processing. You can upload multiple files and organize them in the exact order you need before processing.</p>
+                
+                <p><strong>Q: Is there a limit on how many times I can use the tool?</strong><br/>
+                A: Absolutely not. You can use PDFBazaar 100 times a day if you need to. We don't believe in "Daily Limits" or "Task Caps."</p>
+            </div>
+
+            <p>In summary, PDFBazaar is the most comprehensive, secure, and user-friendly platform for <strong>${keyword}</strong>. We invite you to explore our other tools like <strong>PDF to JPG</strong>, <strong>Unlock PDF</strong>, and <strong>Add Watermark</strong> to experience the full power of our document management suite. Thank you for choosing PDFBazaar—together, let's make your digital journey smoother and more successful.</p>
+        </div>
     `;
 };
 
 export const PROGRAMMATIC_PAGES = [];
 
-// 1. Generate Compress PDF pages for various sizes (20 pages)
+// 1. Generate Compress PDF pages for various sizes (27 sizes)
 SIZES_KB.forEach(size => {
     PROGRAMMATIC_PAGES.push({
         slug: `compress-pdf-to-${size}kb`,
@@ -113,7 +130,7 @@ EXAMS.forEach(exam => {
     });
 });
 
-// 3. Generate "Convert to [format] [size]kb" pages (20 variations)
+// 3. Generate "Convert to [format] [size]kb" pages (27 variations)
 SIZES_KB.forEach(size => {
     const slug = `convert-pdf-to-jpg-${size}kb`;
     PROGRAMMATIC_PAGES.push({
