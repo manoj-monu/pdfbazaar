@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import { PROGRAMMATIC_PAGES } from './src/ProgrammaticSEO.js';
+
 const SITE_URL = 'https://pdfbazaar.com';
 const PUBLIC_DIR = './public';
 
@@ -42,7 +44,9 @@ const SAFE_URLS = [
     '/blog/pdf-me-password-kaise-lagaye/',
     '/blog/pdf-se-page-kaise-delete-kare/',
     '/blog/word-to-pdf-converter-guide/',
-    '/blog/pdf-par-signature-kaise-kare/'
+    '/blog/pdf-par-signature-kaise-kare/',
+    // --- PROGRAMMATIC PAGES ---
+    ...PROGRAMMATIC_PAGES.map(p => `/s/${p.slug}/`)
 ];
 
 function generateSitemap() {

@@ -1,9 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
 
 Sitemap: https://pdfbazaar.com/sitemap.xml

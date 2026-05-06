@@ -10,7 +10,7 @@ import ToolSEOArticle from '../components/ToolSEOArticle';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000');
 
-const ToolPage = ({ id }) => {
+const ToolPage = ({ id, hideSEO }) => {
   const { toolId: paramId } = useParams();
   const toolId = id || paramId;
   const tool = getToolById(toolId);
@@ -1012,7 +1012,7 @@ const ToolPage = ({ id }) => {
         </div>
       )}
 
-      {tool && <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto 60px' }}>
+      {tool && !hideSEO && <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto 60px' }}>
         <ToolSEOArticle toolId={tool.id} toolName={tool.name} toolDesc={tool.desc} />
       </div>}
       <div style={{ marginTop: 'auto', padding: '60px 0 20px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

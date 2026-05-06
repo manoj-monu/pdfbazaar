@@ -1,4 +1,104 @@
 export const BLOG_POSTS = [
+    {
+        id: "resize-pdf-for-up-police-exam-2026",
+        title: "UP Police Bharti 2026: PDF Size 200KB Kaise Kare (Constable & SI Forms)",
+        slug: "up-police-bharti-pdf-resize-guide",
+        excerpt: "UP Police Constable aur SI bharti ke liye documents ka size 200KB se kam hona chahiye. Mobile se resize karne ka aasan tarika.",
+        date: "2026-05-01",
+        author: "Sarkari Result Expert",
+        category: "Exam Tips",
+        content: `
+            <h2>UP Police Online Form Ke Liye PDF Kaise Banaye?</h2>
+            <p>UPPRPB (Uttar Pradesh Police Recruitment and Promotion Board) ke portals par documents upload karte waqt 200KB ki strict limit hoti hai. Agar aapki file 201KB bhi hai, toh upload fail ho jayega.</p>
+            <h3>Requirements:</h3>
+            <ul>
+                <li>Domicile Certificate: Under 200KB</li>
+                <li>Caste Certificate: Under 200KB</li>
+                <li>Marksheets: Under 200KB</li>
+            </ul>
+            <p>Ise theek karne ke liye hamara <a href="/s/compress-pdf-to-200kb">UP Police PDF Compressor</a> use karein. Bas file upload karein aur Target Size me 190 likhein.</p>
+        `
+    },
+    {
+        id: "ssc-cgl-document-upload-problem-solved",
+        title: "SSC CGL 2026: 'File Size Exceeded' Error? How to Fix PDF Upload Problems",
+        slug: "ssc-cgl-pdf-upload-error-fix",
+        excerpt: "SSC CGL online application me documents upload nahi ho rahe? PDF size kam karne aur format sahi karne ki full guide.",
+        date: "2026-05-02",
+        author: "Exam Support",
+        category: "Tutorial",
+        content: `
+            <h2>SSC Portals Par PDF Upload Kyu Nahi Hota?</h2>
+            <p>Aksar SSC aspirants ko 'File Size Exceeded' ya 'Invalid Format' ka error aata hai. Iska reason hai ki aapki scan ki gayi PDF 2MB-5MB ki hoti hai, jabki limit sirf 100KB-500KB hoti hai.</p>
+            <h3>Solution:</h3>
+            <ol>
+                <li>Use <a href="/s/compress-pdf-to-100kb">SSC PDF Compressor</a>.</li>
+                <li>Select 'Extreme Compression' if the file is very large.</li>
+                <li>Download the optimized version and upload again.</li>
+            </ol>
+            <p>Hamara tool SSC portals ke liye special DPI set karta hai taki text readable rahe.</p>
+        `
+    },
+    {
+        id: "neet-2026-document-specification-pdf",
+        title: "NEET 2026 Registration: Document Size & Format Guide for NTA",
+        slug: "neet-nta-document-specification-guide",
+        excerpt: "NTA NEET form ke liye PDF size kitna hona chahiye? Aadhar card aur finger impression PDF kaise banayein?",
+        date: "2026-05-03",
+        author: "Education Mitra",
+        category: "NEET Guide",
+        content: `
+            <h2>NTA NEET Document Guidelines</h2>
+            <p>NEET registration ke liye NTA ne strict guidelines di hain. Aapke certificates 10KB se 300KB ke beech hone chahiye.</p>
+            <ul>
+                <li><strong>Class 10th Certificate:</strong> 50KB to 300KB</li>
+                <li><strong>Category Certificate:</strong> 50KB to 300KB</li>
+                <li><strong>Citizenship Certificate:</strong> 50KB to 300KB</li>
+            </ul>
+            <p>Inhe asani se manage karne ke liye <a href="/s/compress-pdf-to-300kb">NEET PDF Tool</a> ka use karein.</p>
+        `
+    },
+    {
+        id: "how-to-merge-aadhar-front-back-one-page",
+        title: "Aadhar Card Front & Back Side Ko Ek Hi Page Par Kaise Laye (Mobile Trick)",
+        slug: "merge-aadhar-front-back-one-page-pdf",
+        excerpt: "Kai portals par Aadhar ki ek hi PDF mangte hain. Front aur back photo ko ek page par jodne ka free online method.",
+        date: "2026-05-04",
+        author: "Tech Blogger",
+        category: "Tutorial",
+        content: `
+            <h2>Aadhar Front-Back Ko Ek Sath Karein</h2>
+            <p>Jab aapko sirf ek file upload karne ki jagah milti hai, toh aapko Aadhar ke dono sides ko merge karna padta hai.</p>
+            <ol>
+                <li>Front aur Back photo gallery me save karein.</li>
+                <li>Hamare <a href="/image-to-pdf-converter">Image to PDF</a> tool par jayein.</li>
+                <li>Dono photos select karein.</li>
+                <li>Convert karein aur result download karein.</li>
+            </ol>
+            <p>Ye method bank account opening aur sim card purchase ke liye best hai.</p>
+        `
+    },
+    {
+        id: "best-pdf-tools-for-govt-exam-aspirants-india",
+        title: "5 Essential PDF Tools for Government Exam Aspirants in India (2026)",
+        slug: "essential-pdf-tools-for-sarkari-exam",
+        excerpt: "Sarkari naukri ki taiyari kar rahe hain? Ye 5 tools aapka form bharna aur notes manage karna asaan bana denge.",
+        date: "2026-05-05",
+        author: "Manoj (Founder, PDFBazaar)",
+        category: "Career",
+        content: `
+            <h2>Documents Manage Karna Seekhein</h2>
+            <p>Exam preparation me documents upload karna ek bada task hai. In tools ko bookmark karein:</p>
+            <ol>
+                <li><strong>PDF Compressor:</strong> Sizes adjust karne ke liye.</li>
+                <li><strong>PDF Merger:</strong> Multiple documents ko ek portfolio banane ke liye.</li>
+                <li><strong>PDF to JPG:</strong> Mobile me documents save karne ke liye.</li>
+                <li><strong>Unlock PDF:</strong> Password protected IDs ko open karne ke liye.</li>
+                <li><strong>Word to PDF:</strong> Resume update karke save karne ke liye.</li>
+            </ol>
+            <p>Sare tools bilkul free hain <a href="/">PDFBazaar</a> par.</p>
+        `
+    },
     // --- 30 DAYS GROWTH CHALLENGE - APRIL 2026 ---
     {
         id: "pdf-size-50kb-kaise-kare",

@@ -24,6 +24,7 @@ const Blog = lazy(() => import(/* webpackChunkName: "blog" */ './pages/Blog'));
 const BlogPost = lazy(() => import(/* webpackChunkName: "blog-post" */ './pages/BlogPost'));
 const Pricing = lazy(() => import(/* webpackChunkName: "pricing" */ './pages/Pricing'));
 const LegalPages = lazy(() => import(/* webpackChunkName: "legal" */ './pages/LegalPages'));
+const ProgrammaticToolPage = lazy(() => import(/* webpackChunkName: "programmatic" */ './pages/ProgrammaticToolPage'));
 
 const { AboutUs, ContactUs, PrivacyPolicy, TermsConditions, Disclaimer } = LegalPages;
 
@@ -67,6 +68,9 @@ function App() {
           <Route path="/resize-pdf-page-size" element={<ToolPage id="resize-pdf" />} />
           <Route path="/add-page-numbers-to-pdf" element={<ToolPage id="add-page-numbers" />} />
           <Route path="/grayscale-pdf-online" element={<ToolPage id="grayscale-pdf" />} />
+          
+          {/* Programmatic SEO Routes */}
+          <Route path="/s/:slug" element={<ProgrammaticToolPage />} />
 
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:blogId" element={<BlogPost />} />
