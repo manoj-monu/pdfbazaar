@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: pdfbazaar-backend
+    env: docker
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    plan: starter # PDF processing needs some RAM (LibreOffice, Ghostscript)
+    region: singapore # Choose closer region for Indian users
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MODAL_GPU_URL
+        fromEnvVar: MODAL_GPU_URL # Let user set this in Render UI or Blueprints env
+    healthCheckPath: /
+    autoDeploy: true

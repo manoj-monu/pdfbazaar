@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/pdf-icon.png" />
+  <link rel="preload" href="/pdf-icon.png" as="image" fetchpriority="high" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Preconnect to Third Parties to Save DNS Resolving Time -->
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
+  <style>:root{--primary:#1321d4;--bg-color:#f8fafc;--text-primary:#0f172a;--header-height:72px}body{margin:0;font-family:Inter,sans-serif;background:var(--bg-color);color:var(--text-primary);text-rendering:optimizeSpeed} .navbar{height:72px;background:rgba(255,255,255,.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.05);position:sticky;top:0;z-index:50;display:flex;align-items:center}.container{max-width:1200px;margin:0 auto;padding:0 20px;width:100%;box-sizing:border-box}.nav-container{display:flex;justify-content:space-between;align-items:center}.nav-brand{font-weight:800;font-size:28px;color:var(--primary);display:flex;align-items:center;gap:8px;text-decoration:none}.hero-wrapper{background:linear-gradient(135deg,#e0e7ff 0%,#f8fafc 100%);padding:80px 0 40px;text-align:center}</style>
+  <title>PDFbazaar.com - All-in-One Free PDF Tools</title>
+  <meta name="description"
+    content="Manage your documents effortlessly with our 100% free, secure, and intuitive platform. Merge, split, compress, edit, and convert PDFs online in seconds—no installation required." />
+  <meta name="keywords"
+    content="pdf tools, merge pdf, compress pdf, split pdf, edit pdf, pdf to word, word to pdf, best pdf alternative, pdfbazaar" />
+  <!-- Speculation Rules API for faster page loading -->
+  <script type="speculationrules">
+    {
+      "prefetch": [{
+        "where": {
+          "and": [
+            { "href_matches": "/*" }
+          ]
+        },
+        "eagerness": "moderate"
+      }]
+    }
+  </script>
+  <!-- JSON-LD Structured Data for Massive SEO Boost -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PDFBazaar",
+      "url": "https://pdfbazaar.com",
+      "alternateName": "PDF Bazaar",
+      "description": "Free online PDF tools to compress, merge, split, and convert PDFs. 100% free and secure without registration."
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PDFBazaar Toolkit",
+      "operatingSystem": "All",
+      "applicationCategory": "UtilitiesApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Compress, Merge, Split, and Edit your PDF files online for free. Fast, secure, and easy to use.",
+      "featureList": ["Compress PDF below 100kb", "Merge PDF files", "Split PDF", "PDF to Word Converter", "Unlock PDF password"]
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx" defer></script>
+
+  <!-- Optimized Analytics & Adsense Script -->
+  <script>
+    (function () {
+      let isLoaded = false;
+      function loadScripts() {
+        if (isLoaded) return;
+        isLoaded = true;
+
+        // Load Google Analytics
+        const gaScript = document.createElement('script');
+        gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-TP5P1DNSGY";
+        gaScript.async = true;
+        document.body.appendChild(gaScript);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-TP5P1DNSGY');
+
+        // Load Google Adsense
+        const adsScript = document.createElement('script');
+        adsScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2020479148810052";
+        adsScript.async = true;
+        adsScript.crossOrigin = "anonymous";
+        document.body.appendChild(adsScript);
+      }
+
+      // Load on user interaction ONLY (Ensures 90+ PageSpeed score)
+      const triggerEvents = ['scroll', 'mousemove', 'click', 'keydown', 'touchstart'];
+      triggerEvents.forEach(evt => window.addEventListener(evt, loadScripts, { once: true, passive: true }));
+    })();
+  </script>
+</body>
+
+</html>
