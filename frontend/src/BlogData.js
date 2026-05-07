@@ -1,5 +1,65 @@
 export const BLOG_POSTS = [
     {
+        id: "rrb-ntpc-2026-pdf-size-guide",
+        title: "RRB NTPC 2026: How to Resize PDF Documents for Railway Application Form",
+        slug: "rrb-ntpc-pdf-resize-guide",
+        excerpt: "Applying for RRB NTPC 2026? Learn the exact PDF size limits for certificates and marksheet, and how to compress them under 100KB for a successful upload.",
+        date: "2026-05-07",
+        author: "Railway Exam Expert",
+        category: "Exam Tips",
+        content: `
+            <h2>RRB NTPC 2026: Document Upload Specifications</h2>
+            <p>The Railway Recruitment Board (RRB) has announced the NTPC recruitment for 2026. One of the most common reasons for application rejection is the upload of incorrectly sized documents. For RRB NTPC, the portal usually requires scanned educational certificates and category certificates in PDF format within a specific size range, typically between 50KB to 300KB.</p>
+            
+            <p>If your file is larger than this, the server will block the upload. Using PDFBazaar's <a href="/s/compress-pdf-to-100kb">100KB PDF Compressor</a>, you can ensure your document meets the strict railway standards while maintaining crystal clear readability for verification.</p>
+            
+            <h3>Step-by-Step: Compressing PDF for RRB</h3>
+            <ol>
+                <li>Choose the 'Compress PDF' tool on PDFBazaar.</li>
+                <li>Upload your scanned marksheet or certificate.</li>
+                <li>Set the 'Target Size' to 250KB to stay safely under the limit.</li>
+                <li>Download and upload to the RRB portal instantly.</li>
+            </ol>
+            <p>Don't let a technical error stop your career in the Indian Railways. Optimize your documents today!</p>
+        `
+    },
+    {
+        id: "aadhar-password-remove-online-2026",
+        title: "How to Remove Password from Aadhar Card PDF Permanently (2026 Update)",
+        slug: "remove-aadhar-password-permanently",
+        excerpt: "Tired of typing your Aadhar password every time? Learn how to remove the password permanently from your e-Aadhaar PDF using our free online tool.",
+        date: "2026-05-06",
+        author: "Privacy Pro",
+        category: "Tutorial",
+        content: `
+            <h2>Understanding the Aadhaar PDF Password</h2>
+            <p>Every e-Aadhaar PDF downloaded from the UIDAI portal is protected by an 8-character password (the first four letters of your name in CAPITALS followed by your birth year). While this is great for security, it can be annoying if you need to upload the document to multiple portals like bank KYC, PAN application, or job forms, as many automated systems cannot read password-protected files.</p>
+            
+            <p>To solve this, you need a <a href="/unlock-pdf-password-remover">PDF Password Remover</a>. Our tool allows you to upload your protected Aadhar, enter the password once, and download a 'Clean' version that opens instantly without a prompt.</p>
+            
+            <h3>Is it safe?</h3>
+            <p>At PDFBazaar, security is our top priority. Your password is never stored on our servers. The decryption happens in a secure environment, and all files are purged within one hour of processing. This makes it the safest way to handle your sensitive UIDAI documents.</p>
+        `
+    },
+    {
+        id: "ssc-cgl-2026-marksheet-merge",
+        title: "SSC CGL 2026: How to Merge Multiple Semester Marksheets into One PDF",
+        slug: "ssc-cgl-marksheet-merge-guide",
+        excerpt: "SSC CGL requires all semester marksheets to be uploaded as a single PDF. Here is how you can merge them in seconds for your online application.",
+        date: "2026-05-05",
+        author: "Sarkari Guide",
+        category: "Exam Tips",
+        content: `
+            <h2>The Challenge of Multi-Page SSC Documents</h2>
+            <p>For the SSC CGL 2026 recruitment, candidates are often required to upload their graduation degree or semester-wise marksheets. However, the portal only provides a single upload slot for these documents. This means you must combine your 1st, 2nd, 3rd, and final year marksheets into one cohesive PDF file.</p>
+            
+            <p>Using a <a href="/merge-pdf-online-free">Free PDF Merger</a> is the easiest solution. You simply select all your files, drag them into the correct chronological order, and hit 'Merge'.</p>
+            
+            <h3>Pro Tip for SSC Applicants:</h3>
+            <p>After merging, your file size might increase significantly. Always use our <a href="/blog/pdf-size-100kb-ssc-upsc-form">SSC PDF Size Guide</a> to compress the final merged file to under 200KB before submitting. This ensures zero errors during the final submission stage.</p>
+        `
+    },
+    {
         id: "resize-pdf-for-up-police-exam-2026",
         title: "UP Police Bharti 2026: PDF Size 200KB Kaise Kare (Constable & SI Forms) - Full Guide",
         slug: "up-police-bharti-pdf-resize-guide",

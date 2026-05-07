@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Shield, Twitter, Facebook, Instagram, Linkedin, Zap, Lock, RefreshCw } from 'lucide-react';
+import { Shield, Twitter, Facebook, Instagram, Linkedin, Zap, Lock, RefreshCw, FileText } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -8,7 +8,18 @@ const Footer = () => {
                 <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '60px' }}>
                     <div className="footer-col" style={{ gridColumn: 'span 2' }}>
                         <Link to="/" className="nav-brand" style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-                            <img src="/pdf-icon.png" alt="PDFbazaar Logo" style={{ height: '54px', width: '54px', borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }} />
+                            <div style={{ 
+                                width: '54px', 
+                                height: '54px', 
+                                background: '#1321d4', 
+                                borderRadius: '14px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center',
+                                boxShadow: '0 6px 16px rgba(19, 33, 212, 0.3)'
+                            }}>
+                                <FileText size={32} color="white" />
+                            </div>
                             <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: '900', fontSize: '32px', color: '#1321d4', letterSpacing: '-1.5px', lineHeight: 1 }}>
                                 PDFbazaar<span style={{ color: '#1321d4' }}>.com</span>
                             </span>

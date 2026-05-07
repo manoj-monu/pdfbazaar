@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BLOG_POSTS } from '../BlogData';
 import { ArrowLeft } from 'lucide-react';
@@ -8,7 +9,40 @@ import { TOOLS_CATEGORIES } from '../ToolsData';
 
 const BlogPost = () => {
     const { blogId } = useParams();
-    const post = BLOG_POSTS.find(p => p.slug === blogId);
+    // Robust slug matching: trim trailing slashes and handle case-insensitivity
+    const cleanBlogId = blogId?.replace(/\/$/, '').toLowerCase();
+    const post = BLOG_POSTS.find(p => p.slug.toLowerCase() === cleanBlogId);
+
+    // Inject JSON-LD Article Schema
+    useEffect(() => {
+        if (post) {
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "Article",
+                "headline": post.title,
+                "description": post.excerpt,
+                "author": {
+                    "@type": "Person",
+                    "name": post.author
+                },
+                "datePublished": post.date,
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": window.location.href
+                }
+            };
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'article-schema';
+            script.innerHTML = JSON.stringify(schema);
+            document.head.appendChild(script);
+
+            return () => {
+                const existing = document.getElementById('article-schema');
+                if (existing) document.head.removeChild(existing);
+            };
+        }
+    }, [post]);
 
     // Find related tools based on category or content keywords
     const getRelatedTools = () => {

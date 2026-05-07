@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PROGRAMMATIC_PAGES } from '../ProgrammaticSEO';
 import ToolPage from './ToolPage';
@@ -8,7 +8,37 @@ import { Shield, Zap, Globe, ChevronRight } from 'lucide-react';
 
 const ProgrammaticToolPage = () => {
     const { slug } = useParams();
-    const pageData = PROGRAMMATIC_PAGES.find(p => p.slug === slug);
+    // Robust slug matching: trim trailing slashes and handle case-insensitivity
+    const cleanSlug = slug?.replace(/\/$/, '').toLowerCase();
+    const pageData = PROGRAMMATIC_PAGES.find(p => p.slug.toLowerCase() === cleanSlug);
+
+    // Inject JSON-LD FAQ Schema for SEO
+    useEffect(() => {
+        if (pageData && pageData.faq) {
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": pageData.faq.map(item => ({
+                    "@type": "Question",
+                    "name": item.q,
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": item.a
+                    }
+                }))
+            };
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'faq-schema';
+            script.innerHTML = JSON.stringify(schema);
+            document.head.appendChild(script);
+
+            return () => {
+                const existing = document.getElementById('faq-schema');
+                if (existing) document.head.removeChild(existing);
+            };
+        }
+    }, [pageData]);
 
     if (!pageData) {
         return <div style={{ padding: '100px 0', textAlign: 'center' }}>Page not found</div>;

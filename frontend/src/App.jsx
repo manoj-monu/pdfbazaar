@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'rea
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
+import CookieConsent from './components/CookieConsent';
+import BackToTop from './components/BackToTop';
 import AdsPlacement from './components/AdsPlacement';
 import { TOOLS_CATEGORIES } from './ToolsData';
 
@@ -80,9 +82,14 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
+          
+          {/* Catch-all 404: Redirect to Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
       <Footer />
+      <CookieConsent />
+      <BackToTop />
     </Router>
   );
 }

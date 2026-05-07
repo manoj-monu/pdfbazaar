@@ -7,3 +7,16 @@ processed/
 .vscode/
 dist/
 build/
+node-backend/fonts/
+node-backend/uploads/
+node-backend/python_scripts/__pycache__/
+*.exe
+*.pdf
+*.docx
+*.ttf
+*.otf
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico

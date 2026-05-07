@@ -16,8 +16,8 @@ const port = process.env.PORT || 5000;
 app.use(cors({
     exposedHeaders: ['Content-Disposition']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Setup multer for file uploads
 const uploadDir = path.join(__dirname, 'uploads');
@@ -573,21 +573,21 @@ app.post('/api/process/:toolId', upload.array('files'), async (req, res) => {
                         let docXml = zipDocx.readAsText(docEntry);
                         const originalLen = docXml.length;
 
-                        // Remove mc:AlternateContent blocks containing text boxes
+                        // Remove mc:AlternateContent blocks containing text boxes or drawings
                         docXml = docXml.replace(/<mc:AlternateContent[\s\S]*?<\/mc:AlternateContent>/g, (match) => {
-                            if (match.includes('v:textbox') || match.includes('txbxContent') || match.includes('wps:txbx')) {
+                            if (match.includes('v:textbox') || match.includes('txbxContent') || match.includes('wps:txbx') || match.includes('wps:wsp')) {
                                 return '';
                             }
                             return match;
                         });
 
-                        // Remove old-style VML text boxes
-                        docXml = docXml.replace(/<v:shape[\s\S]*?<\/v:shape>/g, (match) => {
-                            if (match.includes('v:textbox')) return '';
-                            return match;
-                        });
+                        // Remove old-style VML shapes and text boxes
+                        docXml = docXml.replace(/<v:shape[\s\S]*?<\/v:shape>/g, '');
+                        docXml = docXml.replace(/<v:rect[\s\S]*?<\/v:rect>/g, '');
+                        docXml = docXml.replace(/<v:textbox[\s\S]*?<\/v:textbox>/g, '');
 
-                        // Remove wps text boxes (modern Word format)
+                        // Remove modern Word processing shapes (wps)
+                        docXml = docXml.replace(/<wps:wsp[\s\S]*?<\/wps:wsp>/g, '');
                         docXml = docXml.replace(/<wps:txbx[\s\S]*?<\/wps:txbx>/g, '');
 
                         if (docXml.length !== originalLen) {
@@ -905,13 +905,21 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
 
         // 🔹 Support All Languages via Google Noto Fonts
         pdfDoc.registerFontkit(fontkit);
-        const FONT_MAP = [
-            { regex: /[\u0980-\u09FF]/, name: 'NotoSansBengali', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf' },
-            { regex: /[\u0A80-\u0AFF]/, name: 'NotoSansGujarati', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansGujarati/NotoSansGujarati-Regular.ttf' },
-            { regex: /[\u0900-\u097F]/, name: 'NotoSansDevanagari', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Regular.ttf' },
-            { regex: /[\u0600-\u06FF\u0750-\u077F]/, name: 'NotoSansArabic', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSansArabic/NotoSansArabic-Regular.ttf' },
-            { regex: /[A-Z][a-z]+ [A-Z][a-z]+/, name: 'NotoSerif', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSerif/NotoSerif-Regular.ttf' }, // Likely formal names
-            { regex: /.*/, name: 'NotoSans', url: 'https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf' }
+        
+        // Comprehensive Font Map for Indian Regional Languages & Styles
+        const FONT_FAMILIES = [
+            { name: 'NotoSansDevanagari', regex: /[\u0900-\u097F]/ },
+            { name: 'NotoSansBengali', regex: /[\u0980-\u09FF]/ },
+            { name: 'NotoSansTamil', regex: /[\u0B80-\u0BFF]/ },
+            { name: 'NotoSansTelugu', regex: /[\u0C00-\u0C7F]/ },
+            { name: 'NotoSansKannada', regex: /[\u0C80-\u0CFF]/ },
+            { name: 'NotoSansMalayalam', regex: /[\u0D00-\u0D7F]/ },
+            { name: 'NotoSansGujarati', regex: /[\u0A80-\u0AFF]/ },
+            { name: 'NotoSansGurmukhi', regex: /[\u0A00-\u0A7F]/ },
+            { name: 'NotoSansOriya', regex: /[\u0B00-\u0B7F]/ },
+            { name: 'NotoSansArabic', regex: /[\u0600-\u06FF\u0750-\u077F]/ },
+            { name: 'NotoSerif', regex: /[A-Z][a-z]+ [A-Z][a-z]+/ }, // Names/Formal
+            { name: 'NotoSans', regex: /.*/ } // Default
         ];
 
         const embeddedFonts = {};
@@ -919,7 +927,12 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
         const pages = pdfDoc.getPages();
 
         for (const rep of replacements) {
-            const { pageIndex, x, y, width, height, newText, fontSize, renderedWidth, renderedHeight, hasMatch, pdfX, pdfY, pdfWidth, pdfHeight } = rep;
+            const { 
+                pageIndex, x, y, width, height, newText, fontSize, 
+                pdfX, pdfY, pdfWidth, pdfHeight, hasMatch,
+                fontWeight, fontStyle 
+            } = rep;
+
             if (pageIndex === undefined || newText === undefined) continue;
             const page = pages[pageIndex];
             if (!page) continue;
@@ -927,111 +940,206 @@ app.post('/api/pdf-editor/replace-text', upload.single('file'), async (req, res)
             let finalX, finalY, finalW, finalH, finalSize;
 
             if (hasMatch) {
-                // ✅ ADOBE METHOD: Use exact PDF coordinates extracted from pdf.js
-                // pdf-lib's origin is bottom-left, same as pdf.js text coordinates
                 finalX = pdfX;
                 finalY = pdfY;
                 finalW = pdfWidth;
                 finalH = pdfHeight;
                 finalSize = fontSize;
             } else {
-                // Fallback Method: Scale rendered pixels to PDF points
-                const { width: pdfPageW, height: pdfPageH } = page.getSize();
-                const scaleX = renderedWidth ? (pdfPageW / renderedWidth) : 1;
-                const scaleY = renderedHeight ? (pdfPageH / renderedHeight) : 1;
-
-                finalX = x * scaleX;
-                finalY = pdfPageH - (y * scaleY) - (height * scaleY); // flip Y axis
-                finalW = width * scaleX;
-                finalH = height * scaleY;
-                finalSize = (fontSize || 12) * scaleY;
+                const { height: pdfPageH } = page.getSize();
+                finalX = x;
+                finalY = pdfPageH - y - height;
+                finalW = width;
+                finalH = height;
+                finalSize = fontSize || 12;
             }
 
             // 1. White rectangle to cover original
             page.drawRectangle({
-                x: finalX - 1,
-                y: finalY - 2,
-                width: finalW + 4,
-                height: finalH + 4,
+                x: finalX - 0.5,
+                y: finalY - 1,
+                width: finalW + 1,
+                height: finalH + 2,
                 color: rgb(1, 1, 1),
             });
 
-            // 2. Draw new text at exact same position
+            // 2. Draw new text
             if (newText.trim()) {
-                // Find custom font for this text
-                let fontInfo = FONT_MAP[FONT_MAP.length - 1]; // Default
-                for (const map of FONT_MAP) {
-                    if (map.regex.test(newText)) {
-                        fontInfo = map;
+                // 🎨 Parse Color (e.g. "rgb(0, 0, 0)")
+                let textColor = rgb(0, 0, 0);
+                if (rep.fontColor) {
+                    const match = rep.fontColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                    if (match) {
+                        textColor = rgb(
+                            parseInt(match[1]) / 255,
+                            parseInt(match[2]) / 255,
+                            parseInt(match[3]) / 255
+                        );
+                    }
+                }
+
+                // Determine style suffix
+                let style = 'Regular';
+                const isBold = fontWeight === 'bold' || parseInt(fontWeight) >= 600;
+                const isItalic = fontStyle === 'italic';
+                
+                if (isBold && isItalic) style = 'BoldItalic';
+                else if (isBold) style = 'Bold';
+                else if (isItalic) style = 'Italic';
+
+                // Find family
+                let family = 'NotoSans';
+                const originalFont = (rep.fontFamily || '').toLowerCase();
+                
+                // If original font is likely Serif (Times, Georgia, etc)
+                if (originalFont.includes('serif') || originalFont.includes('times') || originalFont.includes('georgia')) {
+                    family = 'NotoSerif';
+                }
+
+                for (const fam of FONT_FAMILIES) {
+                    if (fam.regex.test(newText)) {
+                        // If it's a specific language, use that family
+                        if (fam.name !== 'NotoSans' && fam.name !== 'NotoSerif') {
+                            family = fam.name;
+                        }
                         break;
                     }
                 }
 
-                if (!embeddedFonts[fontInfo.name]) {
-                    const fontPath = path.join(__dirname, 'fonts', fontInfo.name + (fontInfo.url.endsWith('.otf') ? '.otf' : '.ttf'));
-                    if (!fs.existsSync(fontPath)) {
-                        console.log(`[Font] Downloading ${fontInfo.name} for required language...`);
+                const fontKey = `${family}-${style}`;
+                
+                if (!embeddedFonts[fontKey]) {
+                    const fontFilename = `${fontKey}.ttf`;
+                    const localPath = path.join(__dirname, 'fonts', fontFilename);
+                    const systemPath = path.join('/usr/share/fonts/truetype/noto', fontFilename);
+                    
+                    let finalFontPath = null;
+                    
+                    if (fs.existsSync(systemPath)) {
+                        finalFontPath = systemPath;
+                    } else if (fs.existsSync(localPath)) {
+                        finalFontPath = localPath;
+                    } else {
+                        // Download from Google Fonts GitHub
+                        console.log(`[Font] Downloading ${fontKey} for parity...`);
                         if (!fs.existsSync(path.join(__dirname, 'fonts'))) fs.mkdirSync(path.join(__dirname, 'fonts'));
-                        await new Promise((resolve, reject) => {
-                            const file = fs.createWriteStream(fontPath);
-                            function fetchUrl(url) {
-                                https.get(url, (response) => {
-                                    if (response.statusCode === 301 || response.statusCode === 302) return fetchUrl(response.headers.location);
-                                    if (response.statusCode !== 200) return reject(new Error(`Failed to download font: ${response.statusCode}`));
-                                    response.pipe(file);
-                                    file.on('finish', () => { file.close(); resolve(); });
-                                }).on('error', (err) => {
-                                    fs.unlink(fontPath, () => { });
-                                    reject(err);
-                                });
+                        
+                        let downloadUrl = `https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/${family}/${fontFilename}`;
+                        
+                        try {
+                            await new Promise((resolve, reject) => {
+                                const file = fs.createWriteStream(localPath);
+                                function fetchUrl(url) {
+                                    https.get(url, (res) => {
+                                        if (res.statusCode === 301 || res.statusCode === 302) return fetchUrl(res.headers.location);
+                                        if (res.statusCode !== 200) return reject(new Error(`Status: ${res.statusCode}`));
+                                        res.pipe(file);
+                                        file.on('finish', () => { file.close(); resolve(); });
+                                    }).on('error', reject);
+                                }
+                                fetchUrl(downloadUrl);
+                            });
+                            finalFontPath = localPath;
+                        } catch (e) {
+                            console.warn(`[Font] Download failed for ${fontKey}: ${e.message}.`);
+                            if (style !== 'Regular') {
+                                finalFontPath = path.join(__dirname, 'fonts', `${family}-Regular.ttf`);
                             }
-                            fetchUrl(fontInfo.url);
-                        });
+                        }
                     }
-                    const fontBytes = fs.readFileSync(fontPath);
-                    embeddedFonts[fontInfo.name] = await pdfDoc.embedFont(fontBytes);
-                }
-                const activeCustomFont = embeddedFonts[fontInfo.name];
 
-                page.drawText(newText, {
-                    x: finalX,
-                    y: finalY,
-                    size: finalSize,
-                    font: activeCustomFont,
-                    color: rgb(0, 0, 0),
-                });
+                    if (finalFontPath && fs.existsSync(finalFontPath)) {
+                        try {
+                            const fontBytes = fs.readFileSync(finalFontPath);
+                            if (fontBytes.length > 0) {
+                                embeddedFonts[fontKey] = await pdfDoc.embedFont(fontBytes);
+                            } else {
+                                throw new Error('Empty font file');
+                            }
+                        } catch (embedErr) {
+                            console.error(`[Font] Failed to embed ${fontKey}:`, embedErr.message);
+                            const { StandardFonts } = require('pdf-lib');
+                            embeddedFonts[fontKey] = await pdfDoc.embedFont(
+                                family === 'NotoSerif' ? StandardFonts.TimesRoman : StandardFonts.Helvetica
+                            );
+                        }
+                    } else {
+                        const { StandardFonts } = require('pdf-lib');
+                        embeddedFonts[fontKey] = await pdfDoc.embedFont(
+                            family === 'NotoSerif' ? StandardFonts.TimesRoman : StandardFonts.Helvetica
+                        );
+                    }
+                }
+
+                try {
+                    const activeCustomFont = embeddedFonts[fontKey];
+                    page.drawText(newText, {
+                        x: finalX,
+                        y: finalY,
+                        size: finalSize,
+                        font: activeCustomFont,
+                        color: textColor,
+                    });
+                } catch (drawErr) {
+                    console.error(`[PDF Editor] Draw error on page ${pageIndex}:`, drawErr.message);
+                }
             }
         }
-
-        const modifiedBytes = await pdfDoc.save();
-        const outPath = path.join(uploadDir, `edited-${Date.now()}.pdf`);
-        fs.writeFileSync(outPath, modifiedBytes);
+        
+        console.log(`[PDF Editor] Applied ${replacements.length} edits. Saving...`);
+        const pdfBytes = await pdfDoc.save();
         if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="pdfbazaar-edited.pdf"');
-        res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
-        res.download(outPath, 'pdfbazaar-edited.pdf', (err) => {
-            if (err) console.error('Download error:', err);
-            setTimeout(() => { if (fs.existsSync(outPath)) fs.unlinkSync(outPath); }, 5000);
-        });
+        res.contentType('application/pdf');
+        res.send(Buffer.from(pdfBytes));
+
     } catch (err) {
-        console.error('[replace-text]', err.message);
+        console.error('[replace-text Error]:', err.message);
         res.status(500).json({ error: 'Text replacement failed.', details: err.message });
     }
 });
 
 // Serve static files from the frontend build
-const distPath = path.join(__dirname, 'dist');
+const distPath = path.resolve(__dirname, 'dist');
+const indexPath = path.join(distPath, 'index.html');
+
+console.log(`[Static] Checking for dist at: ${distPath}`);
+
 if (fs.existsSync(distPath)) {
-    console.log('[API] Serving static files from', distPath);
+    console.log('[Static] Dist directory found. Serving static files.');
     app.use(express.static(distPath));
+    
+    // Catch-all to serve index.html for SPA routing
     app.get('*', (req, res, next) => {
-        // Only serve index.html for non-API routes
+        // Skip API routes
         if (req.path.startsWith('/api')) return next();
-        res.sendFile(path.join(distPath, 'index.html'));
+        
+        // Log the request to help debug 404s
+        console.log(`[SPA] Routing ${req.originalUrl} to index.html`);
+        
+        res.sendFile(indexPath, (err) => {
+            if (err) {
+                console.error(`[Error] Failed to send index.html: ${err.message}`);
+                // Only send 404 if index.html is actually missing
+                if (!res.headersSent) {
+                    res.status(404).send('Application not found. Please try again later.');
+                }
+            }
+        });
     });
+} else {
+    console.warn('[Warning] Dist directory NOT found. Frontend will not be served.');
 }
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'production',
+        port: port
+    });
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

@@ -159,8 +159,12 @@ const PdfEditor = () => {
                     );
                 }
 
-                const editId = Date.now().toString();
-                const fontSize = matchedItem ? matchedItem.fontSize : ((parseFloat(window.getComputedStyle(span).fontSize) || 12) / scale);
+                const computedStyle = window.getComputedStyle(span);
+                const fontSize = matchedItem ? matchedItem.fontSize : ((parseFloat(computedStyle.fontSize) || 12) / scale);
+                const fontWeight = computedStyle.fontWeight;
+                const fontStyle = computedStyle.fontStyle;
+                const fontColor = computedStyle.color; // e.g. "rgb(0, 0, 0)"
+                const fontFamily = computedStyle.fontFamily;
 
                 const newEdit = {
                     id: editId,
@@ -168,6 +172,10 @@ const PdfEditor = () => {
                     originalText: spanText,
                     newText: spanText,
                     fontSize,
+                    fontWeight,
+                    fontStyle,
+                    fontColor,
+                    fontFamily,
                     // ✅ EXACT PDF coordinates - no conversion needed!
                     pdfX: matchedItem ? matchedItem.pdfX : 0,
                     pdfY: matchedItem ? matchedItem.pdfY : 0,
@@ -466,11 +474,18 @@ const PdfEditor = () => {
                 hasMatch: ed.hasMatch,
                 newText: ed.newText,
                 fontSize: ed.fontSize,
+                fontWeight: ed.fontWeight,
+                fontStyle: ed.fontStyle,
+                fontColor: ed.fontColor,
+                fontFamily: ed.fontFamily,
                 renderedWidth: ed.displayWidth, // not really needed if we have exact coords
                 renderedHeight: ed.displayHeight,
             }))));
 
-            const res = await fetch(`${BACKEND_URL}/api/pdf-editor/replace-text`, {
+            const targetUrl = `${BACKEND_URL}/api/pdf-editor/replace-text`;
+            console.log(`[PDF Editor] Sending request to: ${targetUrl}`);
+            
+            const res = await fetch(targetUrl, {
                 method: 'POST',
                 body: formData,
             });
@@ -486,9 +501,15 @@ const PdfEditor = () => {
             setInlineEdits([]); // clear all edits
             setMode('view');
         } catch (err) {
-            alert('Error applying changes: ' + err.message);
+            console.error('[PDF Editor] Save error:', err);
+            let msg = err.message;
+            if (msg === 'Failed to fetch') {
+                msg = 'Cannot reach the server. It might be restarting (Live Update in progress) or your internet is disconnected.';
+            }
+            alert(`Error applying changes: ${msg}`);
+        } finally {
+            setApplyingSaving(false);
         }
-        setApplyingSaving(false);
     };
 
     const triggerDownload = () => {

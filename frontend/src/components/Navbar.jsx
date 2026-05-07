@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X, Heart, FileText } from 'lucide-react';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -9,7 +9,18 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="container nav-container">
                 <Link to="/" className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-                    <img src="/pdf-icon.png" alt="PDFbazaar Logo" style={{ height: '40px', width: '40px', borderRadius: '50%', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                    <div style={{ 
+                        width: '40px', 
+                        height: '40px', 
+                        background: '#1321d4', 
+                        borderRadius: '10px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(19, 33, 212, 0.3)'
+                    }}>
+                        <FileText size={24} color="white" />
+                    </div>
                     <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: '800', fontSize: '28px', color: '#1321d4', letterSpacing: '-1.2px', lineHeight: 1 }}>
                         PDFbazaar<span style={{ color: '#1321d4' }}>.com</span>
                     </span>
