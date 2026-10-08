@@ -304,11 +304,11 @@ export default function PassportPhotoMaker() {
         }
       }
       
-      // Fallback for older browsers
-      const blobUrl = window.URL.createObjectURL(blob);
+      // Fallback for environments without SaveFilePicker (like HTTP)
+      // Use direct b64 instead of blobUrl to prevent download managers from assigning UUIDs
       const link = document.createElement('a');
       link.download = `passport-photo.jpg`;
-      link.href = blobUrl;
+      link.href = b64;
       link.style.display = 'none';
       
       document.body.appendChild(link);
@@ -318,8 +318,7 @@ export default function PassportPhotoMaker() {
         if (document.body.contains(link)) {
           document.body.removeChild(link);
         }
-        window.URL.revokeObjectURL(blobUrl);
-      }, 1000);
+      }, 500);
     } catch (err) {
       console.error("Error downloading photo:", err);
     }
