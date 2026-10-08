@@ -127,9 +127,7 @@ export default function PassportPhotoMaker() {
         const jobData = await response.json();
         
         if (!response.ok) {
-           alert(jobData.error || "Failed to create job");
-           setIsScanning(false);
-           return;
+           throw new Error(jobData.error || "Failed to create job on backend");
         }
         
         console.log("Backend Job Created:", jobData);
