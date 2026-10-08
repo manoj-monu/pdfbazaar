@@ -239,26 +239,30 @@ export default function PassportPhotoMaker() {
     setShowCountryModal(false);
   };
 
-  const getFinalCroppedBase64 = () => {
+  const getCroppedTransparentBase64 = () => {
     const image = imgRef.current;
-    const canvas = previewCanvasRef.current;
-    if (!image || !canvas || !completedCrop) return null;
+    if (!image || !completedCrop) return null;
 
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
+    let cropWidth, cropHeight, cropX, cropY;
+    if (completedCrop.unit === '%') {
+       cropWidth = (completedCrop.width / 100) * image.naturalWidth;
+       cropHeight = (completedCrop.height / 100) * image.naturalHeight;
+       cropX = (completedCrop.x / 100) * image.naturalWidth;
+       cropY = (completedCrop.y / 100) * image.naturalHeight;
+    } else {
+       const scaleX = image.naturalWidth / image.width;
+       const scaleY = image.naturalHeight / image.height;
+       cropWidth = completedCrop.width * scaleX;
+       cropHeight = completedCrop.height * scaleY;
+       cropX = completedCrop.x * scaleX;
+       cropY = completedCrop.y * scaleY;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.floor(cropWidth);
+    canvas.height = Math.floor(cropHeight);
     const ctx = canvas.getContext('2d');
-    const pixelRatio = window.devicePixelRatio;
-    
-    canvas.width = Math.floor(completedCrop.width * scaleX * pixelRatio);
-    canvas.height = Math.floor(completedCrop.height * scaleY * pixelRatio);
-    ctx.scale(pixelRatio, pixelRatio);
     ctx.imageSmoothingQuality = 'high';
-
-    const cropX = completedCrop.x * scaleX;
-    const cropY = completedCrop.y * scaleY;
-    const cropWidth = completedCrop.width * scaleX;
-    const cropHeight = completedCrop.height * scaleY;
-
     ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
 
     const finalCanvas = document.createElement('canvas');
@@ -267,6 +271,28 @@ export default function PassportPhotoMaker() {
     const finalCtx = finalCanvas.getContext('2d');
     finalCtx.imageSmoothingQuality = 'high';
     finalCtx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
+
+    return finalCanvas.toDataURL('image/png', 1.0);
+  };
+
+  const getFinalCroppedBase64 = () => {
+    const transparentBase64 = getCroppedTransparentBase64();
+    if (!transparentBase64) return null;
+
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = selectedSize.width;
+    finalCanvas.height = selectedSize.height;
+    const finalCtx = finalCanvas.getContext('2d');
+
+    // Fill the background color
+    if (selectedBg && !selectedBg.includes('url')) {
+      finalCtx.fillStyle = selectedBg;
+      finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+    }
+
+    const img = new Image();
+    img.src = transparentBase64;
+    finalCtx.drawImage(img, 0, 0, finalCanvas.width, finalCanvas.height);
 
     return finalCanvas.toDataURL('image/jpeg', 1.0);
   };
@@ -541,7 +567,13 @@ export default function PassportPhotoMaker() {
                       <button 
                         className="id-btn-primary" 
                         style={{ width: 'auto', padding: '12px 40px', borderRadius: '30px' }} 
-                        onClick={() => setActiveTab('background')}
+                        onClick={() => {
+                          const croppedImage = getCroppedTransparentBase64();
+                          if (croppedImage) {
+                             setImgSrc(croppedImage);
+                          }
+                          setActiveTab('background');
+                        }}
                       >
                          <CheckCircle size={18} /> Apply Crop & Continue
                       </button>
