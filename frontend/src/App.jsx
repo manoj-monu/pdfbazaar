@@ -27,6 +27,7 @@ const BlogPost = lazy(() => import(/* webpackChunkName: "blog-post" */ './pages/
 const Pricing = lazy(() => import(/* webpackChunkName: "pricing" */ './pages/Pricing'));
 const LegalPages = lazy(() => import(/* webpackChunkName: "legal" */ './pages/LegalPages'));
 const ProgrammaticToolPage = lazy(() => import(/* webpackChunkName: "programmatic" */ './pages/ProgrammaticToolPage'));
+const PassportPhotoMaker = lazy(() => import(/* webpackChunkName: "passport" */ './pages/PassportPhotoMaker'));
 
 const { AboutUs, ContactUs, PrivacyPolicy, TermsConditions, Disclaimer } = LegalPages;
 
@@ -44,6 +45,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pdf-editor" element={<PdfEditor />} />
           <Route path="/tool/edit-pdf" element={<PdfEditor />} />
+          <Route path="/passport-photo-maker" element={<PassportPhotoMaker />} />
           <Route path="/tool/:toolId" element={<OldToolRedirect />} />
           
           {/* SEO Optimized Landing Pages */}

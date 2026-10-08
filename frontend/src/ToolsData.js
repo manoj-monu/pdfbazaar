@@ -1,9 +1,15 @@
 import {
     FilePlus2, Divide, FileDown, RotateCw, Trash2, ArrowRightLeft,
-    FileText, FileImage, ShieldCheck, Unlock, Type, PenTool, Crop, Maximize, Edit3, Settings, PaintBucket
+    FileText, FileImage, ShieldCheck, Unlock, Type, PenTool, Crop, Maximize, Edit3, Settings, PaintBucket, Camera
 } from 'lucide-react';
 
 export const TOOLS_CATEGORIES = [
+    {
+        title: "Photo & Image Tools",
+        tools: [
+            { id: "passport-photo", seoPath: "/passport-photo-maker", name: "Passport Photo Maker", desc: "Create perfect passport and ID photos in seconds. Select country and crop automatically.", icon: Camera, color: "#673AB7", bgColor: "#f0eaf8" }
+        ]
+    },
     {
         title: "Organize PDF",
         tools: [

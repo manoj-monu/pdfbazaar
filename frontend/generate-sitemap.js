@@ -12,7 +12,7 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 
 // --- THE FINAL SAFE LIST (NO 404s ALLOWED) ---
 const SAFE_URLS = [
-    '/merge-pdf-online-free', '/split-pdf-online-free', '/compress-pdf-without-losing-quality',
+    '/passport-photo-maker', '/merge-pdf-online-free', '/split-pdf-online-free', '/compress-pdf-without-losing-quality',
     '/word-to-pdf-converter', '/image-to-pdf-converter', '/excel-to-pdf-converter', '/ppt-to-pdf-converter',
     '/pdf-to-word-converter', '/pdf-to-jpg-converter', '/add-watermark-to-pdf', '/ocr-pdf-searchable-text', 
     '/delete-pdf-pages-online', '/organize-pdf-pages', '/crop-pdf-online-free', '/resize-pdf-page-size',
