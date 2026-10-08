@@ -278,10 +278,22 @@ export default function PassportPhotoMaker() {
   const downloadCroppedImage = async () => {
     const b64 = await getFinalCroppedBase64();
     if (!b64) return;
+    
+    // Convert to Blob for reliable downloading with correct filename
+    const res = await fetch(b64);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    
     const link = document.createElement('a');
-    link.download = `passport-photo-${selectedSize.id}.jpg`;
-    link.href = b64;
+    link.download = `passport-photo-${selectedSize?.id || 'export'}.jpg`;
+    link.href = blobUrl;
+    
+    // Must append to body for Firefox and some Chrome versions to respect 'download'
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
   };
 
   const handlePrintSheet = async () => {
