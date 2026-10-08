@@ -7,7 +7,8 @@ import { Upload, Download, CheckCircle, RotateCcw, Crop, Image as ImageIcon, Spa
 import { Helmet } from 'react-helmet-async';
 import './PassportPhotoMaker.css';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Automatically use local backend for dev, or the Render backend for live production
+const API_BASE_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://pdfbazaar-backend.onrender.com');
 
 const PASSPORT_SIZES = [
   { id: 'us-passport', name: 'US Passport', flag: '🇺🇸', spec: '2 x 2 inch', width: 600, height: 600, aspect: 1 },
