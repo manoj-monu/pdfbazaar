@@ -36,7 +36,6 @@ export default function PassportPhotoMaker() {
   const [activeTab, setActiveTab] = useState('crop');
   const [isScanning, setIsScanning] = useState(false);
   const imgRef = useRef(null);
-  const previewCanvasRef = useRef(null);
 
   const [sliderPosition, setSliderPosition] = useState(50);
   const [enhanceProgress, setEnhanceProgress] = useState(0);
@@ -65,11 +64,10 @@ export default function PassportPhotoMaker() {
       .catch(err => console.error("Could not init guest user:", err));
   }, []);
 
-  // Update preview canvas in real-time when crop changes
+  // Update croppedImageUrl when crop changes
   useEffect(() => {
-    if (completedCrop && imgRef.current && previewCanvasRef.current) {
+    if (completedCrop && imgRef.current && imgRef.current.width > 0) {
       const image = imgRef.current;
-      const canvas = previewCanvasRef.current;
       
       let cropWidth, cropHeight, cropX, cropY;
       if (completedCrop.unit === '%') {
@@ -87,31 +85,24 @@ export default function PassportPhotoMaker() {
       }
 
       if (cropWidth > 0 && cropHeight > 0) {
-        const pixelRatio = window.devicePixelRatio;
-        canvas.width = Math.floor(cropWidth * pixelRatio);
-        canvas.height = Math.floor(cropHeight * pixelRatio);
-        const ctx = canvas.getContext('2d');
-        ctx.scale(pixelRatio, pixelRatio);
-        ctx.imageSmoothingQuality = 'high';
-        
-        if (selectedBg && !selectedBg.includes('url')) {
-          ctx.fillStyle = selectedBg;
-          ctx.fillRect(0, 0, cropWidth, cropHeight);
-        }
-        
-        ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        
-        // Update croppedImageUrl for the background tab
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = Math.floor(cropWidth);
         tempCanvas.height = Math.floor(cropHeight);
         const tempCtx = tempCanvas.getContext('2d');
         tempCtx.imageSmoothingQuality = 'high';
         tempCtx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        setCroppedImageUrl(tempCanvas.toDataURL('image/png', 1.0));
+        
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = selectedSize.width;
+        finalCanvas.height = selectedSize.height;
+        const finalCtx = finalCanvas.getContext('2d');
+        finalCtx.imageSmoothingQuality = 'high';
+        finalCtx.drawImage(tempCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+        
+        setCroppedImageUrl(finalCanvas.toDataURL('image/png', 1.0));
       }
     }
-  }, [completedCrop, selectedSize, selectedBg]);
+  }, [completedCrop, selectedSize]);
 
   const SOLID_COLORS = ['#ffffff', '#1877F2', '#38bdf8', '#ef4444', '#64748b', '#000000', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#f3f4f6', '#3b82f6'];
 
@@ -259,45 +250,9 @@ export default function PassportPhotoMaker() {
     setShowCountryModal(false);
   };
 
-  const getCroppedTransparentBase64 = () => {
-    const image = imgRef.current;
-    if (!image || !completedCrop) return null;
-
-    let cropWidth, cropHeight, cropX, cropY;
-    if (completedCrop.unit === '%') {
-       cropWidth = (completedCrop.width / 100) * image.naturalWidth;
-       cropHeight = (completedCrop.height / 100) * image.naturalHeight;
-       cropX = (completedCrop.x / 100) * image.naturalWidth;
-       cropY = (completedCrop.y / 100) * image.naturalHeight;
-    } else {
-       const scaleX = image.naturalWidth / image.width;
-       const scaleY = image.naturalHeight / image.height;
-       cropWidth = completedCrop.width * scaleX;
-       cropHeight = completedCrop.height * scaleY;
-       cropX = completedCrop.x * scaleX;
-       cropY = completedCrop.y * scaleY;
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.floor(cropWidth);
-    canvas.height = Math.floor(cropHeight);
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-    const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = selectedSize.width;
-    finalCanvas.height = selectedSize.height;
-    const finalCtx = finalCanvas.getContext('2d');
-    finalCtx.imageSmoothingQuality = 'high';
-    finalCtx.drawImage(canvas, 0, 0, finalCanvas.width, finalCanvas.height);
-
-    return finalCanvas.toDataURL('image/png', 1.0);
-  };
-
   const getFinalCroppedBase64 = () => {
     return new Promise((resolve) => {
-      const transparentBase64 = getCroppedTransparentBase64();
+      const transparentBase64 = croppedImageUrl || imgSrc;
       if (!transparentBase64) return resolve(null);
 
       const finalCanvas = document.createElement('canvas');
@@ -641,8 +596,8 @@ export default function PassportPhotoMaker() {
           <div className="id-panel-section" style={{ opacity: completedCrop && imgSrc ? 1 : 0.5, pointerEvents: completedCrop && imgSrc ? 'auto' : 'none', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
             <h3 className="id-panel-title"><ImageIcon size={18} color="#1877F2" /> Final Preview</h3>
             
-            <div className="id-preview-box">
-              <canvas ref={previewCanvasRef} style={{ width: '120px', height: `${120 / selectedSize.aspect}px`, objectFit: 'contain', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+            <div className="id-preview-box" style={{ background: selectedBg, overflow: 'hidden' }}>
+              <img src={croppedImageUrl || imgSrc} style={{ width: '120px', height: `${120 / selectedSize.aspect}px`, objectFit: 'contain' }} />
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
