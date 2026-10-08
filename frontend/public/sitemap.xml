@@ -6,6 +6,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://pdfbazaar.com/passport-photo-maker</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://pdfbazaar.com/merge-pdf-online-free</loc>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>

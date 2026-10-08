@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  avatarUrl     String?
+  passwordHash  String
+  role          String    @default("USER")
+  status        String    @default("ACTIVE")
+  credits       Int       @default(5)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[]
+  subscriptions Subscription[]
+  payments      Payment[]
+  transactions  CreditTransaction[]
+}
+
+model Country {
+  id        String   @id @default(uuid())
+  name      String
+  isoCode   String   @unique
+  iso3Code  String?
+  flag      String?
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documents Document[]
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  countryId   String
+  country     Country  @relation(fields: [countryId], references: [id])
+  name        String
+  slug        String
+  description String?
+  category    String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rules       PhotoRule?
+  projects    Project[]
+}
+
+model PhotoRule {
+  id                String   @id @default(uuid())
+  documentId        String   @unique
+  document          Document @relation(fields: [documentId], references: [id])
+  width             Float
+  height            Float
+  unit              String
+  dpi               Int
+  backgroundType    String
+  backgroundColor   String?
+  minResolution     Int?
+  maxFileSize       Int?
+  allowedFormats    String
+  headRatio         Float?
+  eyePosition       Float?
+  facePosition      String?
+  additionalRules   String?
+  officialSource    String?
+  lastVerifiedAt    DateTime?
+  status            String   @default("ACTIVE")
+}
+
+model Project {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  documentId       String
+  document         Document @relation(fields: [documentId], references: [id])
+  originalFileId   String?
+  processedFileId  String?
+  status           String   @default("DRAFT")
+  complianceScore  Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  jobs             ProcessingJob[]
+}
+
+model ProcessingJob {
+  id             String   @id @default(uuid())
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id])
+  jobType        String
+  status         String   @default("QUEUED")
+  progress       Int      @default(0)
+  inputUrl       String?
+  outputUrl      String?
+  errorMessage   String?
+  processingTime Int?
+  createdAt      DateTime @default(now())
+  completedAt    DateTime?
+}
+
+model Subscription {
+  id                     String   @id @default(uuid())
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id])
+  planId                 String
+  provider               String
+  providerSubscriptionId String?
+  status                 String
+  startDate              DateTime
+  endDate                DateTime
+  createdAt              DateTime @default(now())
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  orderId           String?
+  provider          String
+  providerPaymentId String
+  amount            Float
+  currency          String
+  status            String
+  metadata          String?
+  createdAt         DateTime @default(now())
+}
+
+model CreditTransaction {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Int
+  type        String   // EARN, SPEND, REFUND
+  referenceId String?
+  description String?
+  createdAt   DateTime @default(now())
+}

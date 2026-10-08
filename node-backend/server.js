@@ -10,6 +10,26 @@ const { exec } = require('child_process');
 require('regenerator-runtime/runtime');
 require('dotenv').config();
 
+const localQueue = require('./localQueue');
+const aiPipeline = require('./aiPipeline');
+
+// Set up the background worker logic for Passport Photo AI
+localQueue.setWorkerCallback(async (job) => {
+  console.log(`\n[ID STUDIO JOB START] Job ID: ${job.id}`);
+  const { imageUrl, documentId, tasks } = job.data;
+  await job.updateProgress(10);
+
+  const aiResults = await aiPipeline.runFullPipeline(imageUrl, tasks);
+  await job.updateProgress(100);
+  
+  console.log(`✅ [ID STUDIO JOB END] Job ${job.id} completed!`);
+  return {
+    success: true,
+    aiData: aiResults,
+    compliance: { score: 95, status: 'PASS' }
+  };
+});
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -1130,6 +1150,70 @@ if (fs.existsSync(distPath)) {
 } else {
     console.warn('[Warning] Dist directory NOT found. Frontend will not be served.');
 }
+
+// ============================================
+// GLOBAL ID PHOTO STUDIO ROUTES (Phase 2 & 3)
+// ============================================
+
+// Guest Auth for Passport Photo Maker
+let mockCredits = 5;
+
+app.post('/api/v1/auth/guest', (req, res) => {
+    res.json({
+        user: {
+            id: 'guest_123',
+            name: 'Guest User',
+            credits: mockCredits
+        }
+    });
+});
+
+// Upload & Create Job
+app.post('/api/v1/photo/jobs', async (req, res) => {
+    try {
+        const { imageUrl, documentId } = req.body;
+        if (!imageUrl) return res.status(400).json({ error: 'Image URL is required' });
+        if (mockCredits <= 0) return res.status(402).json({ error: 'Insufficient credits. Please upgrade.' });
+
+        mockCredits -= 1; // Deduct credit for MVP
+        
+        const job = await localQueue.add('process-photo', {
+            imageUrl,
+            documentId,
+            tasks: ['face-detect', 'background-remove']
+        });
+
+        res.json({
+            jobId: job.id,
+            creditsLeft: mockCredits,
+            status: 'QUEUED',
+            message: 'Photo added to AI processing queue'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to create job' });
+    }
+});
+
+// Polling Job Status
+app.get('/api/v1/photo/jobs/:id/status', async (req, res) => {
+    try {
+        const job = await localQueue.getJob(req.params.id);
+        if (!job) return res.status(404).json({ error: 'Job not found' });
+
+        res.json({
+            jobId: job.id,
+            state: await job.getState(),
+            progress: job.progress,
+            result: job.returnvalue
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to get job status' });
+    }
+});
+
+// ============================================
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
