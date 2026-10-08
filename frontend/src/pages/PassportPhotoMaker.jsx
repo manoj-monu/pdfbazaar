@@ -31,6 +31,7 @@ export default function PassportPhotoMaker() {
   const [imgSrc, setImgSrc] = useState('');
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState();
+  const [croppedImageUrl, setCroppedImageUrl] = useState('');
   const [selectedSize, setSelectedSize] = useState(PASSPORT_SIZES[0]);
   const [activeTab, setActiveTab] = useState('crop');
   const [isScanning, setIsScanning] = useState(false);
@@ -70,22 +71,39 @@ export default function PassportPhotoMaker() {
       const image = imgRef.current;
       const canvas = previewCanvasRef.current;
       
-      const scaleX = image.naturalWidth / image.width;
-      const scaleY = image.naturalHeight / image.height;
-      const ctx = canvas.getContext('2d');
-      const pixelRatio = window.devicePixelRatio;
-      
-      canvas.width = Math.floor(completedCrop.width * scaleX * pixelRatio);
-      canvas.height = Math.floor(completedCrop.height * scaleY * pixelRatio);
-      ctx.scale(pixelRatio, pixelRatio);
-      ctx.imageSmoothingQuality = 'high';
+      let cropWidth, cropHeight, cropX, cropY;
+      if (completedCrop.unit === '%') {
+         cropWidth = (completedCrop.width / 100) * image.naturalWidth;
+         cropHeight = (completedCrop.height / 100) * image.naturalHeight;
+         cropX = (completedCrop.x / 100) * image.naturalWidth;
+         cropY = (completedCrop.y / 100) * image.naturalHeight;
+      } else {
+         const scaleX = image.naturalWidth / image.width;
+         const scaleY = image.naturalHeight / image.height;
+         cropWidth = completedCrop.width * scaleX;
+         cropHeight = completedCrop.height * scaleY;
+         cropX = completedCrop.x * scaleX;
+         cropY = completedCrop.y * scaleY;
+      }
 
-      const cropX = completedCrop.x * scaleX;
-      const cropY = completedCrop.y * scaleY;
-      const cropWidth = completedCrop.width * scaleX;
-      const cropHeight = completedCrop.height * scaleY;
-
-      ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+      if (cropWidth > 0 && cropHeight > 0) {
+        const pixelRatio = window.devicePixelRatio;
+        canvas.width = Math.floor(cropWidth * pixelRatio);
+        canvas.height = Math.floor(cropHeight * pixelRatio);
+        const ctx = canvas.getContext('2d');
+        ctx.scale(pixelRatio, pixelRatio);
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+        
+        // Update croppedImageUrl for the background tab
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = Math.floor(cropWidth);
+        tempCanvas.height = Math.floor(cropHeight);
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.imageSmoothingQuality = 'high';
+        tempCtx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+        setCroppedImageUrl(tempCanvas.toDataURL('image/png', 1.0));
+      }
     }
   }, [completedCrop, selectedSize]);
 
@@ -509,7 +527,7 @@ export default function PassportPhotoMaker() {
                   </div>
                   <div className="id-bg-preview-area">
                     <div className="id-bg-preview-img-wrapper" style={{ background: selectedBg }}>
-                      <img src={imgSrc} alt="Preview with background" className="id-bg-preview-img" />
+                      <img src={croppedImageUrl || imgSrc} alt="Preview with background" className="id-bg-preview-img" />
                     </div>
                   </div>
                 </div>
@@ -545,7 +563,7 @@ export default function PassportPhotoMaker() {
                 </div>
               )}
 
-              {activeTab === 'crop' && (
+              <div style={{ display: activeTab === 'crop' ? 'block' : 'none', width: '100%' }}>
                 <>
                   {isScanning && (
                     <div className="id-scanner-overlay">
@@ -570,20 +588,14 @@ export default function PassportPhotoMaker() {
                       <button 
                         className="id-btn-primary" 
                         style={{ width: 'auto', padding: '12px 40px', borderRadius: '30px' }} 
-                        onClick={() => {
-                          const croppedImage = getCroppedTransparentBase64();
-                          if (croppedImage) {
-                             setImgSrc(croppedImage);
-                          }
-                          setActiveTab('background');
-                        }}
+                        onClick={() => setActiveTab('background')}
                       >
                          <CheckCircle size={18} /> Apply Crop & Continue
                       </button>
                     )}
                   </div>
                 </>
-              )}
+              </div>
             </div>
           </div>
         )}
