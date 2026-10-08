@@ -151,7 +151,7 @@ export default function PassportPhotoMaker() {
                 }
                 
                 setIsScanning(false);
-                setActiveTab('background'); // Auto switch to background tab to show off the removed BG
+                // Removed auto switch to background tab so user can adjust crop first
               } else if (statusData.state === 'FAILED') {
                 clearInterval(pollInterval);
                 console.error("Job Failed.");
@@ -187,14 +187,14 @@ export default function PassportPhotoMaker() {
                  resultUrl = `data:image/png;base64,${resultUrl}`;
                }
                setImgSrc(resultUrl);
-               setActiveTab('background');
+               // Wait for user to apply crop, don't auto switch tabs
              }
           } else {
              // If it returned raw image bytes
              const blob = await hfRes.blob();
              const resultUrl = URL.createObjectURL(blob);
              setImgSrc(resultUrl);
-             setActiveTab('background');
+             // Wait for user to apply crop, don't auto switch tabs
           }
         } catch (hfErr) {
           console.error("HF Fallback failed too:", hfErr);
@@ -276,29 +276,32 @@ export default function PassportPhotoMaker() {
   };
 
   const getFinalCroppedBase64 = () => {
-    const transparentBase64 = getCroppedTransparentBase64();
-    if (!transparentBase64) return null;
+    return new Promise((resolve) => {
+      const transparentBase64 = getCroppedTransparentBase64();
+      if (!transparentBase64) return resolve(null);
 
-    const finalCanvas = document.createElement('canvas');
-    finalCanvas.width = selectedSize.width;
-    finalCanvas.height = selectedSize.height;
-    const finalCtx = finalCanvas.getContext('2d');
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = selectedSize.width;
+      finalCanvas.height = selectedSize.height;
+      const finalCtx = finalCanvas.getContext('2d');
 
-    // Fill the background color
-    if (selectedBg && !selectedBg.includes('url')) {
-      finalCtx.fillStyle = selectedBg;
-      finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-    }
+      // Fill the background color
+      if (selectedBg && !selectedBg.includes('url')) {
+        finalCtx.fillStyle = selectedBg;
+        finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+      }
 
-    const img = new Image();
-    img.src = transparentBase64;
-    finalCtx.drawImage(img, 0, 0, finalCanvas.width, finalCanvas.height);
-
-    return finalCanvas.toDataURL('image/jpeg', 1.0);
+      const img = new Image();
+      img.onload = () => {
+        finalCtx.drawImage(img, 0, 0, finalCanvas.width, finalCanvas.height);
+        resolve(finalCanvas.toDataURL('image/jpeg', 1.0));
+      };
+      img.src = transparentBase64;
+    });
   };
 
   const downloadCroppedImage = async () => {
-    const b64 = getFinalCroppedBase64();
+    const b64 = await getFinalCroppedBase64();
     if (!b64) return;
     const link = document.createElement('a');
     link.download = `passport-photo-${selectedSize.id}.jpg`;
@@ -306,8 +309,8 @@ export default function PassportPhotoMaker() {
     link.click();
   };
 
-  const handlePrintSheet = () => {
-    const b64 = getFinalCroppedBase64();
+  const handlePrintSheet = async () => {
+    const b64 = await getFinalCroppedBase64();
     if (b64) {
       setFinalImageBase64(b64);
       setShowPrintModal(true);
