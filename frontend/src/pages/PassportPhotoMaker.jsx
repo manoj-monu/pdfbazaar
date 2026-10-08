@@ -85,21 +85,26 @@ export default function PassportPhotoMaker() {
       }
 
       if (cropWidth > 0 && cropHeight > 0) {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = Math.floor(cropWidth);
-        tempCanvas.height = Math.floor(cropHeight);
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.imageSmoothingQuality = 'high';
-        tempCtx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        
-        const finalCanvas = document.createElement('canvas');
-        finalCanvas.width = selectedSize.width;
-        finalCanvas.height = selectedSize.height;
-        const finalCtx = finalCanvas.getContext('2d');
-        finalCtx.imageSmoothingQuality = 'high';
-        finalCtx.drawImage(tempCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
-        
-        setCroppedImageUrl(finalCanvas.toDataURL('image/png', 1.0));
+        try {
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = Math.floor(cropWidth);
+          tempCanvas.height = Math.floor(cropHeight);
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.imageSmoothingQuality = 'high';
+          tempCtx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+          
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = selectedSize.width;
+          finalCanvas.height = selectedSize.height;
+          const finalCtx = finalCanvas.getContext('2d');
+          finalCtx.imageSmoothingQuality = 'high';
+          finalCtx.drawImage(tempCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+          
+          setCroppedImageUrl(finalCanvas.toDataURL('image/png', 1.0));
+        } catch (err) {
+          console.error("Failed to crop image. Possible cross-origin canvas tainting:", err);
+          setCroppedImageUrl(imgSrc); // Fallback to uncropped if cropping completely fails
+        }
       }
     }
   }, [completedCrop, selectedSize]);
@@ -198,7 +203,12 @@ export default function PassportPhotoMaker() {
              // Adjust based on the actual JSON structure returned by the FastAPI
              let resultUrl = hfData.image || hfData.result || hfData.transparentImageUrl || hfData.data || hfData.base64;
              if (resultUrl) {
-               if (!resultUrl.startsWith('data:') && !resultUrl.startsWith('http')) {
+               if (resultUrl.startsWith('http')) {
+                 // Convert external URL to a local Blob URL to avoid canvas tainting
+                 const urlRes = await fetch(resultUrl);
+                 const urlBlob = await urlRes.blob();
+                 resultUrl = URL.createObjectURL(urlBlob);
+               } else if (!resultUrl.startsWith('data:')) {
                  resultUrl = `data:image/png;base64,${resultUrl}`;
                }
                setImgSrc(resultUrl);

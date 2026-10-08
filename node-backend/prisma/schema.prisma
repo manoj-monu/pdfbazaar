@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?
+  credits       Int       @default(5)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  jobs          Job[]
+  payments      Payment[]
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  status      String    @default("queued") // queued, uploading, detecting_face, segmenting, removing_background, enhancing, cropping, checking_compliance, rendering, completed, failed
+  progress    Int       @default(0)
+  inputUrl    String?   // S3/Signed URL
+  outputUrl   String?
+  documentId  String?   // E.g., 'india-passport'
+  aiData      Json?     // Stores intermediate AI results (landmarks, head pose, compliance score)
+  error       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model DocumentRule {
+  id                  String   @id @default(uuid())
+  country             String
+  documentType        String   // passport, visa, id_card
+  widthMm             Float
+  heightMm            Float
+  background          String   // white, blue, any
+  headSizeRange       Json     // { min: 70, max: 80 }
+  eyePositionRange    Json?    // { min_y: 30, max_y: 40 }
+  minimumResolution   Int?     // DPI or pixel width
+  sourceUrl           String?
+  lastVerifiedAt      DateTime?
+  version             Int      @default(1)
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Float
+  currency    String   @default("INR")
+  status      String   // pending, successful, failed
+  paymentId   String?  // Gateway ID (Razorpay/Stripe)
+  planId      String?  // monthly, yearly
+  creditsAdded Int     @default(0)
+  createdAt   DateTime @default(now())
+}
