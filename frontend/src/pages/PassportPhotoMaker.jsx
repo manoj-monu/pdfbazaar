@@ -280,12 +280,17 @@ export default function PassportPhotoMaker() {
       const b64 = await getFinalCroppedBase64();
       if (!b64) return;
       
+      // Convert data URI to Blob to prevent Chrome from ignoring the 'download' attribute on large data URIs
+      const res = await fetch(b64);
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
       const link = document.createElement('a');
       link.download = `passport-photo.jpg`;
-      link.href = b64;
+      link.href = blobUrl;
       link.style.display = 'none';
       
-      // Must append to body and KEEP it there for a moment so Chrome registers the 'download' attribute
+      // Append to body and delay removal so the async download manager can read the 'download' attribute
       document.body.appendChild(link);
       link.click();
       
@@ -293,6 +298,7 @@ export default function PassportPhotoMaker() {
         if (document.body.contains(link)) {
           document.body.removeChild(link);
         }
+        window.URL.revokeObjectURL(blobUrl);
       }, 1000);
     } catch (err) {
       console.error("Error downloading photo:", err);
