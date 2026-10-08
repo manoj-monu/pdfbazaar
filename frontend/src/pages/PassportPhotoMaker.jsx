@@ -494,16 +494,22 @@ export default function PassportPhotoMaker() {
                     </div>
                   )}
                   
-                  {!isScanning && imgSrc && (
-                    <div style={{ paddingBottom: '10px', color: '#666', fontSize: '13px', textAlign: 'center' }}>
-                      Drag the corners to adjust the crop. The preview on the right updates automatically.
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
+                    <div className="id-canvas-wrapper" style={{ opacity: isScanning ? 0.5 : 1, transition: 'opacity 0.3s', position: 'relative', marginBottom: '20px' }}>
+                      <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={selectedSize.aspect} style={{ maxHeight: '460px', pointerEvents: isScanning ? 'none' : 'auto' }}>
+                        <img ref={imgRef} alt="Crop Preview" src={imgSrc} onLoad={onImageLoad} style={{ maxHeight: '460px', objectFit: 'contain' }} />
+                      </ReactCrop>
                     </div>
-                  )}
 
-                  <div className="id-canvas-wrapper" style={{ opacity: isScanning ? 0.5 : 1, transition: 'opacity 0.3s', position: 'relative' }}>
-                    <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={selectedSize.aspect} style={{ maxHeight: '460px', pointerEvents: isScanning ? 'none' : 'auto' }}>
-                      <img ref={imgRef} alt="Crop Preview" src={imgSrc} onLoad={onImageLoad} style={{ maxHeight: '460px', objectFit: 'contain' }} />
-                    </ReactCrop>
+                    {!isScanning && imgSrc && (
+                      <button 
+                        className="id-btn-primary" 
+                        style={{ width: 'auto', padding: '12px 40px', borderRadius: '30px' }} 
+                        onClick={() => setActiveTab('background')}
+                      >
+                         <CheckCircle size={18} /> Apply Crop & Continue
+                      </button>
+                    )}
                   </div>
                 </>
               )}
