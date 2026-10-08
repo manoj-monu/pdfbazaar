@@ -93,6 +93,12 @@ export default function PassportPhotoMaker() {
         const ctx = canvas.getContext('2d');
         ctx.scale(pixelRatio, pixelRatio);
         ctx.imageSmoothingQuality = 'high';
+        
+        if (selectedBg && !selectedBg.includes('url')) {
+          ctx.fillStyle = selectedBg;
+          ctx.fillRect(0, 0, cropWidth, cropHeight);
+        }
+        
         ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
         
         // Update croppedImageUrl for the background tab
@@ -105,7 +111,7 @@ export default function PassportPhotoMaker() {
         setCroppedImageUrl(tempCanvas.toDataURL('image/png', 1.0));
       }
     }
-  }, [completedCrop, selectedSize]);
+  }, [completedCrop, selectedSize, selectedBg]);
 
   const SOLID_COLORS = ['#ffffff', '#1877F2', '#38bdf8', '#ef4444', '#64748b', '#000000', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#f3f4f6', '#3b82f6'];
 
@@ -525,10 +531,17 @@ export default function PassportPhotoMaker() {
                       <div className={`id-bg-type-tab ${bgType === 'Image' ? 'active' : ''}`} onClick={() => setBgType('Image')}>Image</div>
                     </div>
                   </div>
-                  <div className="id-bg-preview-area">
+                  <div className="id-bg-preview-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div className="id-bg-preview-img-wrapper" style={{ background: selectedBg }}>
                       <img src={croppedImageUrl || imgSrc} alt="Preview with background" className="id-bg-preview-img" />
                     </div>
+                    <button 
+                      className="id-btn-primary" 
+                      style={{ width: 'auto', padding: '12px 40px', borderRadius: '30px', marginTop: '20px' }} 
+                      onClick={() => setActiveTab('enhance')}
+                    >
+                       <CheckCircle size={18} /> Apply Background & Continue
+                    </button>
                   </div>
                 </div>
               )}
@@ -559,6 +572,14 @@ export default function PassportPhotoMaker() {
                     <div className="id-enhance-progress">
                       <div className="id-enhance-progress-bar" style={{ width: `${enhanceProgress}%` }}></div>
                     </div>
+                    
+                    <button 
+                      className="id-btn-primary" 
+                      style={{ width: '100%', padding: '12px', borderRadius: '8px', marginTop: '30px' }} 
+                      onClick={downloadCroppedImage}
+                    >
+                       <Download size={18} /> Finish & Download
+                    </button>
                   </div>
                 </div>
               )}
