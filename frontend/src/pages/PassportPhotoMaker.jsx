@@ -247,10 +247,6 @@ export default function PassportPhotoMaker() {
     setTimeout(() => {
       setCompletedCrop(initialCrop);
     }, 100);
-
-    if (isScanning) {
-      setTimeout(() => setIsScanning(false), 2000); 
-    }
   };
 
   const handleSizeChange = (sizeId) => {
@@ -594,7 +590,7 @@ export default function PassportPhotoMaker() {
                         <div className="id-scanner-corner id-corner-bl"></div>
                         <div className="id-scanner-corner id-corner-br"></div>
                       </div>
-                      <div className="id-scanner-text"><Sparkles size={18} /> Detecting Face & Adjusting Alignment...</div>
+                      <div className="id-scanner-text"><Sparkles size={18} /> Scanning Photo & Removing Background...</div>
                     </div>
                   )}
                   
