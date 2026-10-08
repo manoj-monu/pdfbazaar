@@ -62,6 +62,26 @@ export default function PassportPhotoMaker() {
       .catch(err => console.error("Could not init guest user:", err));
   }, []);
 
+  // Load face-api.js for real Face Detection
+  useEffect(() => {
+    if (!window.faceapi) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js';
+      script.async = true;
+      script.onload = async () => {
+        try {
+          // Load tiny face detector model from a public weights repo
+          const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+          await window.faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+          console.log('Face API Models Loaded!');
+        } catch (e) {
+          console.error("Face API model load error:", e);
+        }
+      };
+      document.body.appendChild(script);
+    }
+  }, []);
+
   // Update preview canvas in real-time when crop changes
   useEffect(() => {
     if (completedCrop && imgRef.current && previewCanvasRef.current) {
@@ -165,9 +185,23 @@ export default function PassportPhotoMaker() {
         }, 1500);
 
       } catch (error) {
-        console.error("Backend Connection Error (Make sure Node server is running on 4000):", error);
-        // Fallback if backend is down
-        setTimeout(() => setIsScanning(false), 3000);
+        console.warn("Backend API unavailable. Falling back to direct Hugging Face AI...", error);
+        try {
+          // Direct fallback to Hugging Face Space if backend is down or CORS fails
+          const hfRes = await fetch('https://manojkumarsh-ai-passport-studio-pro.hf.space/api/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: [base64Data] })
+          });
+          const hfData = await hfRes.json();
+          if (hfData.data && hfData.data[0]) {
+             setImgSrc(hfData.data[0]); // Transparent image from HF
+             setActiveTab('background');
+          }
+        } catch (hfErr) {
+          console.error("HF Fallback failed too:", hfErr);
+        }
+        setIsScanning(false);
       }
     }
   }, [selectedSize.id]);
@@ -178,9 +212,45 @@ export default function PassportPhotoMaker() {
     multiple: false
   });
 
-  const onImageLoad = (e) => {
+  const onImageLoad = async (e) => {
     const { width, height } = e.currentTarget;
-    const initialCrop = centerAspectCrop(width, height, selectedSize.aspect);
+    const imgElement = e.currentTarget;
+    let initialCrop = centerAspectCrop(width, height, selectedSize.aspect);
+    
+    // Attempt Real Face Detection
+    if (window.faceapi && window.faceapi.nets.tinyFaceDetector.isLoaded) {
+      try {
+        const detection = await window.faceapi.detectSingleFace(imgElement, new window.faceapi.TinyFaceDetectorOptions());
+        if (detection) {
+          const { x, y, width: faceWidth, height: faceHeight } = detection.box;
+          
+          // Calculate passport crop based on face (head should be ~60-70% of photo height)
+          // For a standard passport, we need space above head and shoulders below.
+          const headRatio = 0.6; // face takes 60% of total crop height
+          const targetCropHeight = faceHeight / headRatio;
+          const targetCropWidth = targetCropHeight * selectedSize.aspect;
+          
+          const paddingY = (targetCropHeight - faceHeight) / 2;
+          
+          // Convert to percentages for ReactCrop
+          const cropXPercent = Math.max(0, ((x - (targetCropWidth - faceWidth) / 2) / width) * 100);
+          const cropYPercent = Math.max(0, ((y - paddingY * 1.2) / height) * 100); // Shift slightly down for shoulders
+          const cropWidthPercent = Math.min(100, (targetCropWidth / width) * 100);
+          const cropHeightPercent = Math.min(100, (targetCropHeight / height) * 100);
+
+          initialCrop = {
+            unit: '%',
+            x: cropXPercent,
+            y: cropYPercent,
+            width: cropWidthPercent,
+            height: cropHeightPercent
+          };
+        }
+      } catch (err) {
+        console.error("Face detection failed, falling back to center crop", err);
+      }
+    }
+
     setCrop(initialCrop);
     
     // We need to wait a tiny bit for the image to be fully ready before setting completedCrop
@@ -189,7 +259,7 @@ export default function PassportPhotoMaker() {
     }, 100);
 
     if (isScanning) {
-      setTimeout(() => setIsScanning(false), 3000);
+      setTimeout(() => setIsScanning(false), 2000); // Reduced scanning time for better UX
     }
   };
 
