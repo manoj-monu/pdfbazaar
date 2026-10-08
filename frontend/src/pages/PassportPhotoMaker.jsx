@@ -280,17 +280,37 @@ export default function PassportPhotoMaker() {
       const b64 = await getFinalCroppedBase64();
       if (!b64) return;
       
-      // Convert data URI to Blob to prevent Chrome from ignoring the 'download' attribute on large data URIs
       const res = await fetch(b64);
       const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
       
+      // Modern robust download API (bypasses IDM and extensions that strip filenames)
+      if (window.showSaveFilePicker) {
+        try {
+          const fileHandle = await window.showSaveFilePicker({
+            suggestedName: 'passport-photo.jpg',
+            types: [{
+              description: 'JPEG Image',
+              accept: {'image/jpeg': ['.jpg', '.jpeg']},
+            }],
+          });
+          const writable = await fileHandle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return; // Success!
+        } catch (saveErr) {
+          // If user cancels the prompt, just return. 
+          if (saveErr.name === 'AbortError') return;
+          console.error("SaveFilePicker error, falling back...", saveErr);
+        }
+      }
+      
+      // Fallback for older browsers
+      const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.download = `passport-photo.jpg`;
       link.href = blobUrl;
       link.style.display = 'none';
       
-      // Append to body and delay removal so the async download manager can read the 'download' attribute
       document.body.appendChild(link);
       link.click();
       
