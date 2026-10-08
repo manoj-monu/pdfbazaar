@@ -165,15 +165,34 @@ export default function PassportPhotoMaker() {
         }, 1500);
 
       } catch (error) {
-        console.warn("Backend API unavailable. Falling back to direct Hugging Face AI via @gradio/client...", error);
+        console.warn("Backend API unavailable. Falling back to direct Hugging Face FastAPI...", error);
         try {
-          const client = await Client.connect("manojkumarsh/AI-Passport-Studio-Pro");
-          const res = await fetch(base64Data);
-          const blob = await res.blob();
+          const formData = new FormData();
+          formData.append('file', file);
           
-          const hfRes = await client.predict("/predict", { image: blob });
-          if (hfRes.data && hfRes.data[0]) {
-             const resultUrl = hfRes.data[0].url || hfRes.data[0];
+          const hfRes = await fetch('https://manojkumarsh-ai-passport-studio-pro.hf.space/api/process-all', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (!hfRes.ok) throw new Error("HF FastAPI failed with status: " + hfRes.status);
+          
+          const contentType = hfRes.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+             const hfData = await hfRes.json();
+             // Adjust based on the actual JSON structure returned by the FastAPI
+             let resultUrl = hfData.image || hfData.result || hfData.transparentImageUrl || hfData.data || hfData.base64;
+             if (resultUrl) {
+               if (!resultUrl.startsWith('data:') && !resultUrl.startsWith('http')) {
+                 resultUrl = `data:image/png;base64,${resultUrl}`;
+               }
+               setImgSrc(resultUrl);
+               setActiveTab('background');
+             }
+          } else {
+             // If it returned raw image bytes
+             const blob = await hfRes.blob();
+             const resultUrl = URL.createObjectURL(blob);
              setImgSrc(resultUrl);
              setActiveTab('background');
           }
