@@ -7,7 +7,7 @@ export const TOOLS_CATEGORIES = [
     {
         title: "Photo & Image Tools",
         tools: [
-            { id: "passport-photo", seoPath: "/passport-photo-maker", name: "Passport Photo Maker", desc: "Create perfect passport and ID photos in seconds. Select country and crop automatically.", icon: Camera, color: "#673AB7", bgColor: "#f0eaf8" }
+            { id: "passport-photo", seoPath: "/passport-photo-maker", name: "Passport Photo Maker", desc: "Create perfect passport and ID photos in seconds. Select country and crop automatically.", icon: Camera, color: "#673AB7", bgColor: "#f0eaf8", bgImage: "/images/passport-bg.jpg" }
         ]
     },
     {

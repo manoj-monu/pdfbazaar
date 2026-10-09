@@ -68,17 +68,22 @@ const Home = () => {
                         {toolsToShow.map((tool) => {
                             const Icon = tool.icon;
                             return (
-                                <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : (tool.seoPath || `/tool/${tool.id}`)} className="tool-card" key={tool.id}>
-                                    <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
-                                        <Icon size={28} strokeWidth={1.5} />
-                                        <div className="icon-arrow-badge" style={{ color: tool.color }}>
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
-                                            </svg>
+                                <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : (tool.seoPath || `/tool/${tool.id}`)} className="tool-card" key={tool.id} style={{ position: 'relative', overflow: 'hidden' }}>
+                                    {tool.bgImage && (
+                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: `url(${tool.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.15, zIndex: 0 }}></div>
+                                    )}
+                                    <div style={{ position: 'relative', zIndex: 1 }}>
+                                        <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
+                                            <Icon size={28} strokeWidth={1.5} />
+                                            <div className="icon-arrow-badge" style={{ color: tool.color }}>
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+                                                </svg>
+                                            </div>
                                         </div>
+                                        <h3>{tool.name}</h3>
+                                        <p>{tool.desc}</p>
                                     </div>
-                                    <h3>{tool.name}</h3>
-                                    <p>{tool.desc}</p>
                                 </Link>
                             );
                         })}
