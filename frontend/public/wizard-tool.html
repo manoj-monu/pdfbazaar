@@ -314,9 +314,10 @@
     <div class="editor-layout">
       <div class="sidebar">
         <h2>Background</h2>
-        <div class="form-group" style="margin-top:20px;">
-          <label>Pick Background Color</label>
-          <input type="color" id="bgColor" value="#ffffff" oninput="applyBgColor()" style="padding:0; border:none; height:45px; cursor:pointer; border-radius:8px; overflow:hidden;">
+        <div class="form-group" style="margin-top:20px; display:flex; flex-direction:column; align-items:center;">
+          <label style="align-self:flex-start; margin-bottom:15px;">Pick Background Color</label>
+          <input type="hidden" id="bgColor" value="#ffffff">
+          <div id="colorPickerContainer"></div>
         </div>
         
         <div style="display:flex; gap:10px; margin-bottom:30px;">
@@ -695,6 +696,16 @@
     ctx.drawImage(bgRemovedImage, 0, 0);
   }
 
+  function setBg(color) {
+    document.getElementById('bgColor').value = color;
+    if (typeof colorPicker !== 'undefined' && colorPicker) {
+      colorPicker.color.hexString = color;
+    }
+    if (bgRemovedImage.src) {
+      applyBgColor();
+    }
+  }
+
   async function removeBgApi() {
     document.getElementById('scannerOverlay').style.display = 'block';
     document.getElementById('progressContainer').style.display = 'block';
@@ -1050,6 +1061,34 @@
 
 </script>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+<script>
+  let colorPicker;
+  document.addEventListener("DOMContentLoaded", () => {
+    colorPicker = new iro.ColorPicker("#colorPickerContainer", {
+      width: 220,
+      color: "#ffffff",
+      borderWidth: 1,
+      borderColor: "#e5e7eb",
+      layout: [
+        { 
+          component: iro.ui.Wheel,
+        },
+        { 
+          component: iro.ui.Slider,
+          options: { sliderType: 'value' }
+        }
+      ]
+    });
+    colorPicker.on('color:change', function(color) {
+      document.getElementById('bgColor').value = color.hexString;
+      if (bgRemovedImage && bgRemovedImage.src) {
+        applyBgColor();
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
