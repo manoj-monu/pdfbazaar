@@ -314,7 +314,17 @@
     <div class="editor-layout">
       <div class="sidebar">
         <h2>Background</h2>
+        <div class="form-group" style="margin-top:20px;">
+          <label>Pick Background Color</label>
+          <input type="color" id="bgColor" value="#ffffff" oninput="applyBgColor()">
+        </div>
         
+        <div style="display:flex; gap:10px; margin-bottom:30px;">
+          <button class="btn btn-outline" style="flex:1; padding:10px;" onclick="setBg('#ffffff')">White</button>
+          <button class="btn btn-outline" style="flex:1; padding:10px; background:#3B82F6; color:white; border-color:#3B82F6;" onclick="setBg('#3B82F6')">Blue</button>
+          <button class="btn btn-outline" style="flex:1; padding:10px; background:#EF4444; color:white; border-color:#EF4444;" onclick="setBg('#EF4444')">Red</button>
+        </div>
+
         <div style="margin-bottom:15px; display:flex; align-items:center; gap:8px;">
           <input type="checkbox" id="doEnhance" checked style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer;">
           <label for="doEnhance" style="margin:0; font-size:14px; cursor:pointer; color:var(--text); text-transform:none; letter-spacing:0;">Enable AI Face Enhancement (HD)</label>
@@ -323,17 +333,6 @@
         <div id="progressContainer" class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
         <div id="progressText" class="progress-text">0% Scanning...</div>
         <div id="bgLoader" class="loader" style="display:none;"></div>
-        
-        <div class="form-group" style="margin-top:20px;">
-          <label>Pick Background Color</label>
-          <input type="color" id="bgColor" value="#ffffff" oninput="applyBgColor()">
-        </div>
-        
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-          <button class="btn btn-outline" style="flex:1; padding:10px;" onclick="setBg('#ffffff')">White</button>
-          <button class="btn btn-outline" style="flex:1; padding:10px; background:#3B82F6; color:white; border-color:#3B82F6;" onclick="setBg('#3B82F6')">Blue</button>
-          <button class="btn btn-outline" style="flex:1; padding:10px; background:#EF4444; color:white; border-color:#EF4444;" onclick="setBg('#EF4444')">Red</button>
-        </div>
 
         <div class="nav-footer">
           <button class="btn btn-outline" onclick="goToStep(2)">Back</button>
