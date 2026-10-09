@@ -354,8 +354,6 @@
     <div class="editor-layout">
       <div class="sidebar">
         <h2>Enhance & Adjust</h2>
-        <button class="btn btn-primary" style="width:100%; margin-bottom:20px;" onclick="autoEnhance()">✨ Auto Enhance</button>
-        
         <div class="form-group">
           <label>Brightness <span id="vB" class="slider-val">100%</span></label>
           <input type="range" id="slB" min="0" max="200" value="100" oninput="applyAdjustments()">
@@ -368,6 +366,8 @@
           <label>Saturation <span id="vS" class="slider-val">100%</span></label>
           <input type="range" id="slS" min="0" max="200" value="100" oninput="applyAdjustments()">
         </div>
+
+        <button class="btn btn-primary" style="width:100%; margin-bottom:20px;" onclick="autoEnhance()">✨ Auto Enhance</button>
 
         <button class="btn btn-outline" style="width:100%; margin-bottom:20px; border-color:var(--primary); color:var(--primary);" onclick="downloadImage('adjCanvas', 'adjusted_passport.png')">⬇ Download Final Single Photo</button>
           <div class="nav-footer">
