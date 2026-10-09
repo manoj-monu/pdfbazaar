@@ -69,29 +69,32 @@ const Home = () => {
                             const Icon = tool.icon;
                             return (
                                 <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : (tool.seoPath || `/tool/${tool.id}`)} className="tool-card" key={tool.id} style={{ position: 'relative', overflow: 'hidden' }}>
-                                    {tool.bgImage && (
-                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: `url(${tool.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.15, zIndex: 0 }}></div>
-                                    )}
-                                    <div style={{ position: 'relative', zIndex: 1 }}>
-                                        <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative', overflow: 'hidden', padding: tool.id === 'passport-photo' ? '0' : undefined }}>
-                                            {tool.id === 'passport-photo' ? (
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '1px', width: '100%', height: '100%', padding: '0', boxSizing: 'border-box', background: '#fff' }}>
-                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="passport" />
-                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="passport" />
-                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="passport" />
-                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="passport" />
+                                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden', borderRadius: '24px' }}>
+                                        {tool.id === 'passport-photo' ? (
+                                            <>
+                                                <div style={{ position: 'absolute', right: '-15%', top: '-10%', width: '60%', height: '120%', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '8px', opacity: 0.5, transform: 'rotate(-5deg) scale(1.1)' }}>
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} alt="" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} alt="" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} alt="" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} alt="" />
                                                 </div>
-                                            ) : (
-                                                <Icon size={28} strokeWidth={1.5} />
-                                            )}
-                                            <div className="icon-arrow-badge" style={{ color: tool.color, display: tool.id === 'passport-photo' ? 'none' : 'flex' }}>
+                                                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to right, rgba(255,255,255,1) 30%, rgba(255,255,255,0.75) 70%, rgba(255,255,255,0) 100%)' }}></div>
+                                            </>
+                                        ) : tool.bgImage ? (
+                                            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${tool.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.15 }}></div>
+                                        ) : null}
+                                    </div>
+                                    <div style={{ position: 'relative', zIndex: 1 }}>
+                                        <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
+                                            <Icon size={28} strokeWidth={1.5} />
+                                            <div className="icon-arrow-badge" style={{ color: tool.color }}>
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
                                                 </svg>
                                             </div>
                                         </div>
-                                        <h3>{tool.name}</h3>
-                                        <p>{tool.desc}</p>
+                                        <h3 style={{ textShadow: tool.id === 'passport-photo' ? '0 1px 2px rgba(255,255,255,0.8)' : 'none' }}>{tool.name}</h3>
+                                        <p style={{ textShadow: tool.id === 'passport-photo' ? '0 1px 2px rgba(255,255,255,0.8)' : 'none', position: 'relative', zIndex: 2 }}>{tool.desc}</p>
                                     </div>
                                 </Link>
                             );
