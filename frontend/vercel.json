@@ -2,8 +2,21 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/api/remove-bg",
+      "destination": "https://api.runpod.ai/v2/9bak6x4vaiphn6/runsync"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/remove-bg",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" }
+      ]
     }
   ]
 }
