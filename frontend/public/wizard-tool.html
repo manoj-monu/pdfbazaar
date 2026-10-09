@@ -77,7 +77,7 @@
   /* Navigation Footer */
   .nav-footer { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
   
-  canvas { max-width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  canvas { max-width: 100%; max-height: 60vh; width: auto; height: auto; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
   
   .loader { display: none; padding: 20px; text-align: center; color: var(--primary); font-weight: bold; }
   
@@ -286,7 +286,7 @@
       </div>
       <div class="canvas-container" style="background:#e5e7eb;">
         <!-- The Print Sheet Preview -->
-        <canvas id="printCanvas" style="background:white; box-shadow:0 10px 40px rgba(0,0,0,0.2); max-height:80vh; max-width:100%;"></canvas>
+        <canvas id="printCanvas" style="background:white; box-shadow:0 10px 40px rgba(0,0,0,0.2); max-height:80vh; max-width:100%; width:auto; height:auto; object-fit:contain;"></canvas>
       </div>
     </div>
   </div>
