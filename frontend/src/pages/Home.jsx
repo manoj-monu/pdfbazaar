@@ -73,8 +73,17 @@ const Home = () => {
                                         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundImage: `url(${tool.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.15, zIndex: 0 }}></div>
                                     )}
                                     <div style={{ position: 'relative', zIndex: 1 }}>
-                                        <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative' }}>
-                                            <Icon size={28} strokeWidth={1.5} />
+                                        <div className="tool-icon" style={{ backgroundColor: tool.color, color: '#ffffff', position: 'relative', overflow: 'hidden' }}>
+                                            {tool.id === 'passport-photo' ? (
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '2px', width: '100%', height: '100%', padding: '2px', boxSizing: 'border-box' }}>
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} alt="passport" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} alt="passport" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} alt="passport" />
+                                                    <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} alt="passport" />
+                                                </div>
+                                            ) : (
+                                                <Icon size={28} strokeWidth={1.5} />
+                                            )}
                                             <div className="icon-arrow-badge" style={{ color: tool.color }}>
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
