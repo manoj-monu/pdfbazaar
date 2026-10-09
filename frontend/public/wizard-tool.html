@@ -732,7 +732,7 @@
 
       const isEnhance = document.getElementById('doEnhance').checked;
 
-      let res = await fetch('https://9bak6x4vaiphn6.api.runpod.ai/api/process-all?enhance=' + isEnhance, {
+      let res = await fetch('/api/remove-bg?enhance=' + isEnhance, {
         method: 'POST',
         body: fd,
         mode: 'cors',
