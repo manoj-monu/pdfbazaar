@@ -71,8 +71,8 @@ const Home = () => {
                                 <Link to={tool.id === 'edit-pdf' ? '/pdf-editor' : (tool.seoPath || `/tool/${tool.id}`)} className="tool-card" key={tool.id} style={{ position: 'relative', overflow: 'hidden' }}>
                                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, overflow: 'hidden', borderRadius: '20px' }}>
                                         {tool.id === 'passport-photo' ? (
-                                            <div style={{ width: '100%', height: '100%' }}>
-                                                <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Passport Photo Maker" />
+                                            <div style={{ width: '100%', height: '100%', backgroundColor: '#f6f7fb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <img src="/images/passport-grid.jpg" style={{ width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'center' }} alt="Passport Photo Maker" />
                                             </div>
                                         ) : tool.bgImage ? (
                                             <div style={{ width: '100%', height: '100%', backgroundImage: `url(${tool.bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.15 }}></div>
