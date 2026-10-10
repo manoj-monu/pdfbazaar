@@ -209,6 +209,43 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
+  /* Frame Cards Grid (Step 4) */
+  .frame-card {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .frame-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.15);
+  }
+  .frame-card.active {
+    border-color: var(--primary);
+    background: #eef2ff;
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .frame-mini-preview {
+    width: 100%;
+    height: 44px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
   /* Two column layout for Editor Steps (Responsive & Swapped) */
   .editor-layout { display: flex; flex-direction: column-reverse; gap: 30px; width: 100%; align-items: stretch; }
   .sidebar { width: 100%; flex-shrink: 0; }
@@ -440,23 +477,69 @@
   <div id="step-4" class="view-panel">
     <div class="editor-layout">
       <div class="sidebar">
-        <h2>Enhance & Adjust</h2>
-        <div class="form-group">
-          <label>Brightness <span id="vB" class="slider-val">100%</span></label>
-          <input type="range" id="slB" min="0" max="200" value="100" oninput="applyAdjustments()">
-        </div>
-        <div class="form-group">
-          <label>Contrast <span id="vC" class="slider-val">100%</span></label>
-          <input type="range" id="slC" min="0" max="200" value="100" oninput="applyAdjustments()">
-        </div>
-        <div class="form-group">
-          <label>Saturation <span id="vS" class="slider-val">100%</span></label>
-          <input type="range" id="slS" min="0" max="200" value="100" oninput="applyAdjustments()">
+        <h2>Enhance & Frames</h2>
+        
+        <!-- Tab selector between Color Adjustments and 100+ Frames -->
+        <div style="display:flex; gap:6px; margin-bottom:16px; background:#f1f5f9; padding:4px; border-radius:12px; border:1px solid var(--border);">
+          <button type="button" id="tabModeAdjust" class="mode-tab active" onclick="switchAdjustSubTab('adjust')">
+            🎨 Color & Light
+          </button>
+          <button type="button" id="tabModeFrames" class="mode-tab" onclick="switchAdjustSubTab('frames')">
+            🖼️ 100+ Frames / फ्रेम
+          </button>
         </div>
 
-        <button class="btn btn-primary" style="width:100%; margin-bottom:20px;" onclick="autoEnhance()">✨ Auto Enhance</button>
+        <!-- Panel 1: Color Adjustments -->
+        <div id="panelAdjust">
+          <div class="form-group">
+            <label>Brightness <span id="vB" class="slider-val">100%</span></label>
+            <input type="range" id="slB" min="0" max="200" value="100" oninput="applyAdjustments()">
+          </div>
+          <div class="form-group">
+            <label>Contrast <span id="vC" class="slider-val">100%</span></label>
+            <input type="range" id="slC" min="0" max="200" value="100" oninput="applyAdjustments()">
+          </div>
+          <div class="form-group">
+            <label>Saturation <span id="vS" class="slider-val">100%</span></label>
+            <input type="range" id="slS" min="0" max="200" value="100" oninput="applyAdjustments()">
+          </div>
+          <button class="btn btn-primary" style="width:100%; margin-bottom:16px;" onclick="autoEnhance()">✨ Auto Enhance</button>
+        </div>
 
-        <button class="btn" style="width:100%; margin-bottom:20px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); text-transform: uppercase; font-weight: 800; font-size: 15px; letter-spacing: 0.5px; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.4)';" onclick="downloadImage('adjCanvas', 'adjusted_passport.png')">⬇ Download Final Single Photo</button>
+        <!-- Panel 2: 100+ Frames Selection -->
+        <div id="panelFrames" style="display:none;">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label style="font-size:13px; font-weight:700;">Filter by Category / श्रेणी चुनें:</label>
+            <select id="frameCategorySelect" onchange="renderFrameGrid()" style="padding:9px; border-radius:10px; font-size:13px; font-weight:600; width:100%;">
+              <option value="all">🌟 All Categories (114 Frames)</option>
+              <option value="royal_gold">👑 Royal & Golden Luxury (15)</option>
+              <option value="wooden">🪵 Wooden & Vintage (15)</option>
+              <option value="floral">🌸 Floral & Nature (15)</option>
+              <option value="wedding">🪔 Indian Wedding & Festive (15)</option>
+              <option value="birthday">🎂 Birthday, Party & Kids (15)</option>
+              <option value="romantic">❤️ Love & Romantic (12)</option>
+              <option value="modern">📷 Modern Studio & Polaroid (15)</option>
+              <option value="passport_cert">🪪 Passport & Official (12)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label style="font-size:13px; font-weight:700; margin:0;">Frame Thickness:</label>
+              <span id="vFrameThickness" style="font-size:12px; font-weight:700; color:var(--primary);">Medium</span>
+            </div>
+            <input type="range" id="slFrameThickness" min="1" max="5" value="3" oninput="onFrameThicknessChange()" style="width:100%;">
+          </div>
+
+          <button type="button" class="btn btn-outline" style="width:100%; margin-bottom:10px; padding:8px; font-size:12px; color:#ef4444; border-color:#fca5a5; background:#fff5f5; font-weight:700;" onclick="selectFrame('none')">
+            ❌ Remove Frame (बिना फ्रेम के साधारण फोटो)
+          </button>
+
+          <div id="frameCardsList" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; max-height:280px; overflow-y:auto; padding:4px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; margin-bottom:14px;">
+          </div>
+        </div>
+
+        <button class="btn" style="width:100%; margin-bottom:16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); text-transform: uppercase; font-weight: 800; font-size: 14px; letter-spacing: 0.5px; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.4)';" onclick="downloadImage('adjCanvas', 'final_studio_photo.png')">⬇ Download Final Single Photo</button>
           <div class="nav-footer">
           <button class="btn btn-outline" onclick="goToStep(3)">Back</button>
           <button class="btn btn-primary" onclick="preparePrintStep()">Layout & Print ➔</button>
@@ -1015,6 +1098,432 @@
     URL.revokeObjectURL(url);
   }
 
+
+  // ==========================================
+  // 114 PHOTO FRAMES DATABASE & RENDER ENGINE
+  // ==========================================
+  const FRAMES_DATA = [
+    // 👑 Royal Gold (15)
+    {id:'gold_classic', name:'24K Classic Gold', cat:'royal_gold', icon:'👑', style:'gold_polished', bg:'linear-gradient(135deg,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c)'},
+    {id:'gold_ornate_filigree', name:'Royal Baroque Gold', cat:'royal_gold', icon:'⚜️', style:'gold_filigree', bg:'linear-gradient(135deg,#c59b27,#ffe082,#9a7210)'},
+    {id:'gold_palace_arch', name:'Shahi Palace Gold', cat:'royal_gold', icon:'🏰', style:'gold_palace', bg:'linear-gradient(135deg,#d4af37,#fff8dc,#aa771c)'},
+    {id:'gold_rose_luxury', name:'Rose Gold Elegance', cat:'royal_gold', icon:'✨', style:'rose_gold', bg:'linear-gradient(135deg,#b76e79,#ffd1dc,#93505b)'},
+    {id:'gold_antique_museum', name:'Antique Museum Brass', cat:'royal_gold', icon:'🏛️', style:'antique_brass', bg:'linear-gradient(135deg,#846733,#cbb279,#5d461f)'},
+    {id:'gold_double_bevel', name:'Double Gold Tier', cat:'royal_gold', icon:'⭐', style:'gold_double', bg:'linear-gradient(135deg,#e5c158,#fff2a3,#b58925)'},
+    {id:'gold_pearl_bead', name:'Gold & Royal Pearl', cat:'royal_gold', icon:'📿', style:'gold_pearl', bg:'linear-gradient(135deg,#e0c568,#ffffff,#c29d38)'},
+    {id:'gold_art_deco', name:'1920s Art Deco Gold', cat:'royal_gold', icon:'📐', style:'gold_deco', bg:'linear-gradient(135deg,#d4af37,#2c2416,#d4af37)'},
+    {id:'gold_champagne', name:'Champagne Shimmer', cat:'royal_gold', icon:'🥂', style:'champagne_gold', bg:'linear-gradient(135deg,#eadbb6,#fffdf5,#c2af84)'},
+    {id:'gold_florentine', name:'Florentine Leaf Gold', cat:'royal_gold', icon:'🍃', style:'gold_florentine', bg:'linear-gradient(135deg,#c69c3a,#ffea9f,#8e6a17)'},
+    {id:'gold_sunburst', name:'Imperial Sunburst Gold', cat:'royal_gold', icon:'☀️', style:'gold_sunburst', bg:'linear-gradient(135deg,#f39c12,#f1c40f,#d68910)'},
+    {id:'gold_rope_chain', name:'Golden Twisted Rope', cat:'royal_gold', icon:'➰', style:'gold_rope', bg:'linear-gradient(135deg,#b8860b,#ffd700,#8b6508)'},
+    {id:'gold_diamond_crest', name:'Diamond Gold Crest', cat:'royal_gold', icon:'💎', style:'gold_diamond', bg:'linear-gradient(135deg,#d4af37,#e0f7fa,#aa771c)'},
+    {id:'gold_glitter_sparkle', name:'Sparkling Gold Dust', cat:'royal_gold', icon:'✨', style:'gold_glitter', bg:'linear-gradient(135deg,#f7d070,#fff,#d4af37)'},
+    {id:'gold_platinum_dual', name:'Platinum & Gold Dual', cat:'royal_gold', icon:'🔘', style:'platinum_gold', bg:'linear-gradient(135deg,#e5e4e2,#d4af37,#bdc3c7)'},
+
+    // 🪵 Wooden & Vintage (15)
+    {id:'wood_mahogany', name:'Royal Mahogany Wood', cat:'wooden', icon:'🪵', style:'mahogany', bg:'linear-gradient(135deg,#4a1811,#6d2b20,#38120c)'},
+    {id:'wood_dark_walnut', name:'Dark Walnut Studio', cat:'wooden', icon:'🟤', style:'walnut', bg:'linear-gradient(135deg,#2e1c14,#472f23,#1e120d)'},
+    {id:'wood_teak', name:'Indian Teakwood Grain', cat:'wooden', icon:'🪚', style:'teak', bg:'linear-gradient(135deg,#8b5a2b,#a6713d,#6e431d)'},
+    {id:'wood_rustic_oak', name:'Rustic Barn Oak', cat:'wooden', icon:'🏚️', style:'rustic_oak', bg:'linear-gradient(135deg,#5c5042,#7a6c5b,#41382d)'},
+    {id:'wood_vintage_carved', name:'Vintage Carved Teak', cat:'wooden', icon:'🏛️', style:'carved_wood', bg:'linear-gradient(135deg,#784c25,#996434,#5a3617)'},
+    {id:'wood_ebony_black', name:'Matte Ebony Blackwood', cat:'wooden', icon:'⬛', style:'ebony', bg:'linear-gradient(135deg,#1f1f1f,#2d2d2d,#121212)'},
+    {id:'wood_distressed_white', name:'Vintage Shabby White', cat:'wooden', icon:'🤍', style:'shabby_white', bg:'linear-gradient(135deg,#ebe8e1,#f5f4ef,#d8d3c5)'},
+    {id:'wood_cherry', name:'Polished Red Cherrywood', cat:'wooden', icon:'🍒', style:'cherry', bg:'linear-gradient(135deg,#631b18,#822824,#46100e)'},
+    {id:'wood_cedar_plank', name:'Cedar Cabin Plank', cat:'wooden', icon:'🌲', style:'cedar', bg:'linear-gradient(135deg,#8d5b4c,#a67060,#6d4133)'},
+    {id:'wood_driftwood', name:'Coastal Grey Driftwood', cat:'wooden', icon:'🌊', style:'driftwood', bg:'linear-gradient(135deg,#838888,#9fa5a5,#696e6e)'},
+    {id:'wood_bamboo', name:'Natural Bamboo Cane', cat:'wooden', icon:'🎋', style:'bamboo', bg:'linear-gradient(135deg,#d2b55b,#e4cb79,#b4973d)'},
+    {id:'wood_rosewood', name:'Indian Sheesham Wood', cat:'wooden', icon:'🪵', style:'sheesham', bg:'linear-gradient(135deg,#3f1a14,#562720,#290f0b)'},
+    {id:'wood_antique_gilt', name:'Antique Giltwood Frame', cat:'wooden', icon:'⚜️', style:'giltwood', bg:'linear-gradient(135deg,#6e5428,#9e7e43,#4d3919)'},
+    {id:'wood_golden_oak', name:'Golden Oak Double Rim', cat:'wooden', icon:'🟡', style:'golden_oak', bg:'linear-gradient(135deg,#b37d37,#c99650,#936224)'},
+    {id:'wood_charcoal_ash', name:'Charcoal Ash Timber', cat:'wooden', icon:'🔘', style:'charcoal_ash', bg:'linear-gradient(135deg,#3a3d40,#4f5357,#282a2c)'},
+
+    // 🌸 Floral & Nature (15)
+    {id:'floral_red_roses', name:'Romantic Red Roses', cat:'floral', icon:'🌹', style:'roses', bg:'linear-gradient(135deg,#c0392b,#e74c3c,#1e824c)'},
+    {id:'floral_jasmine', name:'Mogra / White Jasmine', cat:'floral', icon:'🌼', style:'jasmine', bg:'linear-gradient(135deg,#27ae60,#ffffff,#f1c40f)'},
+    {id:'floral_marigold_yellow', name:'Marigold (Genda Phool)', cat:'floral', icon:'🏵️', style:'marigold', bg:'linear-gradient(135deg,#e67e22,#f39c12,#d35400)'},
+    {id:'floral_sunflower', name:'Bright Sunflowers', cat:'floral', icon:'🌻', style:'sunflower', bg:'linear-gradient(135deg,#f1c40f,#f39c12,#795548)'},
+    {id:'floral_eucalyptus', name:'Eucalyptus Greenery', cat:'floral', icon:'🌿', style:'eucalyptus', bg:'linear-gradient(135deg,#52796f,#84a98c,#cad2c5)'},
+    {id:'floral_cherry_blossom', name:'Sakura Cherry Blossom', cat:'floral', icon:'🌸', style:'sakura', bg:'linear-gradient(135deg,#ffb7b2,#ffdac1,#e27d60)'},
+    {id:'floral_lotus_traditional', name:'Traditional Indian Lotus', cat:'floral', icon:'🪷', style:'lotus', bg:'linear-gradient(135deg,#e91e63,#f48fb1,#2e7d32)'},
+    {id:'floral_lavender', name:'French Lavender Sprigs', cat:'floral', icon:'🪻', style:'lavender', bg:'linear-gradient(135deg,#9575cd,#b39ddb,#5e35b1)'},
+    {id:'floral_golden_vines', name:'Golden Ivy Vines', cat:'floral', icon:'🌱', style:'golden_ivy', bg:'linear-gradient(135deg,#2e7d32,#d4af37,#1b5e20)'},
+    {id:'floral_spring_daisy', name:'White Spring Daisies', cat:'floral', icon:'🌼', style:'daisy', bg:'linear-gradient(135deg,#81c784,#ffffff,#fbc02d)'},
+    {id:'floral_tropical_monstera', name:'Tropical Palm Leaves', cat:'floral', icon:'🌴', style:'tropical', bg:'linear-gradient(135deg,#1b4332,#2d6a4f,#40916c)'},
+    {id:'floral_wildflower', name:'Pastel Wildflower Meadow', cat:'floral', icon:'💐', style:'wildflower', bg:'linear-gradient(135deg,#f8bbd0,#e1bee7,#c8e6c9)'},
+    {id:'floral_hibiscus', name:'Tropical Hibiscus', cat:'floral', icon:'🌺', style:'hibiscus', bg:'linear-gradient(135deg,#d81b60,#ff8a80,#00897b)'},
+    {id:'floral_orchid', name:'Royal Purple Orchids', cat:'floral', icon:'🪻', style:'orchid', bg:'linear-gradient(135deg,#6a1b9a,#ab47bc,#ce93d8)'},
+    {id:'floral_watercolor', name:'Watercolor Floral Wreath', cat:'floral', icon:'🎨', style:'watercolor_floral', bg:'linear-gradient(135deg,#ffcdd2,#f8bbd0,#bbdefb)'},
+
+    // 🪔 Wedding & Festive (15)
+    {id:'festive_shubh_vivah', name:'Shubh Vivah Mandap', cat:'wedding', icon:'💒', style:'shubh_vivah', bg:'linear-gradient(135deg,#8e0000,#d4af37,#b71c1c)'},
+    {id:'festive_rajasthani_jharokha', name:'Rajasthani Jharokha Arch', cat:'wedding', icon:'🏰', style:'jharokha', bg:'linear-gradient(135deg,#c0392b,#f39c12,#d4af37)'},
+    {id:'festive_marigold_toran', name:'Mango & Marigold Toran', cat:'wedding', icon:'🍃', style:'toran', bg:'linear-gradient(135deg,#2e7d32,#f39c12,#d84315)'},
+    {id:'festive_temple_arch', name:'South Temple Gold Pillar', cat:'wedding', icon:'🛕', style:'temple_arch', bg:'linear-gradient(135deg,#d4af37,#8d6e63,#b71c1c)'},
+    {id:'festive_diya_rangoli', name:'Diwali Diya & Rangoli', cat:'wedding', icon:'🪔', style:'diya_rangoli', bg:'linear-gradient(135deg,#e65100,#ffb300,#4a148c)'},
+    {id:'festive_mehndi_paisley', name:'Mehndi Henna Paisley', cat:'wedding', icon:'🦚', style:'mehndi_paisley', bg:'linear-gradient(135deg,#2e7d32,#d4af37,#1b5e20)'},
+    {id:'festive_bridal_zari', name:'Banarasi Red & Gold Zari', cat:'wedding', icon:'🧣', style:'bridal_zari', bg:'linear-gradient(135deg,#b71c1c,#ffd700,#7f0000)'},
+    {id:'festive_haldi_yellow', name:'Auspicious Haldi Ceremony', cat:'wedding', icon:'🟡', style:'haldi', bg:'linear-gradient(135deg,#fbc02d,#fff176,#f57f17)'},
+    {id:'festive_peacock_majestic', name:'Majestic Peacock Feather', cat:'wedding', icon:'🪶', style:'peacock', bg:'linear-gradient(135deg,#005b96,#00897b,#ffd700)'},
+    {id:'festive_om_swastik', name:'Sacred Om & Swastik Gold', cat:'wedding', icon:'🕉️', style:'om_swastik', bg:'linear-gradient(135deg,#d4af37,#ff6f00,#b71c1c)'},
+    {id:'festive_silver_filigree', name:'Silver Tarakasi Wirecraft', cat:'wedding', icon:'🪙', style:'silver_filigree', bg:'linear-gradient(135deg,#bdc3c7,#ecf0f1,#7f8c8d)'},
+    {id:'festive_golden_bells', name:'Temple Brass Bells', cat:'wedding', icon:'🔔', style:'golden_bells', bg:'linear-gradient(135deg,#d4af37,#8d6e63,#fbc02d)'},
+    {id:'festive_fireworks', name:'Celebration Fireworks Glow', cat:'wedding', icon:'🎆', style:'fireworks', bg:'linear-gradient(135deg,#1a237e,#ff4081,#ffd700)'},
+    {id:'festive_royal_shahi', name:'Mughal Shahi Darbar', cat:'wedding', icon:'👑', style:'shahi_darbar', bg:'linear-gradient(135deg,#4a148c,#d4af37,#880e4f)'},
+    {id:'festive_sindoor_vermilion', name:'Sindoor Vermilion Red Gold', cat:'wedding', icon:'🔴', style:'sindoor', bg:'linear-gradient(135deg,#c62828,#ffd700,#8e0000)'},
+
+    // 🎂 Birthday & Kids (15)
+    {id:'bday_colorful_balloons', name:'Party Balloons Delight', cat:'birthday', icon:'🎈', style:'balloons', bg:'linear-gradient(135deg,#e91e63,#00bcd4,#ffeb3b)'},
+    {id:'bday_confetti_blast', name:'Confetti Streamer Blast', cat:'birthday', icon:'🎉', style:'confetti', bg:'linear-gradient(135deg,#ff4081,#7c4dff,#00e676)'},
+    {id:'bday_sparkling_stars', name:'Twinkling Golden Stars', cat:'birthday', icon:'⭐', style:'stars', bg:'linear-gradient(135deg,#1a237e,#ffd700,#0d47a1)'},
+    {id:'bday_rainbow_wonder', name:'Pastel Rainbow & Clouds', cat:'birthday', icon:'🌈', style:'rainbow', bg:'linear-gradient(135deg,#ff80ab,#ea80fc,#8c9eff)'},
+    {id:'bday_candy_sweet', name:'Sweet Candy Wonderland', cat:'birthday', icon:'🍭', style:'candy', bg:'linear-gradient(135deg,#ff4081,#ffffff,#00e5ff)'},
+    {id:'bday_cute_teddy', name:'Cute Teddy & Polka Dots', cat:'birthday', icon:'🧸', style:'teddy', bg:'linear-gradient(135deg,#ffccbc,#ffe0b2,#bcaaa4)'},
+    {id:'bday_space_galaxy', name:'Galaxy Astronaut Cosmic', cat:'birthday', icon:'🚀', style:'galaxy', bg:'linear-gradient(135deg,#0d1b2a,#415a77,#778da9)'},
+    {id:'bday_little_prince', name:'Little Prince Crown', cat:'birthday', icon:'👑', style:'prince', bg:'linear-gradient(135deg,#1976d2,#64b5f6,#ffd700)'},
+    {id:'bday_little_princess', name:'Little Princess Tiara', cat:'birthday', icon:'👸', style:'princess', bg:'linear-gradient(135deg,#e91e63,#f48fb1,#ffd700)'},
+    {id:'bday_party_hats', name:'Festive Party Hats', cat:'birthday', icon:'🥳', style:'party_hats', bg:'linear-gradient(135deg,#ff5722,#ffeb3b,#4caf50)'},
+    {id:'bday_comic_doodle', name:'Comic Pop Art Dotted', cat:'birthday', icon:'💥', style:'comic', bg:'linear-gradient(135deg,#ffeb3b,#f44336,#2196f3)'},
+    {id:'bday_circus_carnival', name:'Carnival Glowing Bulbs', cat:'birthday', icon:'🎪', style:'carnival', bg:'linear-gradient(135deg,#d32f2f,#ffa000,#ffffff)'},
+    {id:'bday_jungle_safari', name:'Jungle Safari Wildlife', cat:'birthday', icon:'🦁', style:'safari', bg:'linear-gradient(135deg,#388e3c,#8bc34a,#ffb300)'},
+    {id:'bday_golden_glitter', name:'1st Birthday Gold Sparkle', cat:'birthday', icon:'✨', style:'gold_sparkle', bg:'linear-gradient(135deg,#ffd700,#fffde7,#ffa000)'},
+    {id:'bday_cupcake_candles', name:'Cupcakes & Candles', cat:'birthday', icon:'🎂', style:'cupcakes', bg:'linear-gradient(135deg,#f06292,#ba68c8,#4dd0e1)'},
+
+    // ❤️ Love & Romantic (12)
+    {id:'love_crimson_hearts', name:'Crimson Velvet Hearts', cat:'romantic', icon:'❤️', style:'crimson_hearts', bg:'linear-gradient(135deg,#b71c1c,#e53935,#ff8a80)'},
+    {id:'love_couple_rings', name:'Golden Wedding Bands', cat:'romantic', icon:'💍', style:'wedding_rings', bg:'linear-gradient(135deg,#d4af37,#fff8e1,#aa771c)'},
+    {id:'love_rose_petals', name:'Scattered Rose Petals', cat:'romantic', icon:'🥀', style:'rose_petals', bg:'linear-gradient(135deg,#c2185b,#e91e63,#f8bbd0)'},
+    {id:'love_pink_ribbon_bow', name:'Pink Satin Ribbon & Bow', cat:'romantic', icon:'🎀', style:'pink_ribbon', bg:'linear-gradient(135deg,#f06292,#f8bbd0,#ffffff)'},
+    {id:'love_sweet_lace', name:'Victorian Bridal Lace', cat:'romantic', icon:'🤍', style:'bridal_lace', bg:'linear-gradient(135deg,#f5f5f5,#ffffff,#e0e0e0)'},
+    {id:'love_golden_heart_lock', name:'Golden Heart Padlock', cat:'romantic', icon:'🔒', style:'heart_lock', bg:'linear-gradient(135deg,#d4af37,#880e4f,#ffb300)'},
+    {id:'love_neon_glow', name:'Cyberpunk Neon Heart', cat:'romantic', icon:'💖', style:'neon_heart', bg:'linear-gradient(135deg,#212121,#ff007f,#7c4dff)'},
+    {id:'love_postage_airmail', name:'Vintage Love Airmail', cat:'romantic', icon:'💌', style:'love_letter', bg:'linear-gradient(135deg,#e53935,#ffffff,#1e88e5)'},
+    {id:'love_pastel_hearts', name:'Pastel Blush Hearts', cat:'romantic', icon:'💕', style:'pastel_hearts', bg:'linear-gradient(135deg,#f8bbd0,#e1bee7,#ffffff)'},
+    {id:'love_silver_wreath', name:'Silver Jubilee Wreath', cat:'romantic', icon:'🥈', style:'silver_wreath', bg:'linear-gradient(135deg,#cfd8dc,#eceff1,#90a4ae)'},
+    {id:'love_glamour_bokeh', name:'Heart Bokeh Glow', cat:'romantic', icon:'✨', style:'heart_bokeh', bg:'linear-gradient(135deg,#ad1457,#d81b60,#ffd54f)'},
+    {id:'love_cherub_angels', name:'Cupid & Golden Arrows', cat:'romantic', icon:'🏹', style:'cupid', bg:'linear-gradient(135deg,#d4af37,#fce4ec,#f8bbd0)'},
+
+    // 📷 Modern Studio, Minimal & Polaroid (15)
+    {id:'modern_polaroid_classic', name:'Classic Retro Polaroid', cat:'modern', icon:'📷', style:'polaroid_white', bg:'#ffffff'},
+    {id:'modern_polaroid_dark', name:'Dark Studio Polaroid', cat:'modern', icon:'🎞️', style:'polaroid_dark', bg:'#212121'},
+    {id:'modern_white_passepartout', name:'Museum White Matte', cat:'modern', icon:'🖼️', style:'passepartout', bg:'#fbfbfb'},
+    {id:'modern_black_matte', name:'Ultra Minimal Black Matte', cat:'modern', icon:'⬛', style:'black_matte', bg:'#111111'},
+    {id:'modern_frosted_glass', name:'Frosted Glassmorphism', cat:'modern', icon:'🪟', style:'glassmorphism', bg:'linear-gradient(135deg,rgba(255,255,255,0.7),rgba(255,255,255,0.3))'},
+    {id:'modern_drop_shadow', name:'Floating 3D Drop Shadow', cat:'modern', icon:'📄', style:'drop_shadow', bg:'#ffffff'},
+    {id:'modern_double_pinstripe', name:'Clean Double Pinstripe', cat:'modern', icon:'📏', style:'pinstripe', bg:'#ffffff'},
+    {id:'modern_rounded_soft', name:'Modern Rounded Card', cat:'modern', icon:'🔲', style:'rounded_card', bg:'#ffffff'},
+    {id:'modern_filmstrip_35mm', name:'35mm Camera Filmstrip', cat:'modern', icon:'🎞️', style:'filmstrip', bg:'#0a0a0a'},
+    {id:'modern_cyber_neon', name:'Cyber Neon Cyan & Pink', cat:'modern', icon:'⚡', style:'cyber_neon', bg:'#05050a'},
+    {id:'modern_sunset_gradient', name:'Sunset Glow Gradient', cat:'modern', icon:'🌅', style:'sunset_gradient', bg:'linear-gradient(135deg,#ff5e62,#ff9966)'},
+    {id:'modern_nordic_minimal', name:'Nordic Warm Minimal', cat:'modern', icon:'🛋️', style:'nordic', bg:'#f4f1eb'},
+    {id:'modern_split_corner', name:'Architectural Split Corner', cat:'modern', icon:'📐', style:'split_corner', bg:'#ffffff'},
+    {id:'modern_golden_thin', name:'1mm Fine Gallery Gold', cat:'modern', icon:'✨', style:'fine_gold', bg:'#ffffff'},
+    {id:'modern_airmail_vintage', name:'Vintage Airmail Postmark', cat:'modern', icon:'📮', style:'airmail', bg:'#fff9f0'},
+
+    // 🪪 ID, Passport & Certificate Borders (12)
+    {id:'id_passport_solid_black', name:'Official 1px Passport Line', cat:'passport_cert', icon:'🪪', style:'passport_solid', bg:'#ffffff'},
+    {id:'id_passport_dotted_cut', name:'Dotted Cutting Guide Line', cat:'passport_cert', icon:'✂️', style:'passport_dotted', bg:'#ffffff'},
+    {id:'id_cert_gold_ribbon', name:'Diploma Gold Guilloche', cat:'passport_cert', icon:'📜', style:'cert_gold', bg:'#fffef5'},
+    {id:'id_cert_navy_formal', name:'Corporate Navy & Gold Line', cat:'passport_cert', icon:'🏛️', style:'cert_navy', bg:'#ffffff'},
+    {id:'id_cert_emerald_security', name:'Emerald Security Border', cat:'passport_cert', icon:'💵', style:'cert_emerald', bg:'#f0fdf4'},
+    {id:'id_cert_maroon_honor', name:'Crimson Maroon Honor Trim', cat:'passport_cert', icon:'🎖️', style:'cert_maroon', bg:'#fff1f2'},
+    {id:'id_stamp_seal_corner', name:'Notary Red Ribbon Seal', cat:'passport_cert', icon:'🔖', style:'cert_seal', bg:'#ffffff'},
+    {id:'id_embossed_silver', name:'Embossed Silver Certificate', cat:'passport_cert', icon:'🥈', style:'cert_silver', bg:'#f8fafc'},
+    {id:'id_vintage_parchment', name:'Aged Legal Parchment', cat:'passport_cert', icon:'📜', style:'cert_parchment', bg:'#fbf7ee'},
+    {id:'id_dual_corner_bracket', name:'Govt ID Corner Photo Tabs', cat:'passport_cert', icon:'🗂️', style:'id_brackets', bg:'#ffffff'},
+    {id:'id_corporate_badge', name:'Corporate Employee Badge', cat:'passport_cert', icon:'🏷️', style:'id_badge', bg:'#f8fafc'},
+    {id:'id_security_watermark', name:'Fine Wave Anti-Tamper Trim', cat:'passport_cert', icon:'🛡️', style:'id_wave', bg:'#f8fafc'}
+  ];
+
+  let selectedFrameId = 'none';
+  let frameThicknessMultiplier = 1.0;
+
+  function switchAdjustSubTab(tab) {
+    const isAdj = (tab === 'adjust');
+    const tabAdj = document.getElementById('tabModeAdjust');
+    const tabFr = document.getElementById('tabModeFrames');
+    const panelAdj = document.getElementById('panelAdjust');
+    const panelFr = document.getElementById('panelFrames');
+    if (tabAdj) tabAdj.classList.toggle('active', isAdj);
+    if (tabFr) tabFr.classList.toggle('active', !isAdj);
+    if (panelAdj) panelAdj.style.display = isAdj ? 'block' : 'none';
+    if (panelFr) {
+      panelFr.style.display = isAdj ? 'none' : 'block';
+      if (!isAdj) renderFrameGrid();
+    }
+  }
+
+  function onFrameThicknessChange() {
+    const sl = document.getElementById('slFrameThickness');
+    const v = sl ? +sl.value : 3;
+    const labels = ['Thin (1)', 'Medium-Light (2)', 'Medium (3)', 'Thick (4)', 'Heavy Studio (5)'];
+    const multipliers = [0.5, 0.75, 1.0, 1.4, 2.0];
+    const lbl = document.getElementById('vFrameThickness');
+    if (lbl) lbl.textContent = labels[v - 1] || 'Medium';
+    frameThicknessMultiplier = multipliers[v - 1] || 1.0;
+    applyAdjustments();
+  }
+
+  function renderFrameGrid() {
+    const cont = document.getElementById('frameCardsList');
+    if (!cont) return;
+    const cat = document.getElementById('frameCategorySelect') ? document.getElementById('frameCategorySelect').value : 'all';
+    const list = (cat === 'all') ? FRAMES_DATA : FRAMES_DATA.filter(x => x.cat === cat);
+
+    cont.innerHTML = list.map(f => {
+      const isSel = (f.id === selectedFrameId);
+      return `
+        <div class="frame-card ${isSel ? 'active' : ''}" onclick="selectFrame('${f.id}')" title="${f.name}">
+          <div class="frame-mini-preview" style="background:${f.bg};">
+            <span style="background:rgba(255,255,255,0.85); padding:2px 8px; border-radius:6px; font-size:14px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">${f.icon}</span>
+          </div>
+          <div style="font-size:11px; font-weight:700; color:var(--text); line-height:1.2; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:100%;">${f.name}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectFrame(frameId) {
+    selectedFrameId = frameId;
+    renderFrameGrid();
+    applyAdjustments();
+  }
+
+  // ==========================================
+  // CORE CANVAS FRAME DRAWING ENGINE
+  // ==========================================
+  function renderFrameOnCanvas(ctx, w, h, frameId, thicknessMult) {
+    if (!frameId || frameId === 'none') return;
+    const f = FRAMES_DATA.find(x => x.id === frameId);
+    if (!f) return;
+
+    ctx.save();
+    const minDim = Math.min(w, h);
+    let t = Math.max(6, Math.round(minDim * 0.05 * (thicknessMult || 1.0)));
+
+    // Specific style rendering
+    if (f.cat === 'royal_gold') {
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#bf953f'); grad.addColorStop(0.25, '#fcf6ba'); grad.addColorStop(0.5, '#b38728'); grad.addColorStop(0.75, '#fbf5b7'); grad.addColorStop(1, '#aa771c');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = Math.max(1, t*0.08); ctx.strokeRect(t*0.2, t*0.2, w - t*0.4, h - t*0.4);
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = Math.max(1, t*0.08); ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+      // Gold corner details
+      drawGoldCorners(ctx, w, h, t, f.style);
+    } else if (f.cat === 'wooden') {
+      const woodCols = {
+        mahogany: ['#4a1811', '#6d2b20', '#38120c'],
+        walnut: ['#2e1c14', '#472f23', '#1e120d'],
+        teak: ['#8b5a2b', '#a6713d', '#6e431d'],
+        rustic_oak: ['#5c5042', '#7a6c5b', '#41382d'],
+        carved_wood: ['#784c25', '#996434', '#5a3617'],
+        ebony: ['#1f1f1f', '#2d2d2d', '#121212'],
+        shabby_white: ['#ebe8e1', '#f5f4ef', '#d8d3c5'],
+        cherry: ['#631b18', '#822824', '#46100e'],
+        cedar: ['#8d5b4c', '#a67060', '#6d4133'],
+        driftwood: ['#838888', '#9fa5a5', '#696e6e'],
+        bamboo: ['#d2b55b', '#e4cb79', '#b4973d'],
+        sheesham: ['#3f1a14', '#562720', '#290f0b'],
+        giltwood: ['#6e5428', '#9e7e43', '#4d3919'],
+        golden_oak: ['#b37d37', '#c99650', '#936224'],
+        charcoal_ash: ['#3a3d40', '#4f5357', '#282a2c']
+      };
+      const c = woodCols[f.style] || woodCols.teak;
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, c[0]); grad.addColorStop(0.5, c[1]); grad.addColorStop(1, c[2]);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 1;
+      for (let i = 4; i < t - 4; i += 6) ctx.strokeRect(i, i, w - 2*i, h - 2*i);
+      ctx.strokeStyle = '#d4af37'; ctx.lineWidth = Math.max(1, t*0.08); ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+      // Miter 45 deg seams
+      ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0,0); ctx.lineTo(t,t);
+      ctx.moveTo(w,0); ctx.lineTo(w-t,t);
+      ctx.moveTo(0,h); ctx.lineTo(t,h-t);
+      ctx.moveTo(w,h); ctx.lineTo(w-t,h-t);
+      ctx.stroke();
+    } else if (f.cat === 'floral') {
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2; ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+      drawFloralElements(ctx, w, h, t, f.style);
+    } else if (f.cat === 'wedding') {
+      drawWeddingFestive(ctx, w, h, t, f.style);
+    } else if (f.cat === 'birthday') {
+      drawBirthdayElements(ctx, w, h, t, f.style);
+    } else if (f.cat === 'romantic') {
+      drawRomanticElements(ctx, w, h, t, f.style);
+    } else if (f.cat === 'modern') {
+      drawModernElements(ctx, w, h, t, f.style);
+    } else if (f.cat === 'passport_cert') {
+      drawPassportCertElements(ctx, w, h, t, f.style);
+    }
+
+    ctx.restore();
+  }
+
+  function drawGoldCorners(ctx, w, h, t, style) {
+    const s = Math.min(t * 1.5, 40);
+    ctx.fillStyle = '#ffe082';
+    // 4 Corner diamonds / rosettes
+    const corners = [[t/2, t/2], [w - t/2, t/2], [t/2, h - t/2], [w - t/2, h - t/2]];
+    corners.forEach(([cx, cy]) => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(3, t*0.22), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#855b14'; ctx.lineWidth = 1.5; ctx.stroke();
+    });
+  }
+
+  function drawFloralElements(ctx, w, h, t, style) {
+    const fCols = {
+      roses: '#c0392b', jasmine: '#ffffff', marigold: '#f39c12', sunflower: '#f1c40f',
+      eucalyptus: '#52796f', sakura: '#ffb7b2', lotus: '#e91e63', lavender: '#9575cd',
+      golden_ivy: '#d4af37', daisy: '#ffffff', tropical: '#1b4332', wildflower: '#e1bee7',
+      hibiscus: '#d81b60', orchid: '#ab47bc', watercolor_floral: '#f48fb1'
+    };
+    const col = fCols[style] || '#e74c3c';
+    const rad = Math.max(4, t * 0.35);
+    const pts = [[t/2, t/2], [w - t/2, t/2], [t/2, h - t/2], [w - t/2, h - t/2], [w/2, t/2], [w/2, h - t/2], [t/2, h/2], [w - t/2, h/2]];
+    pts.forEach(([px, py]) => {
+      // Petals
+      ctx.fillStyle = col;
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+        ctx.beginPath();
+        ctx.arc(px + Math.cos(a)*rad*0.7, py + Math.sin(a)*rad*0.7, rad*0.45, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Center
+      ctx.fillStyle = (style === 'roses' || style === 'hibiscus') ? '#ffd700' : '#27ae60';
+      ctx.beginPath(); ctx.arc(px, py, rad*0.3, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  function drawWeddingFestive(ctx, w, h, t, style) {
+    if (style === 'shubh_vivah' || style === 'bridal_zari' || style === 'sindoor') {
+      ctx.fillStyle = '#8e0000';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      // Gold zari embroidery border
+      ctx.strokeStyle = '#ffd700'; ctx.lineWidth = Math.max(2, t*0.15);
+      ctx.strokeRect(t*0.5, t*0.5, w - t, h - t);
+      // Zigzag stitches
+      ctx.strokeStyle = 'rgba(255,215,0,0.7)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let x = t; x < w - t; x += 12) {
+        ctx.moveTo(x, t*0.3); ctx.lineTo(x + 6, t*0.7); ctx.lineTo(x + 12, t*0.3);
+        ctx.moveTo(x, h - t*0.3); ctx.lineTo(x + 6, h - t*0.7); ctx.lineTo(x + 12, h - t*0.3);
+      }
+      ctx.stroke();
+    } else {
+      // Mandap / Toran / Jharokha
+      ctx.fillStyle = '#b71c1c';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      // Mango toran garland at top
+      ctx.fillStyle = '#f39c12';
+      for (let x = t; x < w - t; x += 18) {
+        ctx.beginPath(); ctx.arc(x + 9, t*0.5, Math.max(3, t*0.25), 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 2; ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+    }
+  }
+
+  function drawBirthdayElements(ctx, w, h, t, style) {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+    ctx.strokeStyle = '#ff4081'; ctx.lineWidth = 2; ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+    // Colorful confetti / balloons
+    const colors = ['#e91e63', '#00bcd4', '#ffeb3b', '#4caf50', '#9c27b0', '#ff9800'];
+    const r = Math.max(3, t * 0.25);
+    for (let i = 0; i < 28; i++) {
+      ctx.fillStyle = colors[i % colors.length];
+      const side = i % 4;
+      let x, y;
+      if (side === 0) { x = t + (i*17) % (w - 2*t); y = t * 0.4; }
+      else if (side === 1) { x = w - t * 0.4; y = t + (i*19) % (h - 2*t); }
+      else if (side === 2) { x = t + (i*23) % (w - 2*t); y = h - t * 0.4; }
+      else { x = t * 0.4; y = t + (i*29) % (h - 2*t); }
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function drawRomanticElements(ctx, w, h, t, style) {
+    ctx.fillStyle = (style === 'crimson_hearts') ? '#7f0000' : '#fff0f3';
+    ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+    ctx.strokeStyle = '#e91e63'; ctx.lineWidth = 2; ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+    // Draw hearts in 4 corners
+    const hr = Math.max(6, t * 0.4);
+    const corners = [[t/2, t/2], [w - t/2, t/2], [t/2, h - t/2], [w - t/2, h - t/2], [w/2, t/2], [w/2, h - t/2]];
+    ctx.fillStyle = '#ff1744';
+    corners.forEach(([hx, hy]) => {
+      ctx.beginPath();
+      ctx.moveTo(hx, hy + hr*0.3);
+      ctx.bezierCurveTo(hx - hr*0.5, hy - hr*0.4, hx - hr*0.8, hy + hr*0.2, hx, hy + hr*0.8);
+      ctx.bezierCurveTo(hx + hr*0.8, hy + hr*0.2, hx + hr*0.5, hy - hr*0.4, hx, hy + hr*0.3);
+      ctx.fill();
+    });
+  }
+
+  function drawModernElements(ctx, w, h, t, style) {
+    if (style === 'polaroid_white' || style === 'polaroid_dark') {
+      const isDark = (style === 'polaroid_dark');
+      ctx.fillStyle = isDark ? '#1a1a1a' : '#ffffff';
+      // Classic Polaroid has wide bottom margin (chin)
+      const bottomT = t * 2.8;
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - t - bottomT); ctx.fill('evenodd');
+      ctx.strokeStyle = isDark ? '#333333' : '#e0e0e0'; ctx.lineWidth = 1;
+      ctx.strokeRect(t, t, w - 2*t, h - t - bottomT);
+    } else if (style === 'filmstrip') {
+      ctx.fillStyle = '#0a0a0a';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      // Sprocket holes
+      ctx.fillStyle = '#ffffff';
+      const holeW = Math.max(3, t*0.3), holeH = Math.max(4, t*0.4);
+      for (let y = t; y < h - t; y += holeH * 2.2) {
+        ctx.fillRect(t*0.2, y, holeW, holeH);
+        ctx.fillRect(w - t*0.2 - holeW, y, holeW, holeH);
+      }
+    } else if (style === 'cyber_neon') {
+      ctx.fillStyle = '#090a10';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 3; ctx.shadowColor = '#00f0ff'; ctx.shadowBlur = 12;
+      ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+      ctx.strokeStyle = '#ff007f'; ctx.lineWidth = 2; ctx.shadowColor = '#ff007f'; ctx.shadowBlur = 8;
+      ctx.strokeRect(t*0.5, t*0.5, w - t, h - t);
+      ctx.shadowBlur = 0; // reset
+    } else {
+      // Clean modern matte
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = '#111827'; ctx.lineWidth = Math.max(1, t*0.08); ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+    }
+  }
+
+  function drawPassportCertElements(ctx, w, h, t, style) {
+    if (style === 'passport_solid') {
+      // Exact official 1px or 2px consular black border
+      ctx.strokeStyle = '#000000'; ctx.lineWidth = Math.max(1, Math.round(t * 0.15));
+      ctx.strokeRect(0, 0, w, h);
+    } else if (style === 'passport_dotted') {
+      // Studio cutting dashed scissor guide line
+      ctx.strokeStyle = '#6b7280'; ctx.lineWidth = Math.max(1, Math.round(t * 0.15));
+      ctx.setLineDash([8, 6]);
+      ctx.strokeRect(t*0.5, t*0.5, w - t, h - t);
+      ctx.setLineDash([]);
+    } else {
+      // Formal certificate border
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.rect(t, t, w - 2*t, h - 2*t); ctx.fill('evenodd');
+      ctx.strokeStyle = (style === 'cert_navy') ? '#0f2b5c' : '#b8860b'; ctx.lineWidth = Math.max(2, t*0.12);
+      ctx.strokeRect(t*0.3, t*0.3, w - t*0.6, h - t*0.6);
+      ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 1;
+      ctx.strokeRect(t*0.7, t*0.7, w - t*1.4, h - t*1.4);
+      ctx.strokeRect(t, t, w - 2*t, h - 2*t);
+    }
+  }
+
+
   // 4. Adjustments
   function applyAdjustments() {
     const b = document.getElementById('slB').value;
@@ -1037,6 +1546,11 @@
     ctx.filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%)`;
     ctx.drawImage(bgRemovedImage, 0, 0);
     ctx.filter = 'none'; // reset
+
+    // Render 100+ Decorative Frames if selected
+    if (selectedFrameId && selectedFrameId !== 'none') {
+      renderFrameOnCanvas(ctx, canvas.width, canvas.height, selectedFrameId, frameThicknessMultiplier);
+    }
   }
 
   function autoEnhance() {
