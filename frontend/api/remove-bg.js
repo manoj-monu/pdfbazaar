@@ -1,11 +1,12 @@
 // Vercel Serverless Function — api/remove-bg.js
+// 100% Dedicated to RunPod Serverless GPU (9bak6x4vaiphn6)
+
 export const config = {
   api: { bodyParser: false, sizeLimit: '10mb' },
   maxDuration: 60,
 };
 
 const RUNPOD_ENDPOINT = 'https://9bak6x4vaiphn6.api.runpod.ai';
-const HF_FALLBACK_ENDPOINT = 'https://manojkumarsh-allbgremove-api.hf.space';
 const K1 = 'rpa_5VG5SBPDEC0EB1DK4';
 const K2 = 'VQMT00RDRVHFZYEST0MXIR15wncv8';
 const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY || (K1 + K2);
@@ -50,57 +51,31 @@ export default async function handler(req, res) {
     const url = new URL(req.url, 'https://' + host);
     const enhance = url.searchParams.get('enhance') || 'false';
 
-    console.log('Sending to RunPod Serverless GPU endpoint...');
-    let runpodRes = null;
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-      runpodRes = await fetch(
-        RUNPOD_ENDPOINT + '/api/process-all?enhance=' + enhance,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': contentType,
-            'Authorization': 'Bearer ' + RUNPOD_API_KEY,
-            'x-api-key': 'SUPER_SECRET_KEY_998877',
-          },
-          body: body,
-          signal: controller.signal,
-        }
-      );
-      clearTimeout(timeoutId);
-    } catch (err) {
-      console.warn('RunPod attempt error:', err.message);
-    }
-
-    if (runpodRes && runpodRes.ok) {
-      console.log('RunPod Serverless GPU responded successfully!');
-      const imageBuffer = await runpodRes.arrayBuffer();
-      return reply(res, 200, Buffer.from(imageBuffer), 'image/png');
-    }
-
-    console.log('RunPod failed or cold starting, using fallback...');
-    const hfRes = await fetch(
-      HF_FALLBACK_ENDPOINT + '/api/process-all?enhance=' + enhance,
+    console.log('Sending request directly to RunPod Serverless GPU...');
+    const runpodRes = await fetch(
+      RUNPOD_ENDPOINT + '/api/process-all?enhance=' + enhance,
       {
         method: 'POST',
         headers: {
           'Content-Type': contentType,
+          'Authorization': 'Bearer ' + RUNPOD_API_KEY,
           'x-api-key': 'SUPER_SECRET_KEY_998877',
         },
         body: body,
       }
     );
 
-    if (!hfRes.ok) {
-      const errText = await hfRes.text();
-      return reply(res, hfRes.status, { error: errText });
+    if (!runpodRes.ok) {
+      const errText = await runpodRes.text();
+      console.error('RunPod Serverless returned error:', runpodRes.status, errText);
+      return reply(res, runpodRes.status, { error: errText });
     }
 
-    const imageBuffer = await hfRes.arrayBuffer();
+    const imageBuffer = await runpodRes.arrayBuffer();
+    console.log('RunPod Serverless GPU processed image successfully!');
     return reply(res, 200, Buffer.from(imageBuffer), 'image/png');
   } catch (error) {
-    console.error('Handler error:', error);
+    console.error('RunPod fetch error:', error);
     return reply(res, 500, { error: error.message });
   }
 }
