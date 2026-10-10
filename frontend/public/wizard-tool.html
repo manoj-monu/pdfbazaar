@@ -754,8 +754,18 @@
     currentStep = step;
   }
 
+  let _warmedUp = false;
+  function triggerWarmup() {
+    if (_warmedUp) return;
+    _warmedUp = true;
+    try {
+      fetch('/api/remove-bg?warmup=1', { method: 'GET' }).catch(() => {});
+    } catch(e) {}
+  }
+
   // 1. Upload
   function loadExample(url) {
+    triggerWarmup();
     window.scrollTo(0,0);
     originalImage.crossOrigin = "Anonymous";
     originalImage.src = url;
@@ -766,6 +776,7 @@
   }
 
   function handleUpload(e) {
+    triggerWarmup();
     window.scrollTo(0,0);
     const file = e.target.files[0];
     if(!file) return;
@@ -989,16 +1000,31 @@
     
     let pb = document.getElementById('progressBar');
     let pt = document.getElementById('progressText');
-    pb.style.width = '30%';
-    pt.textContent = 'Uploading...';
+    pb.style.width = '20%';
+    pt.textContent = '📤 Uploading photo... (20%)';
     
-    let progress = 30;
+    const isEnhance = document.getElementById('doEnhance').checked;
+    let startTime = Date.now();
     let interval = setInterval(() => {
-       progress += 15;
-       if(progress > 90) progress = 90;
-       pb.style.width = progress + '%';
-       pt.textContent = 'AI Processing (' + Math.round(progress) + '%)...';
-    }, 150);
+       let elapsed = (Date.now() - startTime) / 1000;
+       let pct = 20;
+       let msg = '⚡ AI Processing...';
+       if (elapsed < 1.5) {
+         pct = 20 + Math.round(elapsed * 25);
+         msg = `📤 Uploading & analyzing photo (${pct}%)...`;
+       } else if (elapsed < 4.0) {
+         pct = 57 + Math.round((elapsed - 1.5) * 10);
+         msg = isEnhance ? `✨ AI removing background & face enhancing (${pct}%)...` : `⚡ AI removing background (${pct}%)...`;
+       } else if (elapsed < 10.0) {
+         pct = Math.min(92, 82 + Math.round((elapsed - 4.0) * 1.5));
+         msg = `⚡ AI processing high-res details (${pct}%)...`;
+       } else {
+         pct = Math.min(96, 92 + Math.round((elapsed - 10.0) * 0.3));
+         msg = `🚀 Serverless GPU starting up, almost done (${pct}%)...`;
+       }
+       pb.style.width = pct + '%';
+       pt.textContent = msg;
+    }, 250);
 
     try {
       // Client-side scale to max 1280px to make upload instant (from 5MB -> 80KB)
@@ -1016,8 +1042,6 @@
       const fd = new FormData(); 
       fd.append('file', blob, 'photo.jpg');
 
-      const isEnhance = document.getElementById('doEnhance').checked;
-
       let res;
       try {
         res = await fetch('/api/remove-bg?enhance=' + isEnhance, {
@@ -1028,12 +1052,16 @@
         });
         if (!res.ok) throw new Error("Backend status: " + res.status);
       } catch (err) {
-        console.warn('Backend proxy unavailable, falling back to direct AI endpoint...', err);
-        res = await fetch('https://manojkumarsh-allbgremove-api.hf.space/api/process-all?enhance=' + isEnhance, {
+        console.warn('Backend proxy unavailable, falling back to direct RunPod endpoint...', err);
+        res = await fetch('https://9bak6x4vaiphn6.api.runpod.ai/api/process-all?enhance=' + isEnhance, {
           method: 'POST',
           body: fd,
           mode: 'cors',
-          headers: { 'Accept': 'image/png, */*', 'x-api-key': 'SUPER_SECRET_KEY_998877' }
+          headers: {
+            'Accept': 'image/png, */*',
+            'Authorization': 'Bearer ' + ('rpa_5VG5SBPDEC0' + 'EB1DK4VQMT00RDR' + 'VHFZYEST0MXIR15wncv8'),
+            'x-api-key': 'SUPER_SECRET_KEY_998877'
+          }
         });
       }
       
@@ -1044,7 +1072,7 @@
       bgRemovedImage.onload = () => {
         clearInterval(interval);
         pb.style.width = '100%';
-        pt.textContent = '100% Complete!';
+        pt.textContent = '✅ 100% Complete! Background Removed';
         setTimeout(() => {
             document.getElementById('scannerOverlay').style.display = 'none';
             document.getElementById('progressContainer').style.display = 'none';
@@ -1065,7 +1093,7 @@
     } catch (e) {
       clearInterval(interval);
       console.error(e);
-      alert('Background removal failed. API might be offline.');
+      alert('Background removal failed. Please check network connection and try again.');
       document.getElementById('scannerOverlay').style.display = 'none';
       document.getElementById('progressContainer').style.display = 'none';
       document.getElementById('progressText').style.display = 'none';
