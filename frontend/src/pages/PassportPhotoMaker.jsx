@@ -8,7 +8,7 @@ const PassportPhotoMaker = () => {
   return (
     <div className="w-full" style={{ padding: 0, margin: 0, background: '#f3f4f6' }}>
       <iframe 
-        src="/wizard-tool" 
+        src="/wizard-tool.html?v=2" 
         style={{ width: '100%', height: 'calc(100vh - 72px)', border: 'none', display: 'block' }}
         title="AI Passport Photo Maker"
         scrolling="yes"
