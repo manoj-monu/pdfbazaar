@@ -713,37 +713,55 @@
     
     let pb = document.getElementById('progressBar');
     let pt = document.getElementById('progressText');
-    let progress = 0;
+    pb.style.width = '30%';
+    pt.textContent = 'Uploading...';
     
+    let progress = 30;
     let interval = setInterval(() => {
-       progress += 20;
+       progress += 15;
        if(progress > 90) progress = 90;
        pb.style.width = progress + '%';
-       pt.textContent = Math.round(progress) + '% AI Processing...';
-    }, 120);
+       pt.textContent = 'AI Processing (' + Math.round(progress) + '%)...';
+    }, 150);
 
     try {
-      const tempC = document.createElement('canvas');
-      let scale = 1;
-      if (croppedImage.width > 1280 || croppedImage.height > 1280) {
-        scale = 1280 / Math.max(croppedImage.width, croppedImage.height);
+      // Client-side scale to max 1280px to make upload instant (from 5MB -> 80KB)
+      const maxDim = 1280;
+      let w = croppedImage.width;
+      let h = croppedImage.height;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+        else { w = Math.round(w * (maxDim / h)); h = maxDim; }
       }
-      tempC.width = Math.round(croppedImage.width * scale);
-      tempC.height = Math.round(croppedImage.height * scale);
-      tempC.getContext('2d').drawImage(croppedImage, 0, 0, tempC.width, tempC.height);
+      const tempC = document.createElement('canvas');
+      tempC.width = w; tempC.height = h;
+      tempC.getContext('2d').drawImage(croppedImage, 0, 0, w, h);
       const blob = await new Promise(res => tempC.toBlob(res, 'image/jpeg', 0.95));
       const fd = new FormData(); 
       fd.append('file', blob, 'photo.jpg');
 
       const isEnhance = document.getElementById('doEnhance').checked;
 
-      let res = await fetch('/api/remove-bg?enhance=' + isEnhance, {
-        method: 'POST',
-        body: fd,
-        mode: 'cors',
-        headers: { 'Accept': 'image/png, */*', 'x-api-key': 'SUPER_SECRET_KEY_998877' }
-      });
-      if (!res.ok) throw new Error("RunPod Serverless Failed: " + res.status);
+      let res;
+      try {
+        res = await fetch('/api/remove-bg?enhance=' + isEnhance, {
+          method: 'POST',
+          body: fd,
+          mode: 'cors',
+          headers: { 'Accept': 'image/png, */*', 'x-api-key': 'SUPER_SECRET_KEY_998877' }
+        });
+        if (!res.ok) throw new Error("Backend status: " + res.status);
+      } catch (err) {
+        console.warn('Backend proxy unavailable, falling back to direct AI endpoint...', err);
+        res = await fetch('https://manojkumarsh-allbgremove-api.hf.space/api/process-all?enhance=' + isEnhance, {
+          method: 'POST',
+          body: fd,
+          mode: 'cors',
+          headers: { 'Accept': 'image/png, */*', 'x-api-key': 'SUPER_SECRET_KEY_998877' }
+        });
+      }
+      
+      if(!res.ok) throw new Error("API Failed: " + res.status);
       let resBlob = await res.blob();
       let url = URL.createObjectURL(resBlob);
       
