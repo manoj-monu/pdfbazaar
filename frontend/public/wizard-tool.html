@@ -716,19 +716,24 @@
     let progress = 0;
     
     let interval = setInterval(() => {
-       progress += Math.random() * 4;
-       if(progress > 95) progress = 95;
+       progress += 20;
+       if(progress > 90) progress = 90;
        pb.style.width = progress + '%';
        pt.textContent = Math.round(progress) + '% AI Processing...';
-    }, 200);
+    }, 120);
 
     try {
       const tempC = document.createElement('canvas');
-      tempC.width = croppedImage.width; tempC.height = croppedImage.height;
-      tempC.getContext('2d').drawImage(croppedImage, 0, 0);
-      const blob = await new Promise(res => tempC.toBlob(res, 'image/png'));
+      let scale = 1;
+      if (croppedImage.width > 1280 || croppedImage.height > 1280) {
+        scale = 1280 / Math.max(croppedImage.width, croppedImage.height);
+      }
+      tempC.width = Math.round(croppedImage.width * scale);
+      tempC.height = Math.round(croppedImage.height * scale);
+      tempC.getContext('2d').drawImage(croppedImage, 0, 0, tempC.width, tempC.height);
+      const blob = await new Promise(res => tempC.toBlob(res, 'image/jpeg', 0.95));
       const fd = new FormData(); 
-      fd.append('file', blob, 'photo.png');
+      fd.append('file', blob, 'photo.jpg');
 
       const isEnhance = document.getElementById('doEnhance').checked;
 
