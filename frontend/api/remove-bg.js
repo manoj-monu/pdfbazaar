@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     let runpodRes = null;
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
       runpodRes = await fetch(
         RUNPOD_ENDPOINT + '/api/process-all?enhance=' + enhance,
         {
