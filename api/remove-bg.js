@@ -30,7 +30,7 @@ function reply(res, statusCode, body, contentType = 'application/json') {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-api-key');
 
   if (req.method === 'OPTIONS') {
@@ -38,6 +38,24 @@ export default async function handler(req, res) {
     res.statusCode = 200;
     return res.end();
   }
+
+  // Handle pre-warmup ping (GET or ?warmup=1)
+  const host = req.headers.host || 'pdfbazaar.com';
+  const url = new URL(req.url, 'https://' + host);
+  const isWarmup = req.method === 'GET' || url.searchParams.get('warmup') === '1';
+
+  if (isWarmup) {
+    try {
+      const pingRes = await fetch(RUNPOD_ENDPOINT + '/ping', {
+        headers: { 'Authorization': 'Bearer ' + RUNPOD_API_KEY },
+      });
+      const data = await pingRes.json().catch(() => ({ status: 'ok' }));
+      return reply(res, 200, { status: 'warmed', runpod: data });
+    } catch (e) {
+      return reply(res, 200, { status: 'warmup_triggered', error: e.message });
+    }
+  }
+
   if (req.method !== 'POST') {
     return reply(res, 405, { error: 'Method not allowed' });
   }
@@ -47,8 +65,6 @@ export default async function handler(req, res) {
     for await (const chunk of req) chunks.push(chunk);
     const body = Buffer.concat(chunks);
     const contentType = req.headers['content-type'] || 'multipart/form-data';
-    const host = req.headers.host || 'pdfbazaar.com';
-    const url = new URL(req.url, 'https://' + host);
     const enhance = url.searchParams.get('enhance') || 'false';
 
     console.log('Sending request directly to RunPod Serverless GPU...');
