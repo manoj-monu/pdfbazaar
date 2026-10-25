@@ -36,13 +36,11 @@ const Navbar = () => {
 
                 <div className="nav-actions">
                     <Link
-                        to="/login"
-                        className="btn-login desktop-only"
+                        to="/passport-photo-maker"
+                        className="btn-signup"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: '700', borderRadius: '8px', padding: '10px 16px' }}
                     >
-                        Login
-                    </Link>
-                    <Link to="/signup" className="btn-signup">
-                        Sign up
+                        📷 Photo Maker
                     </Link>
 
                     <button
