@@ -9,14 +9,14 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router/') || id.includes('/react-router-dom/')) {
               return 'react-vendor';
+            }
+            if (id.includes('pdfjs-dist') || id.includes('react-pdf')) {
+              return 'pdfjs-vendor';
             }
             if (id.includes('pdf-lib')) {
               return 'pdf-lib-vendor';
-            }
-            if (id.includes('jimp') || id.includes('lucide-react') || id.includes('react-dropzone')) {
-              return 'deps-vendor';
             }
             return 'vendor';
           }

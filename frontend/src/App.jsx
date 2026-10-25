@@ -28,6 +28,7 @@ const Pricing = lazy(() => import(/* webpackChunkName: "pricing" */ './pages/Pri
 const LegalPages = lazy(() => import(/* webpackChunkName: "legal" */ './pages/LegalPages'));
 const ProgrammaticToolPage = lazy(() => import(/* webpackChunkName: "programmatic" */ './pages/ProgrammaticToolPage'));
 const PassportPhotoMaker = lazy(() => import(/* webpackChunkName: "passport" */ './pages/PassportPhotoMaker'));
+const NotFound = lazy(() => import(/* webpackChunkName: "notfound" */ './pages/NotFound'));
 
 const { AboutUs, ContactUs, PrivacyPolicy, TermsConditions, Disclaimer } = LegalPages;
 
@@ -85,8 +86,8 @@ function App() {
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           
-          {/* Catch-all 404: Redirect to Home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch-all 404 Component */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       <Footer />

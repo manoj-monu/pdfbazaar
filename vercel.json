@@ -4,10 +4,31 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
     }
+  ],
+  "redirects": [
+    { "source": "/tool/compress-pdf", "destination": "/compress-pdf-without-losing-quality", "permanent": true },
+    { "source": "/tool/merge-pdf", "destination": "/merge-pdf-online-free", "permanent": true },
+    { "source": "/tool/split-pdf", "destination": "/split-pdf-online-free", "permanent": true },
+    { "source": "/tool/jpg-to-pdf", "destination": "/image-to-pdf-converter", "permanent": true },
+    { "source": "/tool/pdf-to-word", "destination": "/pdf-to-word-converter", "permanent": true },
+    { "source": "/tool/pdf-to-jpg", "destination": "/pdf-to-jpg-converter", "permanent": true },
+    { "source": "/tool/unlock-pdf", "destination": "/unlock-pdf-password-remover", "permanent": true },
+    { "source": "/tool/protect-pdf", "destination": "/protect-pdf-with-password", "permanent": true },
+    { "source": "/tool/rotate-pdf", "destination": "/rotate-pdf-pages-online", "permanent": true },
+    { "source": "/tool/add-watermark", "destination": "/add-watermark-to-pdf", "permanent": true },
+    { "source": "/tool/ocr-pdf", "destination": "/ocr-pdf-searchable-text", "permanent": true },
+    { "source": "/tool/edit-pdf", "destination": "/pdf-editor", "permanent": true },
+    { "source": "/tool/passport-photo", "destination": "/passport-photo-maker", "permanent": true },
+    { "source": "/tool/word-to-pdf", "destination": "/word-to-pdf-converter", "permanent": true },
+    { "source": "/tool/excel-to-pdf", "destination": "/excel-to-pdf-converter", "permanent": true },
+    { "source": "/tool/ppt-to-pdf", "destination": "/ppt-to-pdf-converter", "permanent": true },
+    { "source": "/tool/delete-pdf-pages", "destination": "/delete-pdf-pages-online", "permanent": true },
+    { "source": "/tool/organize-pdf", "destination": "/organize-pdf-pages", "permanent": true },
+    { "source": "/tool/crop-pdf", "destination": "/crop-pdf-online-free", "permanent": true },
+    { "source": "/tool/resize-pdf", "destination": "/resize-pdf-page-size", "permanent": true },
+    { "source": "/tool/add-page-numbers", "destination": "/add-page-numbers-to-pdf", "permanent": true },
+    { "source": "/tool/grayscale-pdf", "destination": "/grayscale-pdf-online", "permanent": true },
+    { "source": "/tool/(.*)", "destination": "/", "permanent": false }
   ]
 }

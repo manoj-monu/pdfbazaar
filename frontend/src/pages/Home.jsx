@@ -7,9 +7,9 @@ import AdsPlacement from '../components/AdsPlacement';
 
 const Home = () => {
     useSEO({
-        title: 'PDFbazaar.com - All-in-One Free PDF Tools in India',
-        description: 'Compress, Merge, Split, Convert PDF to Word, and extract pages online completely free. Best iLovePDF alternative for super fast PDF tasks.',
-        keywords: 'pdf merge, compress pdf online, pdf to word, jpg to pdf, edit pdf free india, unlock aadhar pdf'
+        title: 'Free Online PDF Tools – Compress, Merge, Convert & Edit | PDFBazaar',
+        description: '100% free online PDF tools to compress, merge, split, convert, and edit documents. Private browser processing with no registration, no watermarks, and no file limits.',
+        keywords: 'free pdf tools, compress pdf online, merge pdf, pdf to word converter, jpg to pdf, edit pdf online free, split pdf'
     });
 
     const [activeFilter, setActiveFilter] = useState('All');
@@ -35,10 +35,10 @@ const Home = () => {
             <div className="hero-wrapper">
                 <section className="hero">
                     <div className="container">
-                        <h1>Compress PDF Under 100KB, Merge & Edit (Free & No Login)</h1>
+                        <h1>Free Online PDF Tools — Compress, Merge, Convert & Edit</h1>
                         <p>
-                            Professional PDF tools for Indian users. Reduce file size instantly, combine documents, 
-                            and convert images to PDF in seconds. No registration, no credit card—just fast results.
+                            Fast, private, and browser-powered document utilities. Compress large files, combine multiple documents, 
+                            convert Office formats to PDF, and edit pages with no registration, no watermarks, and zero software installation.
                         </p>
                     </div>
                 </section>
@@ -134,33 +134,50 @@ const Home = () => {
                 <div className="container">
                     <div style={{ maxWidth: '900px', margin: '0 auto', background: '#fff', padding: '50px', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
                         <h2 style={{ fontSize: '28px', marginBottom: '24px', fontWeight: '900', color: '#0f172a' }}>
-                            India's Best Free PDF Tools Online (2026)
+                            Fast, Private & Free Online PDF Solutions
                         </h2>
                         <p style={{ fontSize: '16px', color: '#475569', lineHeight: '1.8', marginBottom: '24px' }}>
-                            Whether you need to know <strong>"pdf size kam kaise kare"</strong> for a government SSC form, or you are searching for <strong>"pdf compress karna hai free mein"</strong>, PDFBazaar is your ultimate solution. We designed this platform specifically for users who need <strong>free pdf tools without watermark</strong>. You can effortlessly combine files (<strong>pdf kaise combine kare</strong>) or convert photos to documents (<strong>mobile mein pdf kaise banaye</strong>) without any daily limits or login screens. 
+                            PDFBazaar is built for professionals, students, and everyday users worldwide who require rapid, reliable document processing without software installations or subscription paywalls. Whether you need to <strong>compress PDF files</strong> for email submission, <strong>merge multiple PDF reports</strong>, or <strong>convert images and Word files</strong> to clean documents, our browser-powered platform delivers instant results.
                         </p>
                         <p style={{ fontSize: '16px', color: '#475569', lineHeight: '1.8', marginBottom: '32px' }}>
-                            If you've ever wondered <strong>"free mein pdf kaise banaye"</strong> or searched for <strong>"pdf tools hindi mein"</strong> to understand document editing, our site offers the most intuitive, mobile-friendly interface for everything. Say goodbye to heavy apps and try the <strong>best free pdf tools online</strong> directly from your Chrome or mobile browser.
+                            Unlike traditional PDF editors that enforce daily quotas or watermark your work, PDFBazaar is 100% free with no account creation required. Enjoy secure, private document utilities directly from Chrome, Safari, Edge, or Firefox on any desktop or mobile device.
                         </p>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                            <div style={{ background: '#f1f5f9', padding: '20px', borderRadius: '12px' }}>
-                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b' }}>No Registration Required</h4>
-                                <p style={{ fontSize: '14px', color: '#64748b' }}>Our <strong>pdf tools online free no limit</strong> policy ensures you never have to enter your email. Enjoy truly <strong>all in one pdf tools free</strong>.</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+                            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b', fontSize: '16px' }}>No Registration Required</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Enjoy completely unlimited, free PDF utilities with zero sign-ups, credit card requirements, or hidden tiers.</p>
                             </div>
-                            <div style={{ background: '#f1f5f9', padding: '20px', borderRadius: '12px' }}>
-                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b' }}>Absolute Privacy</h4>
-                                <p style={{ fontSize: '14px', color: '#64748b' }}>We auto-delete files immediately. If you need <strong>secure pdf tools online</strong> or to <strong>pdf se text copy kaise kare</strong> securely, you are in the right place.</p>
+                            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b', fontSize: '16px' }}>Strict Document Privacy</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Files are processed securely in your browser where possible. Server tasks are encrypted via SSL and purged automatically within 60 minutes.</p>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b', fontSize: '16px' }}>Cross-Platform Compatibility</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Works seamlessly across Windows, macOS, Linux, iOS, and Android browsers without installing native software.</p>
+                            </div>
+                            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <h4 style={{ fontWeight: '800', marginBottom: '10px', color: '#1e293b', fontSize: '16px' }}>Photo & ID Utilities</h4>
+                                <p style={{ fontSize: '14px', color: '#64748b', lineHeight: '1.6', margin: 0 }}>Create compliant passport, visa, and exam ID photos with automated cropping and file-size presets in our <Link to="/passport-photo-maker" style={{ color: 'var(--primary)', fontWeight: '600' }}>Passport Photo Maker</Link>.</p>
                             </div>
                         </div>
                         
                         <div style={{ marginTop: '40px', paddingTop: '30px', borderTop: '1px solid #e2e8f0' }}>
-                            <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', color: '#334155' }}>Popular Queries Addressed:</h3>
+                            <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: '#334155' }}>Popular Solutions:</h3>
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                {['pdf merge kaise kare', 'free pdf tools india', 'pdf online kaise edit kare free', 'smallpdf alternative free', 'pdf rotate kaise kare free', 'pdf compress tool india free', 'pdf me password kaise lagaye free'].map(kw => (
-                                    <span key={kw} style={{ padding: '4px 10px', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '20px', fontSize: '12px', color: '#64748b' }}>
-                                        {kw}
-                                    </span>
+                                {[
+                                    { name: 'Compress PDF Online', to: '/compress-pdf-without-losing-quality' },
+                                    { name: 'Merge PDF Free', to: '/merge-pdf-online-free' },
+                                    { name: 'PDF to Word Converter', to: '/pdf-to-word-converter' },
+                                    { name: 'JPG to PDF Converter', to: '/image-to-pdf-converter' },
+                                    { name: 'Split PDF Pages', to: '/split-pdf-online-free' },
+                                    { name: 'Unlock PDF Password', to: '/unlock-pdf-password-remover' },
+                                    { name: 'Passport Photo Maker', to: '/passport-photo-maker' },
+                                    { name: 'Add Watermark to PDF', to: '/add-watermark-to-pdf' }
+                                ].map(item => (
+                                    <Link key={item.name} to={item.to} style={{ padding: '6px 14px', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '20px', fontSize: '13px', color: '#475569', textDecoration: 'none', fontWeight: '500' }}>
+                                        {item.name}
+                                    </Link>
                                 ))}
                             </div>
                         </div>

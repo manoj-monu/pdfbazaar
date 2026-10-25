@@ -50,7 +50,7 @@ const useSEO = ({ title, description, keywords, path = '', schema = null, enable
             'og:url': `${SITE_URL}${path || window.location.pathname}`,
             'og:site_name': SITE_NAME,
             'og:image': `${SITE_URL}/og-image.png`,
-            'og:locale': 'en_IN',
+            'og:locale': 'en_US',
         };
         Object.entries(ogTags).forEach(([property, content]) => {
             let el = document.querySelector(`meta[property="${property}"]`);
