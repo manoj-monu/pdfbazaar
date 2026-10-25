@@ -10,6 +10,19 @@ import { BLOG_POSTS } from './src/BlogData.js';
 import { PROGRAMMATIC_PAGES } from './src/ProgrammaticSEO.js';
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const DIST_DIR = path.join(__dirname, 'dist');
+
+function saveRouteHtml(subPath, html) {
+    const pubDir = path.join(PUBLIC_DIR, subPath);
+    if (!fs.existsSync(pubDir)) fs.mkdirSync(pubDir, { recursive: true });
+    fs.writeFileSync(path.join(pubDir, 'index.html'), html);
+
+    if (fs.existsSync(DIST_DIR)) {
+        const distTargetDir = path.join(DIST_DIR, subPath);
+        if (!fs.existsSync(distTargetDir)) fs.mkdirSync(distTargetDir, { recursive: true });
+        fs.writeFileSync(path.join(distTargetDir, 'index.html'), html);
+    }
+}
 
 // --- HANDCRAFTED TOP TOOLS ---
 const HANDCRAFTED_TOOLS = [
@@ -193,6 +206,7 @@ const TEMPLATE = `<!DOCTYPE html>
         .nav-brand { font-weight: 800; font-size: 28px; color: var(--primary); display: flex; align-items: center; gap: 8px; text-decoration: none; margin-bottom: 24px; }
         .intro-box { background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 30px; font-size: 15px; color: #334155; }
     </style>
+    {{HEAD_ASSETS}}
 </head>
 <body>
     <div id="root">
@@ -213,13 +227,29 @@ const TEMPLATE = `<!DOCTYPE html>
             <p><a href="/" style="color: var(--primary); text-decoration: none; font-weight: 600;">View All PDF Tools</a> &bull; <a href="/blog" style="color: var(--primary); text-decoration: none; font-weight: 600;">Guides & Tutorials</a> &bull; <a href="/privacy-policy" style="color: var(--primary); text-decoration: none; font-weight: 600;">Privacy Policy</a></p>
         </footer>
     </div>
-    <script type="module" src="/src/main.jsx" defer></script>
+    {{BODY_ASSETS}}
 </body>
 </html>`;
 
 function prerender() {
     console.log('--- STARTING COMPREHENSIVE PRODUCTION PRERENDER ---');
     let generatedCount = 0;
+
+    const distIndexPath = path.join(DIST_DIR, 'index.html');
+    let headAssets = '';
+    let bodyAssets = '<script type="module" src="/src/main.jsx" defer></script>';
+
+    if (fs.existsSync(distIndexPath)) {
+        const distHtml = fs.readFileSync(distIndexPath, 'utf-8');
+        const cssMatches = distHtml.match(/<link\s+rel="stylesheet"[^>]+>/g) || [];
+        const modulepreloadMatches = distHtml.match(/<link\s+rel="modulepreload"[^>]+>/g) || [];
+        const scriptMatches = distHtml.match(/<script\s+type="module"[^>]+><\/script>/g) || [];
+        
+        headAssets = [...cssMatches, ...modulepreloadMatches].join('\n    ');
+        if (scriptMatches.length > 0) {
+            bodyAssets = scriptMatches.join('\n    ');
+        }
+    }
 
     // Set of routes already handled to prevent duplicate writes
     const handledPaths = new Set();
@@ -267,9 +297,11 @@ function prerender() {
             .replace(/{{FAQ}}/g, faqHtml)
             .replace(/{{EXTRA_CONTENT}}/g, '')
             .replace(/{{SCHEMA}}/g, JSON.stringify(schemaObj))
+            .replace(/{{HEAD_ASSETS}}/g, headAssets)
+            .replace(/{{BODY_ASSETS}}/g, bodyAssets)
             .replace(/{{PATH}}/g, route.path);
 
-        fs.writeFileSync(path.join(dir, 'index.html'), html);
+        saveRouteHtml(route.path, html);
         generatedCount++;
     });
 
@@ -279,9 +311,6 @@ function prerender() {
         const cleanPath = (tool.seoPath || `/tool/${tool.id}`).replace(/^\//, '');
         if (handledPaths.has(cleanPath)) return;
         handledPaths.add(cleanPath);
-
-        const dir = path.join(PUBLIC_DIR, cleanPath);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
         const title = `${tool.name} – Free Online Tool | PDFBazaar`;
         const desc = `Free online ${tool.name}. ${tool.desc} 100% free, secure, and works on desktop and mobile.`;
@@ -314,9 +343,11 @@ function prerender() {
             .replace(/{{FAQ}}/g, faqHtml)
             .replace(/{{EXTRA_CONTENT}}/g, '')
             .replace(/{{SCHEMA}}/g, JSON.stringify(schemaObj))
+            .replace(/{{HEAD_ASSETS}}/g, headAssets)
+            .replace(/{{BODY_ASSETS}}/g, bodyAssets)
             .replace(/{{PATH}}/g, cleanPath);
 
-        fs.writeFileSync(path.join(dir, 'index.html'), html);
+        saveRouteHtml(cleanPath, html);
         generatedCount++;
     });
 
@@ -335,9 +366,6 @@ function prerender() {
         if (handledPaths.has(sp.path)) return;
         handledPaths.add(sp.path);
 
-        const dir = path.join(PUBLIC_DIR, sp.path);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
         const html = TEMPLATE
             .replace(/{{TITLE}}/g, sp.title)
             .replace(/{{DESC}}/g, sp.desc)
@@ -345,9 +373,11 @@ function prerender() {
             .replace(/{{FAQ}}/g, '')
             .replace(/{{EXTRA_CONTENT}}/g, '')
             .replace(/{{SCHEMA}}/g, JSON.stringify({ "@context": "https://schema.org", "@type": "WebPage", "name": sp.h1, "url": `https://pdfbazaar.com/${sp.path}` }))
+            .replace(/{{HEAD_ASSETS}}/g, headAssets)
+            .replace(/{{BODY_ASSETS}}/g, bodyAssets)
             .replace(/{{PATH}}/g, sp.path);
 
-        fs.writeFileSync(path.join(dir, 'index.html'), html);
+        saveRouteHtml(sp.path, html);
         generatedCount++;
     });
 
@@ -356,9 +386,6 @@ function prerender() {
         const blogPath = `blog/${bp.slug}`;
         if (handledPaths.has(blogPath)) return;
         handledPaths.add(blogPath);
-
-        const dir = path.join(PUBLIC_DIR, 'blog', bp.slug);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
         const schemaObj = {
             "@context": "https://schema.org",
@@ -377,9 +404,11 @@ function prerender() {
             .replace(/{{FAQ}}/g, '')
             .replace(/{{EXTRA_CONTENT}}/g, `<div style="font-size: 16px; line-height: 1.8; margin-bottom: 40px;">${bp.content || bp.excerpt}</div>`)
             .replace(/{{SCHEMA}}/g, JSON.stringify(schemaObj))
+            .replace(/{{HEAD_ASSETS}}/g, headAssets)
+            .replace(/{{BODY_ASSETS}}/g, bodyAssets)
             .replace(/{{PATH}}/g, blogPath);
 
-        fs.writeFileSync(path.join(dir, 'index.html'), html);
+        saveRouteHtml(blogPath, html);
         generatedCount++;
     });
 
@@ -388,9 +417,6 @@ function prerender() {
         const progPath = `s/${pg.slug}`;
         if (handledPaths.has(progPath)) return;
         handledPaths.add(progPath);
-
-        const dir = path.join(PUBLIC_DIR, 's', pg.slug);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
         const faqHtml = (pg.faq || []).map(f => `
             <div class="faq-item">
@@ -416,9 +442,11 @@ function prerender() {
             .replace(/{{FAQ}}/g, faqHtml)
             .replace(/{{EXTRA_CONTENT}}/g, pg.content || '')
             .replace(/{{SCHEMA}}/g, JSON.stringify(schemaObj))
+            .replace(/{{HEAD_ASSETS}}/g, headAssets)
+            .replace(/{{BODY_ASSETS}}/g, bodyAssets)
             .replace(/{{PATH}}/g, progPath);
 
-        fs.writeFileSync(path.join(dir, 'index.html'), html);
+        saveRouteHtml(progPath, html);
         generatedCount++;
     });
 

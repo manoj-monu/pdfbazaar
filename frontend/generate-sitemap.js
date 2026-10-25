@@ -67,6 +67,10 @@ function generateSitemap() {
     xml += `</urlset>`;
 
     fs.writeFileSync(path.join(PUBLIC_DIR, 'sitemap.xml'), xml);
+    const distPath = path.join(__dirname, 'dist');
+    if (fs.existsSync(distPath)) {
+        fs.writeFileSync(path.join(distPath, 'sitemap.xml'), xml);
+    }
     console.log('[SITEMAP] Final clean version pushed.');
 }
 
