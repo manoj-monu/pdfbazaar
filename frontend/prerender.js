@@ -149,6 +149,16 @@ const HANDCRAFTED_TOOLS = [
         faq: [
             { q: 'What encryption standard is used to lock the PDF?', a: 'We apply standard PDF security encryption to ensure your sensitive document remains secure against unauthorized viewing.' }
         ]
+    },
+    {
+        path: 'pdf-editor',
+        title: 'Free PDF Editor Online – Edit Text, Add Notes & Annotate | PDFBazaar',
+        desc: 'Edit PDF documents online for free. Add text, highlights, shapes, drawings, and signatures to your PDF with no installation required.',
+        h1: 'Free Online PDF Editor (Annotate, Draw & Sign)',
+        faq: [
+            { q: 'How do I edit a PDF document online?', a: 'Upload your PDF, use the toolbar to add text, annotations, highlights, or shapes, and click Save to download your edited PDF.' },
+            { q: 'Is the PDF editor free to use?', a: 'Yes, PDFBazaar PDF Editor is 100% free with no watermark or page restrictions.' }
+        ]
     }
 ];
 

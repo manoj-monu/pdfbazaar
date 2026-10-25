@@ -17,7 +17,10 @@ const SAFE_URLS = [
     '/pdf-to-word-converter', '/pdf-to-jpg-converter', '/add-watermark-to-pdf', '/ocr-pdf-searchable-text', 
     '/delete-pdf-pages-online', '/organize-pdf-pages', '/crop-pdf-online-free', '/resize-pdf-page-size',
     '/add-page-numbers-to-pdf', '/grayscale-pdf-online', '/protect-pdf-with-password', '/unlock-pdf-password-remover',
-    '/rotate-pdf-pages-online',
+    '/rotate-pdf-pages-online', '/pdf-editor', '/edit-pdf-online-free', '/pdf-to-excel-converter',
+    '/pdf-to-ppt-converter', '/sign-pdf',
+    // --- STATIC & LEGAL ---
+    '/blog', '/pricing', '/about', '/contact', '/privacy-policy', '/terms-conditions', '/disclaimer',
     // --- BLOGS ---
     '/blog/pdf-size-50kb-kaise-kare-mobile-me',
     '/blog/best-free-pdf-tools-for-indian-students-2026',
