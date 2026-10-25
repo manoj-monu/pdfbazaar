@@ -669,7 +669,7 @@ export const BLOG_POSTS = [
     },
     {
         id: "compress-pdf-seo",
-        title: "PDF Size Kam Kaise Kare (Mobile & PC) - Free PDF Compressor 2024",
+        title: "PDF Size Kam Kaise Kare (Mobile & PC) - Free PDF Compressor 2026",
         slug: "pdf-size-kam-kaise-kare",
         excerpt: "SSC, Railway form ya Email ke liye kisi bhi 10MB ki PDF file ko 100KB tak compress karein. Pura process step-by-step Hindi mein.",
         date: "2026-03-01",
@@ -698,7 +698,7 @@ export const BLOG_POSTS = [
 
             <h2>Online Free PDF Compress Karne Ke Steps</h2>
             <ol>
-                <li>Hamare free <a href="/tool/compress-pdf">Compress PDF Tool</a> par jayein</li>
+                <li>Hamare free <a href="/compress-pdf-without-losing-quality">Compress PDF Tool</a> par jayein</li>
                 <li>PDF upload karein — Aadhaar, Marksheet, ya koi bhi document</li>
                 <li>Compression level chunein: Extreme / Recommended / Less</li>
                 <li>Optional: Target Size set karein jaise "200 KB"</li>
@@ -709,7 +709,7 @@ export const BLOG_POSTS = [
             <h2>SSC/Railway Form Ke Liye PDF Compress Kaise Kare?</h2>
             <p>SSC aur Railway portals usually <strong>50KB se 300KB</strong> tak accept karte hain. Follow karein:</p>
             <ol>
-                <li>Compress PDF tool kholein</li>
+                <li><a href="/compress-pdf-without-losing-quality">Compress PDF tool</a> kholein</li>
                 <li>Apna document upload karein</li>
                 <li>"Extreme Compression" select karein</li>
                 <li>Target Size mein "200 KB" type karein</li>
@@ -717,7 +717,7 @@ export const BLOG_POSTS = [
             </ol>
 
             <h2>Mobile Se PDF Size Kam Kaise Kare?</h2>
-            <p>Apne Android ya iPhone ke Chrome/Safari browser mein <strong>pdfbazaar.com/tool/compress-pdf</strong> kholein. Koi app download zaruri nahi — seedha browser se compress karein.</p>
+            <p>Apne Android ya iPhone ke Chrome/Safari browser mein <strong>pdfbazaar.com/compress-pdf-without-losing-quality</strong> kholein. Koi app download zaruri nahi — seedha browser se compress karein.</p>
 
             <h2>Aksar Puchhe Jane Wale Sawaal (FAQs)</h2>
             <h3>Q: Kya PDF compress karne se quality kharab hoti hai?</h3>
@@ -733,16 +733,16 @@ export const BLOG_POSTS = [
 
             <h2>Related Tools</h2>
             <ul>
-                <li><a href="/tool/merge-pdf">Merge PDF</a> — Multiple PDFs ek mein jodein</li>
-                <li><a href="/tool/split-pdf">Split PDF</a> — Specific pages nikalein</li>
-                <li><a href="/tool/pdf-to-word">PDF to Word</a> — Editable Word file banayein</li>
+                <li><a href="/merge-pdf-online-free">Merge PDF</a> — Multiple PDFs ek mein jodein</li>
+                <li><a href="/split-pdf-online-free">Split PDF</a> — Specific pages nikalein</li>
+                <li><a href="/pdf-to-word-converter">PDF to Word</a> — Editable Word file banayein</li>
             </ul>
         `
     },
     // --- 2. MERGE PDF ---
     {
         id: "merge-pdf-seo",
-        title: "Multiple PDF File Ko Ek Sath Kaise Jode - Free Merge PDF Tool 2024",
+        title: "Multiple PDF File Ko Ek Sath Kaise Jode - Free Merge PDF Tool 2026",
         slug: "multiple-pdf-ko-ek-sath-kaise-jode",
         excerpt: "Office ki files ya semester notes ki alag-alag PDFs ko ek hi file me jodne ka sabse aasan aur tezz tarika. Drag and drop se order change karein.",
         date: "2026-02-28",

@@ -52,7 +52,7 @@ const getToolSpecificKeywords = (toolId, toolName) => {
     
     // Default general keywords for any other tool not explicitly matched
     const generalKeywords = [
-        'pdf tools hindi mein', 'best pdf tools india', 'free pdf tools india', 'pdf tools online free india', 'pdf tools online free no limit', 'best free pdf tools online 2024', 'pdf tools without login', 'free pdf tools unlimited use', 'pdf toolkit free online', 'pdf tools like smallpdf free', 'pdf tools offline browser', 'pdf tools mobile friendly', 'pdf tools for students free'
+        'pdf tools hindi mein', 'best pdf tools india', 'free pdf tools india', 'pdf tools online free india', 'pdf tools online free no limit', 'best free pdf tools online 2026', 'pdf tools without login', 'free pdf tools unlimited use', 'pdf toolkit free online', 'pdf tools like smallpdf free', 'pdf tools offline browser', 'pdf tools mobile friendly', 'pdf tools for students free'
     ];
     
     return variations[toolId] || generalKeywords;

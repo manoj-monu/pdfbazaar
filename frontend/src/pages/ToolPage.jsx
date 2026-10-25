@@ -22,18 +22,20 @@ const ToolPage = ({ id, hideSEO }) => {
   const [errorMsg, setErrorMsg] = useState(null);
 
   // Set SEO tags dynamically based on the current tool
+  const currentPath = tool?.seoPath || (typeof window !== 'undefined' ? window.location.pathname : `/tool/${toolId}`);
   useSEO({
+    enabled: !hideSEO,
     title: tool ? `${tool.name} - Free Online PDF Tool | PDFbazaar.com India` : 'PDFbazaar.com Tool',
     description: tool ? `Free online ${tool.name} — ${tool.desc} 100% free, secure, no registration required. Works on Windows, Mac, Android, iPhone.` : 'Free online PDF Tool',
     keywords: tool ? `${tool.name.toLowerCase()}, free ${tool.name.toLowerCase()} online, ${tool.name.toLowerCase()} india, ${tool.id} online free, pdfbazaar ${tool.id}` : 'pdfbazaar tools',
-    path: `/tool/${toolId}`,
+    path: currentPath,
     schema: tool ? {
       '@context': 'https://schema.org',
       '@graph': [
         {
           '@type': 'SoftwareApplication',
           name: `${tool.name} - PDFbazaar.com`,
-          url: `https://pdfbazaar.com/tool/${toolId}`,
+          url: `https://pdfbazaar.com${currentPath}`,
           description: tool.desc,
           applicationCategory: 'UtilitiesApplication',
           operatingSystem: 'Web, Windows, Mac, Android, iOS',
@@ -51,7 +53,7 @@ const ToolPage = ({ id, hideSEO }) => {
             {
               '@type': 'Question',
               name: `How to use ${tool.name} online?`,
-              acceptedAnswer: { '@type': 'Answer', text: `Upload your file on PDFbazaar.com/tool/${toolId}, click the process button, and download your result instantly. No software installation needed.` }
+              acceptedAnswer: { '@type': 'Answer', text: `Upload your file on PDFbazaar.com${currentPath}, click the process button, and download your result instantly. No software installation needed.` }
             },
             {
               '@type': 'Question',

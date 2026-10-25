@@ -3,8 +3,10 @@ import { useEffect } from 'react';
 const SITE_URL = 'https://pdfbazaar.com';
 const SITE_NAME = 'PDFbazaar.com';
 
-const useSEO = ({ title, description, keywords, path = '', schema = null }) => {
+const useSEO = ({ title, description, keywords, path = '', schema = null, enabled = true } = {}) => {
     useEffect(() => {
+        if (!enabled) return;
+
         // ── Title ──
         if (title) document.title = title;
 

@@ -134,7 +134,7 @@ const Home = () => {
                 <div className="container">
                     <div style={{ maxWidth: '900px', margin: '0 auto', background: '#fff', padding: '50px', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
                         <h2 style={{ fontSize: '28px', marginBottom: '24px', fontWeight: '900', color: '#0f172a' }}>
-                            India's Best Free PDF Tools Online (2024)
+                            India's Best Free PDF Tools Online (2026)
                         </h2>
                         <p style={{ fontSize: '16px', color: '#475569', lineHeight: '1.8', marginBottom: '24px' }}>
                             Whether you need to know <strong>"pdf size kam kaise kare"</strong> for a government SSC form, or you are searching for <strong>"pdf compress karna hai free mein"</strong>, PDFBazaar is your ultimate solution. We designed this platform specifically for users who need <strong>free pdf tools without watermark</strong>. You can effortlessly combine files (<strong>pdf kaise combine kare</strong>) or convert photos to documents (<strong>mobile mein pdf kaise banaye</strong>) without any daily limits or login screens. 

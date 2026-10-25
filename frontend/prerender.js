@@ -120,6 +120,16 @@ const SEO_ROUTES = [
         ]
     },
     {
+        path: 'passport-photo-maker',
+        title: 'Free Passport Photo Maker Online - India Sarkari Exam & Visa Photo Resizer',
+        desc: 'Create perfect 3.5x4.5cm passport photos and Sarkari exam photos (SSC, UPSC, Railway, Police) for free. Auto crop, white background, 20KB-50KB size compression.',
+        h1: 'Free Passport Photo Maker & Sarkari Exam Photo Resizer',
+        faq: [
+            { q: 'Can I make SSC CGL and UPSC photos with this tool?', a: 'Yes! Our tool formats your photo to the exact 3.5cm x 4.5cm dimensions and compresses it to the required 20KB-50KB limit.' },
+            { q: 'Can I change the background to white?', a: 'Yes, our automated photo editor provides clean white and light blue backgrounds suitable for passport, visa, and government exams.' }
+        ]
+    },
+    {
         path: 'unlock-pdf-password-remover',
         title: 'Unlock PDF Password Remover: Permanent Decryption (Free)',
         desc: 'Remove passwords from Aadhaar cards, bank statements, and secured PDFs permanently. Secure browser-side decryption.',
@@ -146,10 +156,17 @@ const TEMPLATE = `<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{TITLE}}</title>
     <meta name="description" content="{{DESC}}" />
-    <link rel="canonical" href="https://pdfbazaar.com/{{PATH}}/" />
+    <link rel="canonical" href="https://pdfbazaar.com/{{PATH}}" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESC}}" />
+    <meta property="og:url" content="https://pdfbazaar.com/{{PATH}}" />
+    <meta property="og:type" content="website" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {{SCHEMA}}
+    </script>
     <style>
         :root { --primary: #1321d4; }
         body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; }
@@ -195,11 +212,35 @@ function prerender() {
             </div>
         `).join('');
 
+        const schemaObj = {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebApplication",
+                    "name": route.h1,
+                    "url": `https://pdfbazaar.com/${route.path}`,
+                    "description": route.desc,
+                    "operatingSystem": "All",
+                    "applicationCategory": "UtilitiesApplication",
+                    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+                },
+                {
+                    "@type": "FAQPage",
+                    "mainEntity": (route.faq || []).map(f => ({
+                        "@type": "Question",
+                        "name": f.q,
+                        "acceptedAnswer": { "@type": "Answer", "text": f.a }
+                    }))
+                }
+            ]
+        };
+
         const html = TEMPLATE
             .replace(/{{TITLE}}/g, route.title)
             .replace(/{{DESC}}/g, route.desc)
             .replace(/{{H1}}/g, route.h1)
             .replace(/{{FAQ}}/g, faqHtml)
+            .replace(/{{SCHEMA}}/g, JSON.stringify(schemaObj))
             .replace(/{{PATH}}/g, route.path);
 
         fs.writeFileSync(path.join(dir, 'index.html'), html);
