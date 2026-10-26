@@ -60,10 +60,14 @@ const ProgrammaticToolPage = () => {
         }
     });
 
+    // Detect if this programmatic slug targets a specific size (e.g. compress-pdf-to-300kb)
+    const sizeKbMatch = cleanSlug?.match(/to-(\d+)kb$/);
+    const defaultTargetKb = sizeKbMatch ? parseInt(sizeKbMatch[1], 10) : undefined;
+
     return (
         <div>
             {/* Render the Tool itself */}
-            <ToolPage id={pageData.toolId} hideSEO={true} />
+            <ToolPage id={pageData.toolId} hideSEO={true} defaultTargetKb={defaultTargetKb} />
 
             {/* Custom SEO Content for this specific long-tail keyword */}
             <div className="container" style={{ maxWidth: '1000px', margin: '60px auto' }}>

@@ -11,7 +11,7 @@ export const BLOG_POSTS = [
             <h2>RRB NTPC 2026: Document Upload Specifications</h2>
             <p>The Railway Recruitment Board (RRB) has announced the NTPC recruitment for 2026. One of the most common reasons for application rejection is the upload of incorrectly sized documents. For RRB NTPC, the portal usually requires scanned educational certificates and category certificates in PDF format within a specific size range, typically between 50KB to 300KB.</p>
             
-            <p>If your file is larger than this, the server will block the upload. Using PDFBazaar's <a href="/s/compress-pdf-to-100kb">100KB PDF Compressor</a>, you can ensure your document meets the strict railway standards while maintaining crystal clear readability for verification.</p>
+            <p>If your file is larger than this, the server will block the upload. Using PDFBazaar's <a href="/compress-pdf-without-losing-quality">Online PDF Compressor</a> (or our dedicated <a href="/s/compress-pdf-to-100kb">100KB PDF Compressor</a>), you can ensure your document meets the strict railway standards while maintaining crystal clear readability for verification.</p>
             
             <h3>Step-by-Step: Compressing PDF for RRB</h3>
             <ol>
@@ -39,6 +39,7 @@ export const BLOG_POSTS = [
             
             <h3>Is it safe?</h3>
             <p>At PDFBazaar, security is our top priority. Your password is never stored on our servers. The decryption happens in a secure environment, and all files are purged within one hour of processing. This makes it the safest way to handle your sensitive UIDAI documents.</p>
+            <p>Once your e-Aadhaar is unlocked, if you need to submit it to a portal with file size limits (such as EPFO KYC, scholarship portals, or state welfare schemes requiring files under 300KB), you can easily optimize it with our <a href="/compress-pdf-without-losing-quality">Compress PDF</a> tool.</p>
         `
     },
     {
@@ -253,7 +254,7 @@ export const BLOG_POSTS = [
                 <li>Dono photos select karein.</li>
                 <li>Convert karein aur result download karein.</li>
             </ol>
-            <p>Ye method bank account opening aur sim card purchase ke liye best hai.</p>
+            <p>Ye method bank account opening aur sim card purchase ke liye best hai. Agar convert karne ke baad PDF ka size portal limit (jaise 300KB) se bada ho jaye, toh hamare <a href="/compress-pdf-without-losing-quality">Compress PDF</a> tool se use turant resize kar sakte hain.</p>
         `
     },
     {
@@ -266,15 +267,20 @@ export const BLOG_POSTS = [
         category: "Career",
         content: `
             <h2>Documents Manage Karna Seekhein</h2>
-            <p>Exam preparation me documents upload karna ek bada task hai. In tools ko bookmark karein:</p>
+            <p>Sarkari recruitment portals jaise <strong>SSC, UPSC, Railway RRB, aur State Police</strong> par online form bharte waqt documents upload karna ek decisive step hota hai. Incorrect file format ya size exceeded hone par application reject ho sakti hai. In 5 zaroori tools ko bookmark karein:</p>
             <ol>
-                <li><strong>PDF Compressor:</strong> Sizes adjust karne ke liye.</li>
-                <li><strong>PDF Merger:</strong> Multiple documents ko ek portfolio banane ke liye.</li>
-                <li><strong>PDF to JPG:</strong> Mobile me documents save karne ke liye.</li>
-                <li><strong>Unlock PDF:</strong> Password protected IDs ko open karne ke liye.</li>
-                <li><strong>Word to PDF:</strong> Resume update karke save karne ke liye.</li>
+                <li><a href="/compress-pdf-without-losing-quality"><strong>PDF Compressor:</strong></a> Certificates aur marksheets ko official upload size (50KB se 300KB) ke mutabiq resize karne ke liye.</li>
+                <li><a href="/merge-pdf-online-free"><strong>PDF Merger:</strong></a> Multiple semester marksheets ya category proofs ko ek single combined PDF me jodne ke liye.</li>
+                <li><a href="/image-to-pdf-converter"><strong>JPG to PDF:</strong></a> Scanned photos aur certificates ko clean PDF documents me badalne ke liye.</li>
+                <li><a href="/unlock-pdf-password-remover"><strong>Unlock PDF:</strong></a> Password-protected e-Aadhaar ya e-PAN card se password permanently hatane ke liye taaki portal reject na kare.</li>
+                <li><a href="/passport-photo-maker"><strong>Passport Photo Maker:</strong></a> Official notification ke rules (3.5cm x 4.5cm, white background) ke mutabiq application photo banane ke liye.</li>
             </ol>
-            <p>Sare tools bilkul free hain <a href="/">PDFBazaar</a> par.</p>
+            <div style="margin:25px 0;padding:20px;background:#f8fafc;border-left:4px solid #E5322D;border-radius:8px;">
+                <p style="margin:0 0 10px;font-weight:700;color:#0f172a;">Sarkari Form भरते समय document size का error आ रहा है?</p>
+                <p style="margin:0 0 14px;color:#475569;font-size:14px;">Apne documents ko bina kisi blur ke 50KB–300KB range me compress karein.</p>
+                <a href="/compress-pdf-without-losing-quality" style="display:inline-block;padding:10px 20px;background:#E5322D;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px;">Free Document Compressor Kholein</a>
+            </div>
+            <p>PDFBazaar par ye sabhi tools 100% free hain aur browser me bina kisi registration ke kaam karte hain.</p>
         `
     },
     // --- 30 DAYS GROWTH CHALLENGE - APRIL 2026 ---
@@ -310,15 +316,20 @@ export const BLOG_POSTS = [
         category: "Student Guide",
         content: `
             <h2>Students Ke Liye Best PDF Platform</h2>
-            <p>Digital classes ke zamane me assignments manage karna mushkil kaam hai. Ye tools aapka kaam 2 minute me khatam kar denge:</p>
-            
+            <p>Digital classes, semester assignments, aur internship applications ke dauran documents manage karna har student ki daily requirement hai. In free tools se aap cyber cafe ke bina apne phone se hi kaam khatam kar sakte hain:</p>
             <ol>
-                <li><strong>PDFbazaar.com:</strong> Quick compression aur merging ke liye best.</li>
-                <li><strong>Google Drive:</strong> Textbooks save karne aur scan karne ke liye.</li>
-                <li><strong>Microsoft Lens:</strong> Clear notes scan karne ke liye.</li>
+                <li><a href="/merge-pdf-online-free"><strong>Merge PDF:</strong></a> Assignment sheets, lab reports, aur reference materials ko ek single PDF file me jodein.</li>
+                <li><a href="/compress-pdf-without-losing-quality"><strong>Compress PDF:</strong></a> Heavy PDFs ko college submission portal ya email attachment limit (under 25MB) ke andar layein.</li>
+                <li><a href="/pdf-to-word-converter"><strong>PDF to Word:</strong></a> Lecture notes aur study material se editable text nikalne ke liye.</li>
+                <li><a href="/pdf-editor"><strong>Free PDF Editor:</strong></a> Project reports me text, shapes, ya annotations add karne ke liye.</li>
+                <li><a href="/image-to-pdf-converter"><strong>JPG to PDF:</strong></a> Handwritten assignment copies ki photos ko ek clear PDF book banayein.</li>
             </ol>
-            
-            <p>Cyber cafe par ₹10-20 dene se bachne ke liye hamara <a href="/">All-in-One Dashboard</a> bookmark karein.</p>
+            <div style="margin:25px 0;padding:20px;background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;">
+                <p style="margin:0 0 8px;font-weight:700;color:#166534;">College Assignment ya Project PDF Merge Karna Hai?</p>
+                <p style="margin:0 0 12px;color:#15803d;font-size:14px;">Bina watermark aur bina login kiye multiple PDF files ko instantly combine karein.</p>
+                <a href="/merge-pdf-online-free" style="display:inline-block;padding:10px 20px;background:#22c55e;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;font-size:14px;">Merge PDF Tool Par Jayein</a>
+            </div>
+            <p>Cyber cafe par paise bachane ke liye hamare <a href="/merge-pdf-online-free">Merge PDF</a> aur <a href="/compress-pdf-without-losing-quality">Compress PDF</a> tools ko bookmark karein.</p>
         `
     },
     {
@@ -763,7 +774,7 @@ export const BLOG_POSTS = [
 
             <h2>PDF Files Jodne Ka Tarika (Step-by-Step)</h2>
             <ol>
-                <li><a href="/tool/merge-pdf">Merge PDF</a> page kholiye</li>
+                <li><a href="/merge-pdf-online-free">Merge PDF</a> page kholiye</li>
                 <li>Pehli PDF upload karein — "Select Files" click karein</li>
                 <li>"Add More" se baaki files add karein</li>
                 <li><strong>Drag and drop</strong> se order set karein</li>
@@ -772,7 +783,7 @@ export const BLOG_POSTS = [
             </ol>
 
             <h2>Mobile Se PDF Merge Kaise Kare?</h2>
-            <p>Android ya iPhone ke Chrome browser mein <strong>pdfbazaar.com/tool/merge-pdf</strong> kholein. Files phone gallery se select karein. Koi app download ki zarurat nahi.</p>
+            <p>Android ya iPhone ke Chrome browser mein <strong>pdfbazaar.com/merge-pdf-online-free</strong> kholein. Files phone gallery se select karein. Koi app download ki zarurat nahi.</p>
 
             <h2>FAQs — Merge PDF</h2>
             <h3>Q: Kya merge karne se quality kharab hoti hai?</h3>
@@ -780,15 +791,15 @@ export const BLOG_POSTS = [
             <h3>Q: Kitni files merge kar sakte hain?</h3>
             <p>Unlimited files — 2 ho ya 50, sab merge ho sakti hain.</p>
             <h3>Q: Kya password-protected PDF merge ho sakti hai?</h3>
-            <p>Pehle <a href="/tool/unlock-pdf">Unlock PDF</a> se password hatayein, phir merge karein.</p>
+            <p>Pehle <a href="/unlock-pdf-password-remover">Unlock PDF</a> se password hatayein, phir merge karein.</p>
             <h3>Q: Pages ka order change kar sakte hain?</h3>
             <p>Haan! Upload ke baad drag-and-drop se order set karein.</p>
 
             <h2>Related Tools</h2>
             <ul>
-                <li><a href="/tool/split-pdf">Split PDF</a> — PDF se pages alag karein</li>
-                <li><a href="/tool/compress-pdf">Compress PDF</a> — Merge ke baad size kam karein</li>
-                <li><a href="/tool/rotate-pdf">Rotate PDF</a> — Pages seedhe karein</li>
+                <li><a href="/split-pdf-online-free">Split PDF</a> — PDF se pages alag karein</li>
+                <li><a href="/compress-pdf-without-losing-quality">Compress PDF</a> — Merge ke baad size kam karein</li>
+                <li><a href="/rotate-pdf-pages-online">Rotate PDF</a> — Pages seedhe karein</li>
             </ul>
         `
     },
@@ -819,7 +830,7 @@ export const BLOG_POSTS = [
 
             <h2>JPG se PDF Banane Ka Step-By-Step Process</h2>
             <ol>
-                <li>Browser mein <a href="/tool/jpg-to-pdf">JPG to PDF</a> wale page par jayein.</li>
+                <li>Browser mein <a href="/image-to-pdf-converter">JPG to PDF</a> wale page par jayein.</li>
                 <li><strong>Select Files</strong> click karke gallery se wo sab photos select karein (ek saath).</li>
                 <li>Agar photos aage-peeche ho gayi hai toh unhe <strong>drag-and-drop</strong> karke theek order pe laga le.</li>
                 <li>Red button "Convert to PDF" click karein.</li>
@@ -838,7 +849,7 @@ export const BLOG_POSTS = [
             <h3>Q: Kya mai PNG image ko bhi convert kar sakta hu?</h3>
             <p>Ans: Haan, humare system (JPG to PDF) me aap JPG, JPEG aur PNG formats aaram se drag kr sakte ho.</p>
             <h3>Q: Bahut sari photos hai, kya size bada banega?</h3>
-            <p>Ans: Han, kyuki images combine hui hain. Lekin aap file banne ke baad humara <a href="/tool/compress-pdf">Compress PDF</a> tool use karke size chota kr sakte ho.</p>
+            <p>Ans: Han, kyuki images combine hui hain. Lekin aap file banne ke baad humara <a href="/compress-pdf-without-losing-quality">Compress PDF</a> tool use karke size chota kr sakte ho.</p>
             <h3>Q: Kya koi quality kharab hogi?</h3>
             <p>Ans: Bilkul nahi! Original image ka resolution freeze kr diaper lock kardiya jata hai. HD quality retain rehti hai.</p>
         `
@@ -869,7 +880,7 @@ export const BLOG_POSTS = [
 
             <h2>Permanently Password Hatane (Remove) ke Steps:</h2>
             <ol>
-                <li>Hamare 100% secure <a href="/tool/unlock-pdf">Unlock PDF</a> page par jayein.</li>
+                <li>Hamare 100% secure <a href="/unlock-pdf-password-remover">Unlock PDF</a> page par jayein.</li>
                 <li>System se apni locked format PDF (Aadhar/Pan/Bank) ko upload/drag karein.</li>
                 <li>Right side display mein System apse correct password (jo apko pehlese pta hai upar methods dwara) process run karne keliye maanghega.</li>
                 <li>Us document password ko type karke <strong>Unlock PDF</strong> dabayein.</li>
@@ -892,7 +903,7 @@ export const BLOG_POSTS = [
         content: `
             <h2>PDF Ko MS Word Mein Kaise Badle (Convert PDF to Word Online)</h2>
             <p>PDF ka aavishkar isliye hua tha taaki doosre computer par file ka "formatting" aur layout same rahe aur usme chhed-chaad na ho sake. Lekin kayi baar humein ek contract, menu card, ya company resume me aakhiri moment par chhota sa update (like mobile number change) krna hota hai. Wahan PDF edit karna nightmare (darawana) sabit hota hai.</p>
-            <p>Is problem ko permanently theek krne ke liye <a href="/tool/pdf-to-word">PDF to Word Converter</a> engine banaya gya hai. Aap isse use karke apni uss "Read-Only" PDF file ko phirse ek purane MS Word "doc/docx" frame me laakar 100% edit theek kr payenge.</p>
+            <p>Is problem ko permanently theek krne ke liye <a href="/pdf-to-word-converter">PDF to Word Converter</a> engine banaya gya hai. Aap isse use karke apni uss "Read-Only" PDF file ko phirse ek purane MS Word "doc/docx" frame me laakar 100% edit theek kr payenge.</p>
 
             <h2>Kyun Zaruri Hota Hai PDF ko Word me Change Krna?</h2>
             <ul>
@@ -903,7 +914,7 @@ export const BLOG_POSTS = [
 
             <h2>Best Guide to Switch PDF format to DOCX:</h2>
             <ol>
-                <li>Hmari free service wali website par <a href="/tool/pdf-to-word">PDF to Word</a> generator me click krein.</li>
+                <li>Hmari free service wali website par <a href="/pdf-to-word-converter">PDF to Word</a> generator me click krein.</li>
                 <li>Ek "Upload file" icon ka use karte hue system folder me se apni document daalo.</li>
                 <li>Converter cloud engine chalega (10 to 15 seconds), aur server OCR AI aapki margins aur graphics copy kr lega.</li>
                 <li>Button dikhega - Microsoft DOCX ko PC ya handset storage pe download karke aaraam se <strong>Edit</strong> karein!</li>
@@ -916,7 +927,7 @@ export const BLOG_POSTS = [
             <h3>Q: Kya mai Scanned PDF se text nikaal sakta hun?</h3>
             <p>Ans: Nahi. Scanned (Photo khinchi huyi) books images hoti hain. Text only extractable jabhi hoga dosto jab wo text real ho. Photo extract image editor me dikhegi.</p>
             <h3>Q: Password lagi PDF modify ho payegi kya?</h3>
-            <p>Ans: First us file ko security shield hatao hamare free <a href="/tool/unlock-pdf">Unlock PDF</a> function dakar, aur uske open file ban ne k bad direct edit conversion shuru kardena.</p>
+            <p>Ans: First us file ko security shield hatao hamare free <a href="/unlock-pdf-password-remover">Unlock PDF</a> function dakar, aur uske open file ban ne k bad direct edit conversion shuru kardena.</p>
         `
     },
     // --- 6. SPLIT PDF ---
@@ -931,7 +942,7 @@ export const BLOG_POSTS = [
         content: `
             <h2>PDF File Ko Bich Me Se Cut/Split Kaise Kare? (Extract Pages)</h2>
             <p>Maan lijiye aapke pass ek Bank account ki 12 monthly Statements ki badi PDF file mail par aai he, jo almost 50-60 page lambi hoti hai. C.A. office se demand hui hai ki sirf financially relevant pichle mahine ke transaction pages (jaise pages 45 to 48) provide karein.</p>
-            <p>Kaise aap ek bade pahaad jaesi book file mein se sirf "woh specific kaagaz" baahar nikalenge aur dusron se hide krenge? Yahan istemaal mei aata hai — <strong><a href="/tool/split-pdf">PDF Splitting Tool</a></strong>, jo bilkul ek sharp virtual blade ki tarah sirf wahi pages file root se trim kar leta hai.</p>
+            <p>Kaise aap ek bade pahaad jaesi book file mein se sirf "woh specific kaagaz" baahar nikalenge aur dusron se hide krenge? Yahan istemaal mei aata hai — <strong><a href="/split-pdf-online-free">PDF Splitting Tool</a></strong>, jo bilkul ek sharp virtual blade ki tarah sirf wahi pages file root se trim kar leta hai.</p>
 
             <h2>Kab-Kab Split-Extract Feature Kaam Aata He?</h2>
             <ul>
@@ -942,7 +953,7 @@ export const BLOG_POSTS = [
 
             <h2>PDF File Se Important Page Extract (Nikalne) Ka Process:</h2>
             <ol>
-                <li>Website pe available free engine <strong><a href="/tool/split-pdf">Split PDF</a></strong> button ko dabein.</li>
+                <li>Website pe available free engine <strong><a href="/split-pdf-online-free">Split PDF</a></strong> button ko dabein.</li>
                 <li>Phone memory me se apni bohut badi bulk book upload platform pr drop karde.</li>
                 <li>Aap input option screen board pr dekhenge. Jo panno chahiye, uski value feed krdein. For Example: Yadi apko page number "5" se lekar page number "12" alag krne ha, to dakhil krdein "5-12". Aur agar page 3 extra ha, comma lagaye "5-12, 18".</li>
                 <li><strong>Split PDF</strong> button execute/puch press kr do.</li>
@@ -976,7 +987,7 @@ export const BLOG_POSTS = [
 
             <h2>How to Encrypt PDF Online with PDFbazaar.com</h2>
             <ol>
-                <li>Click karein: <a href="/tool/protect-pdf">Protect PDF Tool</a> page par.</li>
+                <li>Click karein: <a href="/protect-pdf-with-password">Protect PDF Tool</a> page par.</li>
                 <li><strong>Select File</strong> par click karke apni file choose karein.</li>
                 <li>Right panel mein apna strong <strong>Password</strong> type karein (Jaise: Ramesh@2024).</li>
                 <li>"Protect PDF" button push karein.</li>
@@ -1009,7 +1020,7 @@ export const BLOG_POSTS = [
 
             <h2>Step By Step Deletion Procedure:</h2>
             <ol>
-                <li>Homepage se chunye <a href="/tool/delete-pdf-pages">Delete PDF Pages</a> application.</li>
+                <li>Homepage se chunye <a href="/delete-pdf-pages-online">Delete PDF Pages</a> application.</li>
                 <li>File upload krein jiske pages theek krne ho.</li>
                 <li>Graphic UI mein sab pages ke thumbnails view hongey. Jis page ko nikalna ho, uskey <strong>Trash icon</strong> par click kr dein.</li>
                 <li>"Apply Changes" ya "Delete Pages" hit kre aur cleaned final copy download marlein.</li>
@@ -1041,7 +1052,7 @@ export const BLOG_POSTS = [
 
             <h2>Converter Tools Settings and Steps:</h2>
             <ol>
-                <li>Enter karein hamare fast <a href="/tool/word-to-pdf">Word To PDF</a> web page me.</li>
+                <li>Enter karein hamare fast <a href="/word-to-pdf-converter">Word To PDF</a> web page me.</li>
                 <li>MS Word file (.doc ya .docx) choose karke drag N drop karein.</li>
                 <li>Processing Server chalega.. and 3 seconds mei LibreOffice render backend pure tables n design render mar dega.</li>
                 <li>Convert Push karke "Safe PDF result" save kijiye.</li>
@@ -1060,7 +1071,7 @@ export const BLOG_POSTS = [
         content: `
             <h2>Bina Print Nikale PDF par Signature Attach Karna (E-Sign PDF Free)</h2>
             <p>Purana time consume approach tha ki aap paper ka print nikalein, kaale ya neele pen se actual signature karein, us page ko mobile app ya flatbed se scan karein aur vapsi send krein. Ye process ghumav-daar aur slow ha, khas torkr ek remote job ya WFH employee k perspectvie se.</p>
-            <p>Modern fast track time mein electronic overlay signatures seedha screen ke upar digitally touch pen se mark kiye jate hain. PDFbazaar ka <strong><a href="/tool/sign-pdf">Sign PDF Tool</a></strong> apko ek interactive or real paper smooth interface platform deta hai app-free browser mein.</p>
+            <p>Modern fast track time mein electronic overlay signatures seedha screen ke upar digitally touch pen se mark kiye jate hain. PDFbazaar ka <strong><a href="/sign-pdf">Sign PDF Tool</a></strong> apko ek interactive or real paper smooth interface platform deta hai app-free browser mein.</p>
 
             <h2>Digital aur E-Stamp E-Signatures lgane k tarike:</h2>
             <ul>
@@ -1088,7 +1099,7 @@ export const BLOG_POSTS = [
 
             <h2>Excel Scaling - Auto Margin Cut Problem Fix:</h2>
             <p>Normal print feature ka ek bahut bada failure dekhiye : Sheet print nikalne par huge table aadha page 1 me print hta hai ayr thoda bacha hua data page 2 per fail kar khich jaata ha.</p>
-            <p>Iss confusion se chutkary ke lia ap directly <a href="/tool/excel-to-pdf">Excel to PDF Tool</a> module visit karin. Automatic Libre-Office based "Fit to Page Width" scaling run hoti hai background pe jo apke har possible chart and grids ko scale compress and wrap fit manage krti hai.</p>
+            <p>Iss confusion se chutkary ke lia ap directly <a href="/excel-to-pdf-converter">Excel to PDF Tool</a> module visit karin. Automatic Libre-Office based "Fit to Page Width" scaling run hoti hai background pe jo apke har possible chart and grids ko scale compress and wrap fit manage krti hai.</p>
 
             <h2>Steps convert Spreadsheet XLSX to HD Scale PDF:</h2>
             <ol>
@@ -1122,7 +1133,7 @@ export const BLOG_POSTS = [
 
             <h2>Convert (PPT to PDF) process in Detail:</h2>
             <ol>
-                <li>Chrome Browser mein PDFbazaar.com open karein aur <a href="/tool/ppt-to-pdf">PPT to PDF Tool</a> module select karein.</li>
+                <li>Chrome Browser mein PDFbazaar.com open karein aur <a href="/ppt-to-pdf-converter">PPT to PDF Tool</a> module select karein.</li>
                 <li>Apni school, college ya workplace presentation (jinme extension .ppt ya .pptx h) drop-box canvas mei upload chodein.</li>
                 <li>Hmara dedicated converter Cloud logic un slides rendering generate karega. Graphics down-scale and embedment hoti he.</li>
                 <li>2-4 seconds mein complete report slides ki tarah exact high-definition PDF ready-to-save mil jayega!</li>
@@ -1152,7 +1163,7 @@ export const BLOG_POSTS = [
 
             <h2>Steps HTML Layout (.html code) ko Convert karne ke liye:</h2>
             <ol>
-                <li>Click karein us section par jiska URL point: <a href="/tool/html-to-pdf">HTML to PDF</a> Engine he.</li>
+                <li>Click karein us section par jiska URL point: <a href="/html-to-pdf">HTML to PDF</a> Engine he.</li>
                 <li>Is tool mei input do form mei hoga: Ya to Live URL paste karein "https://example.com" or apni local script source file '.html' extension me add karein.</li>
                 <li>Convert Command Push karein aur Wait for rendering browser bot jisse wo DOM trees calculate kr sake.</li>
                 <li>10 Seconds maximum k baad bilkul crisp margins ke sath multiple PDF generated document download kar lein.</li>
@@ -1179,7 +1190,7 @@ export const BLOG_POSTS = [
 
             <h2>Steps to get Tabular Numbers in Editable Sheet:</h2>
             <ol>
-                <li>Launch tool engine window from here: <a href="/tool/pdf-to-excel">PDF to Excel Converter</a> link.</li>
+                <li>Launch tool engine window from here: <a href="/pdf-to-excel-converter">PDF to Excel Converter</a> link.</li>
                 <li>(Optional) Yadi file lock wali hai toh hamara Free Unlock PDF feature pehle password decrypt krega file ko.</li>
                 <li>Wo invoice ya bank records file system box pr supply krein.</li>
                 <li>Export Command fire karein aur "Mathematical formatting retention" phase tak intzaar kriyen.</li>
@@ -1202,7 +1213,7 @@ export const BLOG_POSTS = [
             <p>Aisi situations me automated technology ka benefit li jaye. PDFbazaar.com conversion script definitely aapka valuable office samay bacha sakta hai bina thakaan k.</p>
 
             <h2>How does PDF switch back into Editable PPT Slides?</h2>
-            <p>Aap jesy function on krtye hai, hamara <a href="/tool/pdf-to-ppt">PDF to PPT Tool</a> directly "OCR (Optical Character Recognition)" ka advance logic implement krke paragraphs font sizes aur image positions mathematically calculate karta hai.</p>
+            <p>Aap jesy function on krtye hai, hamara <a href="/pdf-to-ppt-converter">PDF to PPT Tool</a> directly "OCR (Optical Character Recognition)" ka advance logic implement krke paragraphs font sizes aur image positions mathematically calculate karta hai.</p>
             <p>Fir un elements aur data block containers ko standard Microsoft PowerPoint (.PPTX) slide shapes block me auto-allocate (bitha) deta hai. Header h1 convert hoga Slide Title me, aur text paragraph paragraph body element me!</p>
 
             <h2>Guide PDF to Slides Extraction process:</h2>
@@ -1229,7 +1240,7 @@ export const BLOG_POSTS = [
             <p>Screenshots lene se image ki phat jati hai (quality zero ho jati hai). Screenshot crop karne me bhi time waste hota hai.</p>
 
             <h2>Do Tarike ke Use Cases - Convert vs Extract:</h2>
-            <p>PDFbazaar ka <a href="/tool/pdf-to-jpg">PDF to JPG Tool</a> aapki dono practical problems ko solve karne ke liye 2 options deta hai:</p>
+            <p>PDFbazaar ka <a href="/pdf-to-jpg-converter">PDF to JPG Tool</a> aapki dono practical problems ko solve karne ke liye 2 options deta hai:</p>
             <ul>
                 <li><strong>1. Page to JPG (Convert Everything):</strong> Agar PDF me 10 pages ki book hai, toh tool un sabhi 10 panno ka screen-capture lega ultra-high HD resolution mein, aur aapko 10 alag-alag photos (.JPG) de dega. Good for: Notes or WhatsApp Image sharing.</li>
                 <li><strong>2. Extract Images (Nikalna):</strong> Agar PDF file me text bhi likha hai aur beech me ek choti photo chipki hui hai.. Toh tool sirf us photo ko asli original size aur quality me baahar cheer (extract) nikal dega bina kisi text ke. Good for: Form filling and Designer assets.</li>
@@ -1259,7 +1270,7 @@ export const BLOG_POSTS = [
             <p>Digital content ki chori aaj ke time pe bohut common aur dukhad issue hai. Agar aap ek tuition teacher hain jo mehnat se banaye hue notes bachon ko PDF bana kar bhejte hain, ya business agent jo quotations share karta hai, toh uspar apna ya company ka naam as a <strong>Watermark</strong> mark chipkana behad aavashyak hai — taki koi uspar apna naam na likh sake.</p>
 
             <h2>Watermarking Ke Customization Features:</h2>
-            <p>Hamare in-browser <a href="/tool/add-watermark">Add Watermark</a> utility engine aapko bahut deep aur secure customization parameters provde karta hai.</p>
+            <p>Hamare in-browser <a href="/add-watermark-to-pdf">Add Watermark</a> utility engine aapko bahut deep aur secure customization parameters provde karta hai.</p>
             <ul>
                 <li><strong>Custom Text:</strong> Aap text frame me kuch bhi label bharyien jaise "Do Not Copy", "Confidential", ya "Property of XYZ".</li>
                 <li><strong>Transparency Setup:</strong> Watermark kitna gehra (Solid black) ya kitna halka (Greyish ghost) dikhna chahiye, opacity slider se manually select karein taki text ke peeche ki likhavat na daabe.</li>
@@ -1291,7 +1302,7 @@ export const BLOG_POSTS = [
             <p>Aam zindagi mei, aam office worker ko normal general editing like spelling error theek karna, kisi purane form number par whitenar (white rectangle shape) pherr kar uska naya invoice number likhne ki aam zarurat padti hai.</p>
 
             <h2>Hmara Editor Tool Kaise Work Karta Hai?</h2>
-            <p>Humne aapke web-browser (Chrome/Edge) ke andar hi directly MS Paint aur MS Word ke modern mila-jula mixture wala ek solid <strong><a href="/tool/edit-pdf">Edit PDF Engine</a></strong> create kar diya hai.</p>
+            <p>Humne aapke web-browser (Chrome/Edge) ke andar hi directly MS Paint aur MS Word ke modern mila-jula mixture wala ek solid <strong><a href="/pdf-editor">Edit PDF Engine</a></strong> create kar diya hai.</p>
             
             <h3>Powerful Top PDF Editing Features Provided:</h3>
             <ul>
@@ -1320,7 +1331,7 @@ export const BLOG_POSTS = [
             <p>Aisi lock image wale text/pixels ko samajhne aur bahar nikalney ka kamaal system he <strong>OCR (Optical Character Recognition)</strong> karta hai.</p>
 
             <h2>Ai Driven Optical Character Processing</h2>
-            <p>Server based powerful AI pattern algorithms <a href="/tool/ocr-pdf">OCR PDF Tool</a> aapki picture file me jaha-jaha alphabets, lines aur shapes hongi unko as a machine character pehchanta hai, aur background image delete karky use actual universal searchable font me replace or translate karta hai.</p>
+            <p>Server based powerful AI pattern algorithms <a href="/ocr-pdf-searchable-text">OCR PDF Tool</a> aapki picture file me jaha-jaha alphabets, lines aur shapes hongi unko as a machine character pehchanta hai, aur background image delete karky use actual universal searchable font me replace or translate karta hai.</p>
             
             <h3>Text Nikalney (Convert Scanned PDF to Txt) ka Method:</h3>
             <ol>
@@ -1345,7 +1356,7 @@ export const BLOG_POSTS = [
             <p>Kayi baar Internet (university portal ya forum) se download ki gayi research material PDF eBook files ya research papers mein pages ke chaaron kinaro (edges) par bohut saari khaali extra space (white margin border) waste ho ri hoti hai. Issey pareshani tb hoti hy jab hum ussi document ko chote screen wali mobile device Kindle me zoom out krty hain.. to text font bahut small / microscopic lagte hain.</p>
             
             <h3>What is PDF Cropping Tool?</h3>
-            <p>By utilizing the feature rich <a href="/tool/crop-pdf">Crop PDF Tool</a> by PDFbazaar, aap un unused useless background safed borders ko blade box tool ki tarah highlight crop out mar/remove sakte ho. File trim hojaty he aur directly fit to Screen frame resize hoti hai. (Paper printing aur saving k respect mai bhi ink expenditure kam padhta hy). </p>
+            <p>By utilizing the feature rich <a href="/crop-pdf-online-free">Crop PDF Tool</a> by PDFbazaar, aap un unused useless background safed borders ko blade box tool ki tarah highlight crop out mar/remove sakte ho. File trim hojaty he aur directly fit to Screen frame resize hoti hai. (Paper printing aur saving k respect mai bhi ink expenditure kam padhta hy). </p>
 
             <h2>PDF Page Frame Ko Chhota (Trimming) Krney ke Steps:</h2>
             <ol>
@@ -1379,7 +1390,7 @@ export const BLOG_POSTS = [
 
             <h2>Steps to Scale and Change PDF Base Ratio (A4/Legal) size:</h2>
             <ol>
-                <li>Hamary resizing engine <a href="/tool/resize-pdf">Resize PDF Tool</a> widget k andar pravesh krein.</li>
+                <li>Hamary resizing engine <a href="/resize-pdf-page-size">Resize PDF Tool</a> widget k andar pravesh krein.</li>
                 <li>Galti wali measurement file select marain device se.</li>
                 <li>List setting panel dekte huay Output format type ("A4" ya "Legal Size" or "US-Letter") mention/lock krke resize action shuru kr de.</li>
                 <li>Platform 5 sec calculation k bad, margin aspect ratio globally adjust karti hui dimension correctly apply kr dega.. ready for flawless stamping!</li>
@@ -1408,7 +1419,7 @@ export const BLOG_POSTS = [
 
             <h2>How to Reorder (Aage-peeche) Document sheets step-by-step:</h2>
             <ol>
-                <li>App section me navigation option  <a href="/tool/organize-pdf">Organize PDF Suite</a> me apni file drop/bhejte hi, ek visual block grid UI screen par on ho jata hai.</li>
+                <li>App section me navigation option  <a href="/organize-pdf-pages">Organize PDF Suite</a> me apni file drop/bhejte hi, ek visual block grid UI screen par on ho jata hai.</li>
                 <li>Bade screen box mein saare panney Thumbnails cards k tarh deksko ge.</li>
                 <li>Un grid images blocks (thumbnails) ko mouse pointer/mobile touch se long-hold karke unki true appropriate location/index position par <strong>drag karke place drop</strong> (chhodein) karein.</li>
                 <li>Sequence fully theek krne ke bad "Apply Organization" trigger start kr de, and boom aapka file sequence complete error-free ban ke wapas aa jata hai without heavy memory size!</li>
@@ -1432,7 +1443,7 @@ export const BLOG_POSTS = [
             <h2>Permanent Seedha PDF Banane Ka Fix Tarika:</h2>
             <ul>
                 <li>Iska fix Temporary View Rotation nhi.. balkay Core File structure me Base rotation lock krwane par possible hga.</li>
-                <li>Go inside the <a href="/tool/rotate-pdf">Rotate PDF Server Tool</a> module application yahan.</li>
+                <li>Go inside the <a href="/rotate-pdf-pages-online">Rotate PDF Server Tool</a> module application yahan.</li>
                 <li>Targeted file dalkar, sab thumbnails me se faulty tedi page picture select karien. Sab ko bhi select kia ja skta ha.</li>
                 <li>Uspar Circle buttons click kren and <strong>permanently correct save angle</strong> (Jaise Turn Right-90 Degree , Left-90 Degree, ya invert 180) command mention krke export render process chalu kardein!</li>
                 <li>Resultant copy base-code humesha hi sahi screen aspect ratio aur viewing angle display retain kregi hamesha!</li>

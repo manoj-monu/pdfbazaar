@@ -7,7 +7,7 @@ import { ChevronRight, Zap, Shield, Globe } from 'lucide-react';
 const getToolSpecificKeywords = (toolId, toolName) => {
     const variations = {
         'compress-pdf': [
-            'compress pdf below 100kb free', 'compress pdf below 200kb online', 'compress pdf below 500kb free', 'compress pdf below 1mb free', 'compress pdf below 2mb online', 'compress pdf file size online free', 'compress pdf without losing quality', 'compress pdf without watermark', 'compress pdf for email free', 'compress pdf for whatsapp', 'compress pdf online no sign up', 'compress pdf online no limit', 'compress large pdf file free', 'reduce pdf size online free', 'reduce pdf file size without losing quality', 'reduce pdf size below 1mb', 'reduce pdf size for email', 'reduce pdf mb online', 'make pdf file smaller online free', 'shrink pdf file size free', 'pdf size kam kaise kare', 'pdf compress kaise kare free mein', 'pdf ka size kaise kam kare', 'pdf compress karna hai', 'pdf size reduce karna hai free', 'compress pdf 10mb to 1mb free', 'compress pdf 5mb to 500kb', 'best free pdf compressor online', 'pdf compressor without upload', 'compress pdf in browser', 'pdf compress kaise kare', 'whatsapp ke liye pdf compress kaise kare', 'email ke liye pdf size kam kaise kare', 'pdf compress karna hai without watermark', 'pdf 1mb se kam karna hai', 'pdf compress tool india free'
+            'sarkari pdf', 'compress aadhar', 'aadhar card 300 kb pdf online', 'compress aadhar card pdf', 'sarkari pdf compressor', 'compress pdf to 300kb online', 'compress pdf below 100kb free', 'compress pdf below 200kb online', 'compress pdf below 500kb free', 'compress pdf below 1mb free', 'compress pdf below 2mb online', 'compress pdf file size online free', 'compress pdf without losing quality', 'compress pdf without watermark', 'compress pdf for email free', 'compress pdf for whatsapp', 'compress pdf online no sign up', 'compress pdf online no limit', 'compress large pdf file free', 'reduce pdf size online free', 'reduce pdf file size without losing quality', 'reduce pdf size below 1mb', 'reduce pdf size for email', 'reduce pdf mb online', 'make pdf file smaller online free', 'shrink pdf file size free', 'pdf size kam kaise kare', 'pdf compress kaise kare free mein', 'pdf ka size kaise kam kare', 'pdf compress karna hai', 'pdf size reduce karna hai free', 'compress pdf 10mb to 1mb free', 'compress pdf 5mb to 500kb', 'best free pdf compressor online', 'pdf compressor without upload', 'compress pdf in browser', 'pdf compress kaise kare', 'whatsapp ke liye pdf compress kaise kare', 'email ke liye pdf size kam kaise kare', 'pdf compress karna hai without watermark', 'pdf 1mb se kam karna hai', 'pdf compress tool india free'
         ],
         'merge-pdf': [
             'merge pdf files online free', 'merge pdf without watermark', 'merge pdf online no sign up', 'merge pdf files into one free', 'combine pdf files online free', 'combine two pdf files free', 'combine multiple pdf into one', 'join pdf files online free', 'join two pdf online free', 'merge pdf india free', 'pdf merge karna hai free mein', '2 pdf ko ek mein kaise jode', 'pdf files ko merge kaise kare', 'pdf jodna hai free mein', 'pdf combine kaise kare', 'merge pdf no limit free', 'merge pdf without login', 'merge pdf files free download', 'best free pdf merger online', 'pdf merger online unlimited', 'merge scanned pdf files free', 'merge pdf and images online free', 'combine pdf pages online', 'merge pdf files in order free', 'online pdf combiner no watermark', 'pdf combine karna hai', 'free pdf joiner online', 'merge pdf files fast free', 'pdf merger without size limit', 'pdf merge kaise kare', 'pdf kaise combine kare', 'add pages to pdf online free', 'pdf merge tool india free'
@@ -67,6 +67,7 @@ const getDynamicContent = (toolId, toolName) => {
             intro: deep.intro,
             section1: { title: deep.section1_title, content: deep.section1_content },
             section2: { title: deep.section2_title, content: deep.section2_content },
+            section3: deep.section3_title ? { title: deep.section3_title, content: deep.section3_content } : null,
             faqs: deep.faq
         };
     }
@@ -174,6 +175,15 @@ const ToolSEOArticle = ({ toolId, toolName }) => {
                     </h3>
                     <div style={{ whiteSpace: 'pre-line' }}>{formatText(content.section2.content)}</div>
                 </section>
+
+                {content.section3 && (
+                    <section style={{ padding: '30px 40px', background: '#f8fafc', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                        <h3 style={{ fontSize: '20px', color: '#0f172a', marginBottom: '16px', fontWeight: '800' }}>
+                            {content.section3.title}
+                        </h3>
+                        <div style={{ whiteSpace: 'pre-line', color: '#475569', fontSize: '14px', lineHeight: '1.7' }}>{formatText(content.section3.content)}</div>
+                    </section>
+                )}
             </div>
 
             {/* Feature Highlights with icons */}

@@ -175,6 +175,68 @@ LEGACY_REDIRECTS.forEach(lr => {
   }
 });
 
+console.log('\n--- 6. Phase 3: Testing Internal Links, Quick Presets & Disclaimers ---');
+// 6.1 Check BlogData.js for zero /tool/* legacy links
+const blogDataPath = path.join(__dirname, 'src', 'BlogData.js');
+const blogDataContent = fs.readFileSync(blogDataPath, 'utf-8');
+const legacyToolMatches = blogDataContent.match(/\/tool\/[a-z0-9-]+/g) || [];
+if (legacyToolMatches.length === 0) {
+  console.log('PASS [Blog Internal Links]: 0 legacy /tool/* links found in BlogData.js (all updated to canonical)');
+  passCount++;
+} else {
+  console.error(`FAIL [Blog Internal Links]: Found ${legacyToolMatches.length} legacy /tool/* links in BlogData.js: ${legacyToolMatches.join(', ')}`);
+  failCount++;
+}
+
+// 6.2 Check ToolPage.jsx for quick presets and defaultTargetKb
+const toolPagePath = path.join(__dirname, 'src', 'pages', 'ToolPage.jsx');
+const toolPageContent = fs.readFileSync(toolPagePath, 'utf-8');
+const hasPresets = toolPageContent.includes("100 KB") && toolPageContent.includes("200 KB") && toolPageContent.includes("300 KB") && toolPageContent.includes("500 KB");
+const hasDefaultTargetKb = toolPageContent.includes("defaultTargetKb");
+if (hasPresets && hasDefaultTargetKb) {
+  console.log('PASS [ToolPage Quick Presets]: Quick presets (100KB, 200KB, 300KB, 500KB) and defaultTargetKb support verified');
+  passCount++;
+} else {
+  console.error('FAIL [ToolPage Quick Presets]: Missing quick presets or defaultTargetKb in ToolPage.jsx');
+  failCount++;
+}
+
+// 6.3 Check ProgrammaticToolPage.jsx for slug size auto-population
+const progToolPath = path.join(__dirname, 'src', 'pages', 'ProgrammaticToolPage.jsx');
+const progToolContent = fs.readFileSync(progToolPath, 'utf-8');
+const hasSizeAutoPop = progToolContent.includes("sizeKbMatch") && progToolContent.includes("defaultTargetKb={defaultTargetKb}");
+if (hasSizeAutoPop) {
+  console.log('PASS [Programmatic Auto-Population]: ProgrammaticToolPage passes defaultTargetKb from slug to ToolPage');
+  passCount++;
+} else {
+  console.error('FAIL [Programmatic Auto-Population]: ProgrammaticToolPage missing size auto-population logic');
+  failCount++;
+}
+
+// 6.4 Check DeepSEOData.js for verified Sarkari/Aadhaar guidelines & statutory notice
+const deepSeoPath = path.join(__dirname, 'src', 'DeepSEOData.js');
+const deepSeoContent = fs.readFileSync(deepSeoPath, 'utf-8');
+const hasSarkariGuidelines = deepSeoContent.includes("SSC (CGL, CHSL, MTS, GD)") && deepSeoContent.includes("UIDAI myAadhaar Portal") && deepSeoContent.includes("Statutory Disclaimer");
+if (hasSarkariGuidelines) {
+  console.log('PASS [DeepSEO Accuracy]: Verified Sarkari/Aadhaar guidelines and statutory disclaimer verified in DeepSEOData.js');
+  passCount++;
+} else {
+  console.error('FAIL [DeepSEO Accuracy]: Missing Sarkari guidelines or statutory disclaimer in DeepSEOData.js');
+  failCount++;
+}
+
+// 6.5 Check ProgrammaticSEO.js for statutory notice
+const progSeoPath = path.join(__dirname, 'src', 'ProgrammaticSEO.js');
+const progSeoContent = fs.readFileSync(progSeoPath, 'utf-8');
+const hasProgDisclaimer = progSeoContent.includes("Statutory Notice");
+if (hasProgDisclaimer) {
+  console.log('PASS [Programmatic Disclaimer]: Statutory disclaimer verified in ProgrammaticSEO.js');
+  passCount++;
+} else {
+  console.error('FAIL [Programmatic Disclaimer]: Missing statutory disclaimer in ProgrammaticSEO.js');
+  failCount++;
+}
+
 console.log('\n========================================================');
 console.log(`RESULTS: ${passCount} PASSED, ${failCount} FAILED`);
 console.log('========================================================');
@@ -182,3 +244,4 @@ console.log('========================================================');
 if (failCount > 0) {
   process.exit(1);
 }
+

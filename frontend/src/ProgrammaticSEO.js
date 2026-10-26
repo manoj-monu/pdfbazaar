@@ -107,6 +107,10 @@ const generateHumanLikeContent = (keyword, toolName, specValue) => {
             </div>
 
             <p>In summary, PDFBazaar is the most comprehensive, secure, and user-friendly platform for <strong>${keyword}</strong>. We invite you to explore our other tools like <strong>PDF to JPG</strong>, <strong>Unlock PDF</strong>, and <strong>Add Watermark</strong> to experience the full power of our document management suite. Thank you for choosing PDFBazaar—together, let's make your digital journey smoother and more successful.</p>
+
+            <div style="margin-top: 32px; padding: 18px 24px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 13px; color: #64748b; line-height: 1.6;">
+                <strong>Statutory Notice:</strong> PDFBazaar is an independent web utility and is NOT affiliated with, endorsed by, or associated with UIDAI, EPFO, Staff Selection Commission (SSC), Union Public Service Commission (UPSC), or any government department. All document processing utilizes end-to-end SSL encryption, and temporary files on the processing server are automatically and permanently deleted within 60 minutes.
+            </div>
         </div>
     `;
 };

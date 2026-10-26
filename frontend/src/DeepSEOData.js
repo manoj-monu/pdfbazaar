@@ -21,24 +21,32 @@ export const DEEP_SEO_CONTENT = {
         ]
     },
     'compress-pdf': {
-        h1: "Compress PDF Under 100KB (Free & No Login) – PDFBazaar",
-        intro: `PDF size kam karna ek aam problem hai, khas karke jab aapko koi document email karna ho ya kisi government job portal par upload karna ho. Aksar portals par 200KB ya 500KB ki limit hoti hai. Hamara **Compress PDF online** tool is tension ko hamesha ke liye khatam kar deta hai. 
-        
-        Hum advanced compression algorithms ka use karte hain jo PDF ke metadata aur unwanted elements ko remove karte hain bina text ki quality bigade. Aap "Extreme", "Recommended", ya "Less" compression modes mein se choose kar sakte hain. Hamara specialized target-size feature aapko allow karta hai ki aap exact '100KB' ya '500KB' jaisa goal set karein.`,
-        section1_title: "Why Compress PDF on PDFbazaar?",
-        section1_content: `*   **Perfect for Job Portals:** SSC, Banking, and Railway forms ke liye optimized compression.
-*   **Target Size Feature:** Aap manually size set kar sakte hain (e.g. compress under 100kb).
-*   **Privacy Guaranteed:** Aapki files download karne ke 1 ghante baad automatically delete ho jati hain.
-*   **No Watermark:** Hum log bilkul free service dete hain bina kisi hidden watermark ke.`,
-        section2_title: "PDF Size Kam Kaise Karein? (Steps to Compress)",
-        section2_content: `1.  **Upload:** Apni heavy PDF file upload karein.
-2.  **Settings:** Apna desired compression level select karein (Recommended is best for general use).
-3.  **Target (Optional):** Agar portal ki strict limit hai, toh target size box mein value likhein.
-4.  **Compress & Download:** Click karein aur 2 seconds mein compressed file hasil karein.`,
+        h1: "Compress PDF Online Without Losing Quality (Free & Secure) – PDFBazaar",
+        intro: `PDF size kam karna ek zaroori zaroorat hai, khas taur par jab aapko koi document Sarkari exam portals (SSC, UPSC, RRB), bank KYC, ya online forms par upload karna ho. Aksar portals par 100KB, 200KB, ya 300KB ki strict limit hoti hai. Hamara **Compress PDF online** tool in technical limits ko pura karne ke liye surgically optimized hai.
+
+Hum multi-layer Ghostscript aur smart downsampling use karte hain jo metadata aur excessive DPI ko optimize karta hai bina text ki sharpness bigade. Chahe aapko scanned marksheet compress karni ho ya Aadhaar card copy, aap quick preset buttons (100KB, 200KB, 300KB, 500KB) se 1-click me target set kar sakte hain.`,
+        section1_title: "Sarkari Exams & Government Portal Upload Guidelines (Verified)",
+        section1_content: `*   **SSC (CGL, CHSL, MTS, GD):** Scanned educational certificates aur caste certificates strictly **50KB se 300KB** ke beech hone chahiye (PDF format).
+*   **UPSC (Civil Services, NDA, CDS):** Identity aur qualification documents **20KB se 300KB** PDF format me required hote hain.
+*   **Railway RRB (NTPC, Group D):** Community certificates aur documents usually **50KB se 300KB** accept kiye jate hain.
+*   **State Police (UPPRPB, Bihar Police):** Domicile aur category certificates strictly **20KB se 200KB** range me upload karne hote hain.
+*   **EPFO Member Portal (KYC / Joint Declaration):** Supporting PDF documents historical upload modules me **under 300KB to 500KB** require karte hain.
+*   **UIDAI myAadhaar Portal:** Proof of Identity (POI) aur Proof of Address (POA) updates ke liye JPEG, PNG, ya PDF format me maximum **2MB** tak allow karta hai.
+*   **Password-Protected e-Aadhaar Notice:** UIDAI se downloaded e-Aadhaar PDF par 8-character password laga hota hai. Government application portals password-protected files reject kar dete hain. Upload karne se pehle hamare [Unlock PDF](/unlock-pdf-password-remover) tool se password zaroor hatayein.`,
+        section2_title: "Step-by-Step: PDF Compress Kaise Karein?",
+        section2_content: `1.  **Upload:** Apni heavy PDF file upload karein (scanned documents, certificates, ya IDs).
+2.  **Quick Preset Chunein:** Sidebar me se 100 KB, 200 KB, 300 KB, ya 500 KB preset button dabayein, ya custom target size likhein.
+3.  **Compress:** Red "Compress PDF" button par click karein. Multi-pass engine instant processing shuru karega.
+4.  **Download & Verify:** Process complete hote hi file size aur saving percentage check karke download karein.`,
+        section3_title: "Statutory Notice & Privacy Guarantee",
+        section3_content: `Statutory Disclaimer: PDFBazaar is an independent web utility and is NOT affiliated with, endorsed by, or associated with the Unique Identification Authority of India (UIDAI), Employees' Provident Fund Organisation (EPFO), Staff Selection Commission (SSC), Union Public Service Commission (UPSC), or any government department.
+
+All file transfers utilize 256-bit SSL encryption. Documents are processed in isolated temporary server memory and are automatically and permanently deleted within 60 minutes. We never store, inspect, or share user documents.`,
         faq: [
-            { q: "Kya PDF compress karne se text blur ho jayega?", a: "Nahi. Hamara 'Recommended' mode text clarity ko protect karta hai. Sirf images ka resolution optimize kiya jata hai." },
-            { q: "Compress PDF under 100kb kaise karein?", a: "Upload ke baad hamare tool mein 'Target Size' mein '100' likhein aur unit 'KB' chunein. Tool koshish karega ki file 100KB ke niche aa jaye." },
-            { q: "Is it safe to compress sensitive documents?", a: "Yes, we use SSL encryption for all transfers and our server deletes files automatically." }
+            { q: "Aadhaar Card PDF ko 300 KB kaise karein?", a: "Upload box mein apna Aadhaar PDF dalein, '300 KB' quick preset button par click karein, aur 'Compress PDF' dabayein. Engine high-contrast text and QR code clarity maintain rakhta hai." },
+            { q: "Kya exact 300 KB size ki guarantee hai?", a: "Hamara Ghostscript engine 3 progressive passes karta hai target size achieve karne ke liye. Scanned photos aur documents 300 KB ke andar aasani se compress ho jate hain. Lekin agar document mein heavy uncompressable vector fonts ya text hain, toh engine maximum achievable compression provide karta hai taaki text readable rahe." },
+            { q: "Kya password-protected PDF compress ho sakti hai?", a: "Nahi, encrypted file ko compress karne ke liye pehle uska password hatana zaroori hai. Hamara 'Unlock PDF' tool use karke password remove karein, phir compress karein." },
+            { q: "Kya sensitive documents upload karna safe hai?", a: "Ji haan, sabhi transfers SSL-encrypted hote hain aur server se 60 minute ke andar files permanently delete ho jati hain." }
         ]
     },
     'jpg-to-pdf': {

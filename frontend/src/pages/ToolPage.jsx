@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { getToolById } from '../ToolsData';
@@ -10,7 +10,7 @@ import ToolSEOArticle from '../components/ToolSEOArticle';
 
 const BACKEND_URL = 'https://manojkumarsh-pdfbazaar.hf.space';
 
-const ToolPage = ({ id, hideSEO }) => {
+const ToolPage = ({ id, hideSEO, defaultTargetKb }) => {
   const { toolId: paramId } = useParams();
   const toolId = id || paramId;
   const tool = getToolById(toolId);
@@ -83,8 +83,15 @@ const ToolPage = ({ id, hideSEO }) => {
   const [browserProcessing, setBrowserProcessing] = useState(false); // for browser-side tools
   const [browserProgress, setBrowserProgress] = useState(0);
   const [customDpi, setCustomDpi] = useState('auto');
-  const [targetSizeMB, setTargetSizeMB] = useState('');
-  const [targetSizeUnit, setTargetSizeUnit] = useState('MB');
+  const [targetSizeMB, setTargetSizeMB] = useState(defaultTargetKb ? defaultTargetKb.toString() : '');
+  const [targetSizeUnit, setTargetSizeUnit] = useState(defaultTargetKb ? 'KB' : 'MB');
+
+  useEffect(() => {
+    if (defaultTargetKb) {
+      setTargetSizeMB(defaultTargetKb.toString());
+      setTargetSizeUnit('KB');
+    }
+  }, [defaultTargetKb]);
 
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -755,11 +762,52 @@ const ToolPage = ({ id, hideSEO }) => {
 
                   {/* Target Size */}
                   <h4 style={{ color: '#333', marginBottom: '8px' }}>Target File Size</h4>
+                  {/* Quick Preset Buttons */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '10px' }}>
+                    {[
+                      { label: '100 KB', val: '100', desc: 'SSC / UPSC' },
+                      { label: '200 KB', val: '200', desc: 'Police / State' },
+                      { label: '300 KB', val: '300', desc: 'Govt / Aadhaar' },
+                      { label: '500 KB', val: '500', desc: 'College / Email' }
+                    ].map(p => {
+                      const isActive = targetSizeMB === p.val && targetSizeUnit === 'KB';
+                      return (
+                        <button
+                          key={p.val}
+                          type="button"
+                          onClick={() => {
+                            if (isActive) {
+                              setTargetSizeMB('');
+                            } else {
+                              setTargetSizeMB(p.val);
+                              setTargetSizeUnit('KB');
+                            }
+                          }}
+                          style={{
+                            padding: '6px 4px',
+                            border: isActive ? '1.5px solid #E5322D' : '1px solid #e2e8f0',
+                            borderRadius: '6px',
+                            background: isActive ? '#fff1f2' : '#ffffff',
+                            color: isActive ? '#E5322D' : '#334155',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: isActive ? '700' : '600',
+                            textAlign: 'center',
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div>{p.label}</div>
+                          <div style={{ fontSize: '9px', color: isActive ? '#E5322D' : '#94a3b8', fontWeight: '400' }}>{p.desc}</div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input
                       type="number"
                       className="input-field"
-                      placeholder={targetSizeUnit === 'KB' ? 'e.g. 500' : 'e.g. 2'}
+                      placeholder={targetSizeUnit === 'KB' ? 'e.g. 300' : 'e.g. 2'}
                       min="1"
                       step={targetSizeUnit === 'KB' ? '50' : '0.1'}
                       value={targetSizeMB}
@@ -790,10 +838,10 @@ const ToolPage = ({ id, hideSEO }) => {
                       >MB</button>
                     </div>
                   </div>
-                  <p style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>
+                  <p style={{ fontSize: '11px', color: '#64748b', marginTop: '6px', lineHeight: '1.4' }}>
                     {targetSizeUnit === 'KB'
-                      ? 'e.g. 500 for ~500 KB output. Leave blank to auto-compress.'
-                      : 'e.g. 2 for ~2 MB output. Leave blank to auto-compress.'}
+                      ? (targetSizeMB ? `Target ${targetSizeMB} KB set hai. Note: Scanned documents easily compress hote hain, text/vector documents readable text preserve karte hain.` : 'Quick preset chunein ya custom size likhein (e.g. 300).')
+                      : 'Target size MB mein set karein, ya auto-compression ke liye blank chhodein.'}
                   </p>
                 </div>
               )}
@@ -935,12 +983,13 @@ const ToolPage = ({ id, hideSEO }) => {
                   {/* Target size feedback */}
                   {targetHit && (
                     <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px', padding: '10px 16px', marginBottom: '8px', fontSize: '14px', color: '#166534', maxWidth: '480px' }}>
-                      ✅ Target size achieved! ({targetSizeMB} {targetSizeUnit})
+                      ✅ Target size achieved! ({resultSize < 1048576 ? (resultSize / 1024).toFixed(1) + ' KB' : (resultSize / 1048576).toFixed(2) + ' MB'} ≤ {targetSizeMB} {targetSizeUnit})
                     </div>
                   )}
                   {targetMissed && (
-                    <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', padding: '10px 16px', marginBottom: '8px', fontSize: '13px', color: '#92400e', maxWidth: '480px' }}>
-                      ⚠️ Target {targetSizeMB} {targetSizeUnit} fully achieve nahi hua — yeh is PDF ka maximum compression hai. Lower DPI ya Extreme mode try karein.
+                    <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', padding: '10px 16px', marginBottom: '8px', fontSize: '13px', color: '#92400e', maxWidth: '480px', lineHeight: '1.5' }}>
+                      ⚠️ <strong>Target {targetSizeMB} {targetSizeUnit} fully achieve nahi ho paya.</strong><br />
+                      Is document ka maximum achievable size <strong>{resultSize < 1048576 ? (resultSize / 1024).toFixed(1) + ' KB' : (resultSize / 1048576).toFixed(2) + ' MB'}</strong> hai. (Vector fonts aur text quality preserve karne ke liye yeh limit hai. Extreme mode ya Grayscale try karein.)
                     </div>
                   )}
                 </>
